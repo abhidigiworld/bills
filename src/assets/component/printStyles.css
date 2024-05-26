@@ -1,0 +1,12 @@
+@media print {
+    /* Hide all elements by default */
+    .print-hidden {
+      display: none !important;
+    }
+  
+    @page {
+      size: A4; /* Set page size to A4 */
+      margin: auto; /* Remove default margins */
+    }
+  }
+  
