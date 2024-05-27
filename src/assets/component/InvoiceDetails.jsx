@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import './printStyles.css';
 import axios from 'axios';
-import logo from './logo.png'; // Assuming you have your logo image file
-import './InvoiceDetails.css'; // Assuming you have a CSS file for styling
+import logo from '../images/LOGO.png';
 
 function InvoiceDetails({ invoiceId }) {
   const [invoiceDetails, setInvoiceDetails] = useState({});
