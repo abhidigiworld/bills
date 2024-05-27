@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './printStyles.css';
 import axios from 'axios';
 import Header from './Header';
 import Footer from './Footer';
@@ -44,7 +45,7 @@ function Bills() {
   return (
     <>
       <Header />
-      <div className="container mx-auto">
+      <div className="container mx-auto print-hidden">
         <h1 className="text-2xl font-bold mb-4">All Bills</h1>
         {alertMessage && (
           <div className="bg-green-200 text-green-800 border border-green-600 py-2 px-4 mb-4">

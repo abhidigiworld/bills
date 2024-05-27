@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import './printStyles.css';
 import axios from 'axios';
 import logo from '../images/LOGO.png';
+import signature from '../images/sign.png';
+import stamp from '../images/stamp.png'
 
 function InvoiceComponent({ invoiceDetails }) {
     const [items, setItems] = useState([]);
@@ -17,6 +19,7 @@ function InvoiceComponent({ invoiceDetails }) {
     const [grandTotal, setGrandTotal] = useState(0);
     const [grandTotalInWords, setGrandTotalInWords] = useState('');
     const [saveSuccess, setSaveSuccess] = useState(false);
+    const [billGenerated, setBillGenerated] = useState(false);
 
     const addItem = () => {
         const newItem = {
@@ -62,11 +65,12 @@ function InvoiceComponent({ invoiceDetails }) {
         // This is a placeholder function, you may replace it with a library or custom logic
         const grandTotalWords = convertNumberToWords(totalTaxableAmount + totalTaxes);
         setGrandTotalInWords(grandTotalWords);
+        setBillGenerated(true);
     };
 
     const convertNumberToWords = (number) => {
         if (number === 0) return 'Zero';
-        number=Math.round(number);
+        number = Math.round(number);
         const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
         const teens = ['', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
         const tens = ['', 'Ten', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
@@ -137,12 +141,12 @@ function InvoiceComponent({ invoiceDetails }) {
         }
     };
 
-    const myfunc = ()=>{
-        setTimeout(()=>{
+    const myfunc = () => {
+        setTimeout(() => {
             setSaveSuccess(false);
-        },1000);
+        }, 1000);
     };
-     
+
     const handlePrint = () => {
         window.print();
         console.log('Printing invoice...');
@@ -150,7 +154,7 @@ function InvoiceComponent({ invoiceDetails }) {
 
     return (
         <>
-            <div className="container mx-auto mt-8 px-4 lg:px-8">
+            <div className="container mx-auto mt-8 px-4 lg:px-8 mb-12 pb-8">
                 <div className="flex flex-col lg:flex-row gap-4">
                     <div className="flex flex-col space-y-2 w-1/3 print-hidden">
                         <input type="text" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} className="border px-3 py-2 rounded" />
@@ -161,7 +165,7 @@ function InvoiceComponent({ invoiceDetails }) {
                         <button onClick={calculateBill} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Generate Bill</button>
                     </div>
                     <div className='printdata border'>
-                        <p className="text-lg font-bold bg-gray-300">Tax Invoice</p>
+                        <p className="text-lg font-bold bg-gray-300 text-center">Tax Invoice</p>
                         <div className="flex justify-between px-4 py-2 bg-gray-300">
                             <div className="flex items-center">
                                 <img src={logo} alt="Your Company Logo" class="w-16 h-16 mr-2" />
@@ -241,6 +245,14 @@ function InvoiceComponent({ invoiceDetails }) {
                             <div className="text-right relative">
                                 <p className="text-sm">For Sakshi Enterprises</p>
                                 <p className="text-sm absolute bottom-0 right-0">Authority Signature</p>
+                                {billGenerated && (
+                                    <>
+                                        <img src={signature} alt="Signature" className="absolute top-0 left-0 right-0 mx-auto mt-4 w-44 h-auto" />
+                                        <img src={stamp} alt="stamp" className="absolute top-0 left-0 right-0 mx-auto mt-4 w-80 h-auto" />
+                                    </>
+                                )}
+
+
                             </div>
                         </div>
                     </div>
