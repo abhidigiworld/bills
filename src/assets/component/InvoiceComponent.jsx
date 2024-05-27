@@ -120,7 +120,13 @@ function InvoiceComponent({ invoiceDetails }) {
                     quantity: item.quantity,
                     rate: item.rate,
                     totalValue: item.totalValue
-                }))
+                })),
+                freightCharges: freightCharges,
+                cgst: cgst,
+                sgst: sgst,
+                igst: igst,
+                grandTotal: grandTotal,
+                grandTotalInWords: grandTotalInWords
             });
             console.log('Invoice saved successfully', response.data);
             setSaveSuccess(true); // Set save success message
