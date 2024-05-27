@@ -15,6 +15,7 @@ function InvoiceDetails({ invoiceId }) {
     const [igst, setIGST] = useState(0);
     const [grandTotal, setGrandTotal] = useState(0);
     const [grandTotalInWords, setGrandTotalInWords] = useState('');
+    const [subtotal,setSubtotal]=useState('');
 
     useEffect(() => {
         const fetchInvoiceDetails = async () => {
@@ -25,6 +26,7 @@ function InvoiceDetails({ invoiceId }) {
                 setItems(data.items);
                 // Calculate total, taxes, and grand total
                 const subTotal = data.items.reduce((acc, item) => acc + item.totalValue, 0);
+                setSubtotal(subTotal);
                 const gst = 0.09; // 9% GST
                 const cgst = gst * subTotal;
                 const sgst = gst * subTotal;
@@ -113,21 +115,21 @@ function InvoiceDetails({ invoiceId }) {
                     </table>
                 </div>
                 <div className="bg-gray-100 p-4">
-                    <div className="grid grid-cols-1 gap-4 mt -2 sm:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-4 mt-2 sm:grid-cols-2">
                         <div>
-                            <p className="text-sm">Grand Total (In Words): <span className="font-semibold">{grandTotalInWords}</span></p>
+                            <p className="text-sm">Grand Total (In Words): <span className="font-semibold">{invoiceDetails.grandTotalInWords}</span></p>
                         </div>
                         <div className='text-left'>
-                            {/* Add conditional rendering to check if the values are defined before accessing toFixed */}
-                            <p className="text-sm">Total: <span className="font-semibold">{total !== undefined ? total.toFixed(2) : '-'}</span></p>
-                            <p className="text-sm">Freight Charges: <span className="font-semibold">{freightCharges !== undefined ? freightCharges.toFixed(2) : '-'}</span></p>
-                            <p className="text-sm">CGST: <span className="font-semibold">{cgst !== undefined ? cgst.toFixed(2) : '-'}</span></p>
-                            <p className="text-sm">SGST: <span className="font-semibold">{sgst !== undefined ? sgst.toFixed(2) : '-'}</span></p>
-                            <p className="text-sm">IGST: <span className="font-semibold">{igst !== undefined ? igst.toFixed(2) : '-'}</span></p>
-                            <p className="text-sm">Grand Total: <span className="font-semibold">{grandTotal !== undefined ? grandTotal.toFixed(2) : '-'}</span></p>
+                            <p className="text-sm">Total: <span className="font-semibold">{subtotal !== undefined ? subtotal.toFixed(2) : '-'}</span></p>
+                            <p className="text-sm">Freight Charges: <span className="font-semibold">{invoiceDetails.freightCharges}</span></p>
+                            <p className="text-sm">CGST: <span className="font-semibold">{invoiceDetails.cgst}</span></p>
+                            <p className="text-sm">SGST: <span className="font-semibold">{invoiceDetails.sgst}</span></p>
+                            <p className="text-sm">IGST: <span className="font-semibold">{invoiceDetails.igst}</span></p>
+                            <p className="text-sm">Grand Total: <span className="font-semibold">{invoiceDetails.grandTotal}</span></p>
                         </div>
                     </div>
                 </div>
+
 
                 <div className="bg-gray-200 p-4 px-8 flex justify-between">
                     <div>
