@@ -66,7 +66,7 @@ function InvoiceDetails({ invoiceId }) {
             <div className="bg-gray-100 p-4">
                 <div className="grid grid-cols-1 gap-4 mt-2 sm:grid-cols-2">
                     <div className='text-left'>
-                        <p className="text-sm">M/s: <span className="font-semibold">{invoiceDetails.msInput}</span></p>
+                        <p className="text-sm">M/s: <span className="font-semibold">{invoiceDetails.companyName}</span></p>
                         <p className="text-sm">GSTIN: <span className="font-semibold">{invoiceDetails.gstin}</span></p>
                         <p className="text-sm">State: <span className="font-semibold">{invoiceDetails.state}</span></p>
                     </div>

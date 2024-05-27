@@ -41,7 +41,7 @@ function InvoiceComponent({ invoiceDetails }) {
         setTotal(totalAmount);
 
         // calculation
-        const freight = 50; // Sample static data
+        const freight = 0; // Sample static data
         const cgstRate = 9; // Sample static data
         const sgstRate = 9; // Sample static data
         const igstRate = 18; // Sample static data
