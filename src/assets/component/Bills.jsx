@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Header from './Header';
 import Footer from './Footer';
+import InvoiceDetails from './InvoiceDetails'; // Import the InvoiceDetails component
 
 function Bills() {
   const [bills, setBills] = useState([]);
   const [alertMessage, setAlertMessage] = useState('');
+  const [selectedInvoice, setSelectedInvoice] = useState(null); // State to track the selected invoice
 
   useEffect(() => {
     // Function to fetch all bills from the server
@@ -32,6 +34,11 @@ function Bills() {
       console.error('Error deleting bill:', error);
       setAlertMessage('An error occurred while deleting the invoice');
     }
+  };
+
+  // Function to handle view details button click
+  const handleViewDetails = (id) => {
+    setSelectedInvoice(id); // Set the selected invoice id
   };
 
   return (
@@ -68,10 +75,16 @@ function Bills() {
                   <td className="px-4 py-2">{bill.invoiceDate}</td>
                   <td className="px-4 py-2">
                     <button
-                      className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                      className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 mr-2"
                       onClick={() => handleDelete(bill._id)}
                     >
                       Delete
+                    </button>
+                    <button
+                      className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                      onClick={() => handleViewDetails(bill._id)} // Pass the invoice id
+                    >
+                      View Details
                     </button>
                   </td>
                 </tr>
@@ -81,6 +94,7 @@ function Bills() {
         </div>
       </div>
       <Footer />
+      {selectedInvoice && <InvoiceDetails invoiceId={selectedInvoice} />} {/* Render InvoiceDetails component if selectedInvoice is not null */}
     </>
   );
 }
