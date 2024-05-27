@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import './printStyles.css';
 
 function Header() {
   return (
-    <header className="bg-blue-500 text-white py-4">
+    <header className="bg-blue-500 text-white py-4 print-hidden">
       <div className="container mx-auto">
         <h1 className="text-2xl font-bold"> <Link to={'/Main'}>Sakshi Enterprises</Link> </h1>
         <p>Providing Quality Services Since 2024</p>
