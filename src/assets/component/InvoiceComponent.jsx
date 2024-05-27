@@ -71,13 +71,13 @@ function InvoiceComponent({ invoiceDetails }) {
         const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
         const teens = ['', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
         const tens = ['', 'Ten', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
-        const scales = ['', 'Thousand', 'Million', 'Billion', 'Trillion'];
+        const scales = ['', 'Hundred', 'Thousand', 'Lakh', 'Crore', 'Arab', 'Kharab', 'Neel', 'Padma', 'Shankh', 'Maha Shankh'];
     
         const numberToWords = (num) => {
             if (num === 0) return '';
             let words = '';
             if (num >= 100) {
-                words = numberToWords(Math.floor(num / 100)) + ' Hundred ';
+                words = ones[Math.floor(num / 100)] + ' Hundred ';
                 num %= 100;
             }
             if (num >= 11 && num <= 19) {
@@ -92,15 +92,26 @@ function InvoiceComponent({ invoiceDetails }) {
             return words.trim();
         };
     
-        const integerPart = Math.floor(number);
-        const decimalPart = Math.round((number - integerPart) * 100); // Convert decimal part to cents
-        let words = numberToWords(integerPart);
+        let integerPart = Math.floor(number);
+        let decimalPart = Math.round((number - integerPart) * 100); // Round to nearest paisa
+        let words = '';
+        
+        let scaleIndex = 0;
+        while (integerPart > 0) {
+            const remainder = integerPart % 100;
+            if (remainder !== 0) {
+                const wordsForSegment = numberToWords(remainder) + ' ' + scales[scaleIndex];
+                words = wordsForSegment + ' ' + words;
+            }
+            integerPart = Math.floor(integerPart / 100);
+            scaleIndex++;
+        }
     
         if (decimalPart > 0) {
             words += ' Rupees ' + numberToWords(decimalPart) + ' Paisa';
         }
     
-        return words;
+        return words.trim();
     };
     
 
