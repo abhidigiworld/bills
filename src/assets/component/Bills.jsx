@@ -11,7 +11,7 @@ function Bills() {
     // Function to fetch all bills from the server
     const fetchBills = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/invoices');
+        const response = await axios.get('https://billsbackend-git-main-abhidigiworlds-projects.vercel.app/api/invoices');
         setBills(response.data);
       } catch (error) {
         console.error('Error fetching bills:', error);
@@ -24,7 +24,7 @@ function Bills() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/invoices/${id}`);
+      await axios.delete(`https://billsbackend-git-main-abhidigiworlds-projects.vercel.app/api/invoices/${id}`);
       // Update the local state by filtering out the deleted invoice
       setBills(bills.filter((bill) => bill._id !== id));
       setAlertMessage('Invoice deleted successfully');

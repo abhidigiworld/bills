@@ -114,7 +114,7 @@ function InvoiceComponent({ invoiceDetails }) {
 
     const handleSave = async () => {
         try {
-            const response = await axios.post('http://localhost:3000/api/invoices', {
+            const response = await axios.post('https://billsbackend-git-main-abhidigiworlds-projects.vercel.app/api/invoices', {
                 companyName: invoiceDetails.msInput,
                 gstin: invoiceDetails.gstin,
                 state: invoiceDetails.state,
