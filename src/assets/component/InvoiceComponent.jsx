@@ -44,10 +44,10 @@ function InvoiceComponent({ invoiceDetails }) {
         setTotal(totalAmount);
 
         // calculation
-        const freight = 0; // Sample static data
-        const cgstRate = 9; // Sample static data
-        const sgstRate = 9; // Sample static data
-        const igstRate = 18; // Sample static data
+        const freight = 0; 
+        const cgstRate = 9; 
+        const sgstRate = 9; 
+        const igstRate = 18; 
 
         const totalTaxes = (totalAmount * (cgstRate + sgstRate)) / 100;
         const totalTaxableAmount = totalAmount + freight;
@@ -60,9 +60,6 @@ function InvoiceComponent({ invoiceDetails }) {
         setSgst(totalSgst);
         setIgst(totalIgst);
         setGrandTotal(totalTaxableAmount + totalTaxes);
-
-        // Convert grand total to words
-        // This is a placeholder function, you may replace it with a library or custom logic
         const grandTotalWords = convertNumberToWords(totalTaxableAmount + totalTaxes);
         setGrandTotalInWords(grandTotalWords);
         setBillGenerated(true);
@@ -70,12 +67,12 @@ function InvoiceComponent({ invoiceDetails }) {
 
     const convertNumberToWords = (number) => {
         if (number === 0) return 'Zero';
-        number = Math.round(number);
+    
         const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
         const teens = ['', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
         const tens = ['', 'Ten', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
         const scales = ['', 'Thousand', 'Million', 'Billion', 'Trillion'];
-
+    
         const numberToWords = (num) => {
             if (num === 0) return '';
             let words = '';
@@ -94,26 +91,18 @@ function InvoiceComponent({ invoiceDetails }) {
             }
             return words.trim();
         };
-
-        let words = '';
-        let scaleIndex = 0;
-        while (number > 0) {
-            const chunk = number % 1000;
-            if (chunk !== 0) {
-                words = numberToWords(chunk) + ' ' + scales[scaleIndex] + (words ? ' ' : '') + words;
-            }
-            number = Math.floor(number / 1000);
-            scaleIndex++;
+    
+        const integerPart = Math.floor(number);
+        const decimalPart = Math.round((number - integerPart) * 100); // Convert decimal part to cents
+        let words = numberToWords(integerPart);
+    
+        if (decimalPart > 0) {
+            words += ' Rupees ' + numberToWords(decimalPart) + ' Paisa';
         }
-
-        const decimalPart = (number * 100).toString().split('.')[1]; // Extract decimal part with 2 digits after point
-        let decimalWords = '';
-        if (decimalPart) {
-            decimalWords = ' and ' + numberToWords(parseInt(decimalPart)) + ' Cents';
-        }
-
-        return words.trim() + decimalWords;
+    
+        return words;
     };
+    
 
 
     const handleSave = async () => {
