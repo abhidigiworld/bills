@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import logo from './logo.png'; // Assuming you have your logo image file
-import './InvoiceDetails.css'; // Assuming you have a CSS file for styling
+import logo from '../images/LOGO.png'; // Assuming you have your logo image file
+import './printStyles.css'; // Assuming you have a CSS file for styling
 
 function InvoiceDetails({ invoiceId }) {
     const [invoiceDetails, setInvoiceDetails] = useState({});
@@ -44,6 +44,11 @@ function InvoiceDetails({ invoiceId }) {
 
         fetchInvoiceDetails();
     }, [invoiceId]);
+
+    const handlePrint = () => {
+        window.print();
+        console.log('Printing invoice...');
+    };
 
     return (
     <>
@@ -130,7 +135,6 @@ function InvoiceDetails({ invoiceId }) {
             </div>
         </div>
         <div className="flex justify-end mt-4">
-            <button onClick={handleSave} className="bg-green-500 text-white px-4 py-2 rounded mr-2 hover:bg-green-600 print-hidden">Save</button>
             <button onClick={handlePrint} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 print-hidden">Print</button>
         </div>
     </>

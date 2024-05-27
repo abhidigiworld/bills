@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Header from './Header';
 import Footer from './Footer';
-import InvoiceDetails from './InvoiceDetails'; // Import the InvoiceDetails component
+import InvoiceDetails from './InvoiceDetails'; 
 
 function Bills() {
   const [bills, setBills] = useState([]);
@@ -38,7 +38,7 @@ function Bills() {
 
   // Function to handle view details button click
   const handleViewDetails = (id) => {
-    setSelectedInvoice(id); // Set the selected invoice id
+    setSelectedInvoice(id);
   };
 
   return (
