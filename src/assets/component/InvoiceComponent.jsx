@@ -115,7 +115,7 @@ function InvoiceComponent({ invoiceDetails }) {
       
         // Convert decimal part to words
         if (decimalPart > 0) {
-          words += 'and Paisa ' + convertToWords(decimalPart);
+          words += 'and' + convertToWords(decimalPart) + 'Paisa ';
         }
       
         return words.trim();
