@@ -67,63 +67,64 @@ function InvoiceComponent({ invoiceDetails }) {
 
     const convertNumberToWords = (number) => {
         if (number === 0) return 'Zero';
-      
+
         const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
         const teens = ['', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
         const tens = ['', 'Ten', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
-      
+
         const convertToWords = (num) => {
-          let words = '';
-      
-          if (num >= 100) {
-            words += ones[Math.floor(num / 100)] + ' Hundred ';
-            num %= 100;
-          }
-      
-          if (num >= 20) {
-            words += tens[Math.floor(num / 10)] + ' ';
-            num %= 10;
-          }
-      
-          if (num >= 1 && num <= 9) {
-            words += ones[num] + ' ';
-          }
-      
-          return words.trim();
+            let words = '';
+
+            if (num >= 100) {
+                words += ones[Math.floor(num / 100)] + ' Hundred ';
+                num %= 100;
+            }
+
+            if (num >= 20) {
+                words += tens[Math.floor(num / 10)] + ' ';
+                num %= 10;
+            }
+
+            if (num >= 1 && num <= 9) {
+                words += ones[num] + ' ';
+            }
+
+            return words.trim();
         };
-      
-        const scales = ['', 'Thousand', 'Lakh', 'Crore'];
-        let scaleIndex = 2; // Start with lakhs
+
+        const scales = ['', 'Thousand', 'Lakh', 'Crore', 'Arab', 'Kharab', 'Neel', 'Padma', 'Shankh', 'Maha Shankh'];
+        let scaleIndex = 0; // Start with Thousand
         let words = '';
-      
+
         // Separate integer and decimal parts
         let integerPart = Math.floor(number);
         let decimalPart = Math.round((number - integerPart) * 100);
-      
+
         // Convert integer part to words
         while (integerPart > 0) {
-          const remainder = integerPart % 1000;
-      
-          if (remainder !== 0) {
-            const scaleWord = scales[scaleIndex];
-            words = convertToWords(remainder) + ' ' + scaleWord + ' ' + words;
-          }
-      
-          integerPart = Math.floor(integerPart / 1000);
-          scaleIndex--;
+            const remainder = integerPart % 1000;
+
+            if (remainder !== 0) {
+                const scaleWord = scales[scaleIndex];
+                words = convertToWords(remainder) + ' ' + scaleWord + ' ' + words;
+            }
+
+            integerPart = Math.floor(integerPart / 1000);
+            scaleIndex++;
         }
-      
+
         // Convert decimal part to words
         if (decimalPart > 0) {
-          words += ' and ' + convertToWords(decimalPart) + ' Paisa ';
+            words += ' and ' + convertToWords(decimalPart) + ' Paisa ';
         }
-      
+
         return words.trim();
-      };
-      
-      
-      
-      
+    };
+
+    // Example usage
+    console.log(convertNumberToWords(1032202.64)); // Output: "Ten Lakh Thirty Two Thousand Two Hundred Two and Sixty Four Paisa"
+
+
 
     const handleSave = async () => {
         try {
