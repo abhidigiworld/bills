@@ -3,7 +3,7 @@ import './printStyles.css';
 import axios from 'axios';
 import Header from './Header';
 import Footer from './Footer';
-import InvoiceDetails from './InvoiceDetails'; 
+import InvoiceDetails from './InvoiceDetails';
 
 function Bills() {
   const [bills, setBills] = useState([]);
@@ -53,16 +53,16 @@ function Bills() {
           </div>
         )}
         <div className="overflow-x-auto">
-          <table className="w-full table-auto">
+          <table className="w-full table-auto border border-collapse">
             <thead>
-              <tr className="bg-gray-200">
-                <th className="px-4 py-2">Company Name</th>
-                <th className="px-4 py-2">GSTIN</th>
-                <th className="px-4 py-2">State</th>
-                <th className="px-4 py-2">State Code</th>
-                <th className="px-4 py-2">Invoice No</th>
-                <th className="px-4 py-2">Invoice Date</th>
-                <th className="px-4 py-2">Actions</th>
+              <tr className="bg-gray-200 text-left">
+                <th className="px-4 py-2 md:w-1/6">Company Name</th> {/* Adjusted width for responsiveness */}
+                <th className="px-4 py-2 md:w-1/6">GSTIN</th> {/* Adjusted width for responsiveness */}
+                <th className="px-4 py-2 md:w-1/6">State</th> {/* Adjusted width for responsiveness */}
+                <th className="px-4 py-2 md:w-1/6">State Code</th> {/* Adjusted width for responsiveness */}
+                <th className="px-4 py-2 md:w-1/6">Invoice No</th> {/* Adjusted width for responsiveness */}
+                <th className="px-4 py-2 md:w-1/6">Invoice Date</th> {/* Adjusted width for responsiveness */}
+                <th className="px-4 py-2 md:w-1/6">Actions</th> {/* Adjusted width for responsiveness */}
               </tr>
             </thead>
             <tbody>
@@ -74,7 +74,7 @@ function Bills() {
                   <td className="px-4 py-2">{bill.stateCode}</td>
                   <td className="px-4 py-2">{bill.invoiceNo}</td>
                   <td className="px-4 py-2">{bill.invoiceDate}</td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-2 flex justify-center md:justify-end"> {/* Center align on small screens and right align on medium and larger screens */}
                     <button
                       className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 mr-2"
                       onClick={() => handleDelete(bill._id)}
@@ -83,7 +83,7 @@ function Bills() {
                     </button>
                     <button
                       className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-                      onClick={() => handleViewDetails(bill._id)} // Pass the invoice id
+                      onClick={() => handleViewDetails(bill._id)}
                     >
                       View Details
                     </button>
@@ -95,8 +95,9 @@ function Bills() {
         </div>
       </div>
       <Footer />
-      {selectedInvoice && <InvoiceDetails invoiceId={selectedInvoice} />} {/* Render InvoiceDetails component if selectedInvoice is not null */}
+      {selectedInvoice && <InvoiceDetails invoiceId={selectedInvoice} />}
     </>
+
   );
 }
 
