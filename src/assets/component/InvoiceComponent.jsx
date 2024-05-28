@@ -59,63 +59,61 @@ const calculateBill = () => {
     setSgst(parseFloat(totalSgst).toFixed(2));
     setIgst(parseFloat(totalIgst).toFixed(2));
     setGrandTotal((parseFloat(totalTaxableAmount) + parseFloat(totalCgst) + parseFloat(totalSgst) + parseFloat(totalIgst)).toFixed(2));
-    console.log(grandTotal);
     const grandTotalWords = convertNumberToWords(grandTotal);
     setGrandTotalInWords(grandTotalWords);
     setBillGenerated(true);
 };
 
 
-    const convertNumberToWords = (number) => {
-        if (number === 0) return 'Zero';
+const convertNumberToWords = (number) => {
+    if (number === 0) return 'Zero';
 
-        const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
-        const teens = ['', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
-        const tens = ['', 'Ten', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
-        const scales = ['', 'Hundred', 'Thousand', 'Lakh', 'Crore', 'Arab', 'Kharab', 'Neel', 'Padma', 'Shankh', 'Maha Shankh'];
+    const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+    const teens = ['', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+    const tens = ['', 'Ten', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+    const scales = ['', 'Thousand', 'Lakh', 'Crore'];
 
-        const numberToWords = (num) => {
-            if (num === 0) return '';
-            let words = '';
-            if (num >= 100) {
-                words = ones[Math.floor(num / 100)] + ' Hundred ';
-                num %= 100;
-            }
-            if (num >= 11 && num <= 19) {
-                words += teens[num - 10] + ' ';
-            } else if (num >= 10 || num === 0) {
-                words += tens[Math.floor(num / 10)] + ' ';
-                num %= 10;
-            }
-            if (num >= 1 && num <= 9) {
-                words += ones[num] + ' ';
-            }
-            return words.trim();
-        };
-
-        let integerPart = Math.floor(number);
-        let decimalPart = Math.round((number - integerPart) * 100); // Round to nearest paisa
+    const convertToWords = (num) => {
         let words = '';
-
-        let scaleIndex = 0;
-        while (integerPart > 0) {
-            const remainder = integerPart % 100;
-            if (remainder !== 0) {
-                const wordsForSegment = numberToWords(remainder) + ' ' + scales[scaleIndex];
-                words = wordsForSegment + ' ' + words;
-            }
-            integerPart = Math.floor(integerPart / 100);
-            scaleIndex++;
+        if (num >= 100) {
+            words += ones[Math.floor(num / 100)] + ' Hundred ';
+            num %= 100;
         }
-
-        if (decimalPart > 0) {
-            words += ' Rupees ' + numberToWords(decimalPart) + ' Paisa';
+        if (num >= 11 && num <= 19) {
+            words += teens[num - 10] + ' ';
+        } else if (num >= 10 || num === 0) {
+            words += tens[Math.floor(num / 10)] + ' ';
+            num %= 10;
         }
-
+        if (num >= 1 && num <= 9) {
+            words += ones[num] + ' ';
+        }
         return words.trim();
     };
 
+    let integerPart = Math.floor(number);
+    let decimalPart = Math.round((number - integerPart) * 100); 
+    let words = '';
 
+    let scaleIndex = 0;
+    while (integerPart > 0) {
+        const remainder = integerPart % 100;
+        if (remainder !== 0) {
+            const segmentWords = convertToWords(remainder) + ' ' + scales[scaleIndex];
+            words = segmentWords + ' ' + words;
+        }
+        integerPart = Math.floor(integerPart / 100);
+        scaleIndex++;
+    }
+
+    if (decimalPart > 0) {
+        words += 'Rupees and ' + convertToWords(decimalPart) + ' Paisa';
+    } else {
+        words += 'Rupees';
+    }
+
+    return words.trim();
+};
 
     const handleSave = async () => {
         try {
