@@ -20,6 +20,10 @@ function InvoiceComponent({ invoiceDetails }) {
     const [grandTotalInWords, setGrandTotalInWords] = useState('');
     const [saveSuccess, setSaveSuccess] = useState(false);
     const [billGenerated, setBillGenerated] = useState(false);
+    const [freight, setfreight] = useState();
+    const [cgstRate, setcgstRate] = useState();
+    const [sgstRate, setsgstRate] = useState();
+    const [igstRate, setigstRate] = useState();
 
     const addItem = () => {
         const newItem = {
@@ -36,43 +40,40 @@ function InvoiceComponent({ invoiceDetails }) {
         setRate('');
     };
 
-    const calculateBill = () => {
-        let totalAmount = 0;
-        items.forEach(item => {
-            totalAmount += parseFloat(item.totalValue);
-        });
-        setTotal(totalAmount);
+const calculateBill = () => {
+    let totalAmount = 0;
+    items.forEach(item => {
+        totalAmount += parseFloat(item.totalValue);
+    });
+    setTotal(totalAmount);
 
-        // calculation
-        const freight = 0; 
-        const cgstRate = 9; 
-        const sgstRate = 9; 
-        const igstRate = 18; 
+    const totalTaxableAmount = parseFloat(totalAmount) + parseFloat(freight);
+    
+    // Calculate individual taxes
+    const totalCgst = (parseFloat(totalTaxableAmount) * parseFloat(cgstRate)) / 100;
+    const totalSgst = (totalTaxableAmount * sgstRate) / 100;
+    const totalIgst = (totalTaxableAmount * igstRate) / 100;
 
-        const totalTaxes = (totalAmount * (cgstRate + sgstRate)) / 100;
-        const totalTaxableAmount = totalAmount + freight;
-        const totalCgst = (totalTaxableAmount * cgstRate) / 100;
-        const totalSgst = (totalTaxableAmount * sgstRate) / 100;
-        const totalIgst = (totalTaxableAmount * igstRate) / 100;
+    setFreightCharges(parseFloat(freight).toFixed(2));
+    setCgst(parseFloat(totalCgst).toFixed(2));
+    setSgst(parseFloat(totalSgst).toFixed(2));
+    setIgst(parseFloat(totalIgst).toFixed(2));
+    setGrandTotal((parseFloat(totalTaxableAmount) + parseFloat(totalCgst) + parseFloat(totalSgst) + parseFloat(totalIgst)).toFixed(2));
+    console.log(grandTotal);
+    const grandTotalWords = convertNumberToWords(grandTotal);
+    setGrandTotalInWords(grandTotalWords);
+    setBillGenerated(true);
+};
 
-        setFreightCharges(freight);
-        setCgst(totalCgst);
-        setSgst(totalSgst);
-        setIgst(totalIgst);
-        setGrandTotal(totalTaxableAmount + totalTaxes);
-        const grandTotalWords = convertNumberToWords(totalTaxableAmount + totalTaxes);
-        setGrandTotalInWords(grandTotalWords);
-        setBillGenerated(true);
-    };
 
     const convertNumberToWords = (number) => {
         if (number === 0) return 'Zero';
-    
+
         const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
         const teens = ['', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
         const tens = ['', 'Ten', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
         const scales = ['', 'Hundred', 'Thousand', 'Lakh', 'Crore', 'Arab', 'Kharab', 'Neel', 'Padma', 'Shankh', 'Maha Shankh'];
-    
+
         const numberToWords = (num) => {
             if (num === 0) return '';
             let words = '';
@@ -91,11 +92,11 @@ function InvoiceComponent({ invoiceDetails }) {
             }
             return words.trim();
         };
-    
+
         let integerPart = Math.floor(number);
         let decimalPart = Math.round((number - integerPart) * 100); // Round to nearest paisa
         let words = '';
-        
+
         let scaleIndex = 0;
         while (integerPart > 0) {
             const remainder = integerPart % 100;
@@ -106,14 +107,14 @@ function InvoiceComponent({ invoiceDetails }) {
             integerPart = Math.floor(integerPart / 100);
             scaleIndex++;
         }
-    
+
         if (decimalPart > 0) {
             words += ' Rupees ' + numberToWords(decimalPart) + ' Paisa';
         }
-    
+
         return words.trim();
     };
-    
+
 
 
     const handleSave = async () => {
@@ -168,6 +169,10 @@ function InvoiceComponent({ invoiceDetails }) {
                         <input type="number" placeholder="Quantity" value={quantity} onChange={(e) => setQuantity(e.target.value)} className="border px-3 py-2 rounded" />
                         <input type="number" placeholder="Rate" value={rate} onChange={(e) => setRate(e.target.value)} className="border px-3 py-2 rounded" />
                         <button onClick={addItem} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add</button>
+                        <input type="number" placeholder="Freight Charges" value={freight} onChange={(e) => setfreight(e.target.value)} className="border px-3 py-2 rounded" />
+                        <input type="number" placeholder="CGST Rate" value={cgstRate} onChange={(e) => setcgstRate(e.target.value)} className="border px-3 py-2 rounded" />
+                        <input type="number" placeholder="SGST Rate" value={sgstRate} onChange={(e) => setsgstRate(e.target.value)} className="border px-3 py-2 rounded" />
+                        <input type="number" placeholder="IGST Rate" value={igstRate} onChange={(e) => setigstRate(e.target.value)} className="border px-3 py-2 rounded" />
                         <button onClick={calculateBill} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Generate Bill</button>
                     </div>
                     <div className='printdata border'>
@@ -230,12 +235,12 @@ function InvoiceComponent({ invoiceDetails }) {
                                     <p className="text-sm">Grand Total (In Words): <span className="font-semibold">{grandTotalInWords}</span></p>
                                 </div>
                                 <div className='text-left'>
-                                    <p className="text-sm">Total: <span className="font-semibold">{total.toFixed(2)}</span></p>
-                                    <p className="text-sm">Freight Charges: <span className="font-semibold">{freightCharges.toFixed(2)}</span></p>
-                                    <p className="text-sm">CGST: <span className="font-semibold">{cgst.toFixed(2)}</span></p>
-                                    <p className="text-sm">SGST: <span className="font-semibold">{sgst.toFixed(2)}</span></p>
-                                    <p className="text-sm">IGST: <span className="font-semibold">{igst.toFixed(2)}</span></p>
-                                    <p className="text-sm">Grand Total: <span className="font-semibold">{grandTotal.toFixed(2)}</span></p>
+                                    <p className="text-sm">Total: <span className="font-semibold">{total}</span></p>
+                                    <p className="text-sm">Freight Charges: <span className="font-semibold">{freight}</span></p>
+                                    <p className="text-sm">CGST: <span className="font-semibold">{cgst}</span></p>
+                                    <p className="text-sm">SGST: <span className="font-semibold">{sgst}</span></p>
+                                    <p className="text-sm">IGST: <span className="font-semibold">{igst}</span></p>
+                                    <p className="text-sm">Grand Total: <span className="font-semibold">{grandTotal}</span></p>
                                 </div>
                             </div>
                         </div>
