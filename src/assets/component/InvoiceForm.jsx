@@ -86,47 +86,48 @@ const fetchLastInvoiceNumber = async () => {
 
   return (
     <>
-      <Header />
-      <div className="container mx-auto mt-8 px-4">
-        <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-          <div className="p-6 print-hidden">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-6">Create New Invoice</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div>
-                <input type="text" placeholder="M/s" value={msInput} onChange={(e) => setMsInput(e.target.value)} className={`border-2 border-gray-200 w-full px-4 py-2 rounded focus:outline-none ${errors.msInput ? 'border-red-500' : ''}`} />
-                {errors.msInput && <p className="text-red-500 text-sm mt-1">{errors.msInput}</p>}
-              </div>
-              <div>
-                <input type="text" placeholder="GSTIN" value={gstin} onChange={(e) => setGstin(e.target.value)} className={`border-2 border-gray-200 w-full px-4 py-2 rounded focus:outline-none ${errors.gstin ? 'border-red-500' : ''}`} />
-                {errors.gstin && <p className="text-red-500 text-sm mt-1">{errors.gstin}</p>}
-              </div>
-              <div>
-                <input type="text" placeholder="State" value={state} onChange={(e) => setState(e.target.value)} className={`border-2 border-gray-200 w-full px-4 py-2 rounded focus:outline-none ${errors.state ? 'border-red-500' : ''}`} />
-                {errors.state && <p className="text-red-500 text-sm mt-1">{errors.state}</p>}
-              </div>
-              <div>
-                <input type="text" placeholder="State Code" value={stateCode} onChange={(e) => setStateCode(e.target.value)} className={`border-2 border-gray-200 w-full px-4 py-2 rounded focus:outline-none ${errors.stateCode ? 'border-red-500' : ''}`} />
-                {errors.stateCode && <p className="text-red-500 text-sm mt-1">{errors.stateCode}</p>}
-              </div>
-              <div>
-                <input type="number" placeholder="Invoice No" value={invoiceNo} onChange={(e) => setInvoiceNo(e.target.value)} className={`border-2 border-gray-200 w-full px-4 py-2 rounded focus:outline-none ${errors.invoiceNo ? 'border-red-500' : ''}`} />
-                {errors.invoiceNo && <p className="text-red-500 text-sm mt-1">{errors.invoiceNo}</p>}
-              </div>
-              <div>
-                <input type="date" value={invoiceDate} onChange={handleDateChange} className={`border-2 border-gray-200 w-full px-4 py-2 rounded focus:outline-none ${errors.invoiceDate ? 'border-red-500' : ''}`} />
-                {errors.invoiceDate && <p className="text-red-500 text-sm mt-1">{errors.invoiceDate}</p>}
-              </div>
-              <div className="col-span-2 flex justify-end">
-                <button onClick={handleSubmit} className="bg-blue-500 text-white px-6 py-2 rounded focus:outline-none hover:bg-blue-600 transition-colors duration-300">Submit</button>
-              </div>
+    <Header />
+    <div className="container mx-auto mt-8 px-4">
+      <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="p-6 print-hidden">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">Create New Invoice</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="w-full sm:w-auto">
+              <input type="text" placeholder="M/s" value={msInput} onChange={(e) => setMsInput(e.target.value)} className={`border-2 border-gray-200 w-full px-4 py-2 rounded focus:outline-none ${errors.msInput ? 'border-red-500' : ''}`} />
+              {errors.msInput && <p className="text-red-500 text-sm mt-1">{errors.msInput}</p>}
+            </div>
+            <div className="w-full sm:w-auto">
+              <input type="text" placeholder="GSTIN" value={gstin} onChange={(e) => setGstin(e.target.value)} className={`border-2 border-gray-200 w-full px-4 py-2 rounded focus:outline-none ${errors.gstin ? 'border-red-500' : ''}`} />
+              {errors.gstin && <p className="text-red-500 text-sm mt-1">{errors.gstin}</p>}
+            </div>
+            <div className="w-full sm:w-auto">
+              <input type="text" placeholder="State" value={state} onChange={(e) => setState(e.target.value)} className={`border-2 border-gray-200 w-full px-4 py-2 rounded focus:outline-none ${errors.state ? 'border-red-500' : ''}`} />
+              {errors.state && <p className="text-red-500 text-sm mt-1">{errors.state}</p>}
+            </div>
+            <div className="w-full sm:w-auto">
+              <input type="text" placeholder="State Code" value={stateCode} onChange={(e) => setStateCode(e.target.value)} className={`border-2 border-gray-200 w-full px-4 py-2 rounded focus:outline-none ${errors.stateCode ? 'border-red-500' : ''}`} />
+              {errors.stateCode && <p className="text-red-500 text-sm mt-1">{errors.stateCode}</p>}
+            </div>
+            <div className="w-full sm:w-auto">
+              <input type="number" placeholder="Invoice No" value={invoiceNo} onChange={(e) => setInvoiceNo(e.target.value)} className={`border-2 border-gray-200 w-full px-4 py-2 rounded focus:outline-none ${errors.invoiceNo ? 'border-red-500' : ''}`} />
+              {errors.invoiceNo && <p className="text-red-500 text-sm mt-1">{errors.invoiceNo}</p>}
+            </div>
+            <div className="w-full sm:w-auto">
+              <input type="date" value={invoiceDate} onChange={handleDateChange} className={`border-2 border-gray-200 w-full px-4 py-2 rounded focus:outline-none ${errors.invoiceDate ? 'border-red-500' : ''}`} />
+              {errors.invoiceDate && <p className="text-red-500 text-sm mt-1">{errors.invoiceDate}</p>}
+            </div>
+            <div className="w-full sm:col-span-2 flex justify-end">
+              <button onClick={handleSubmit} className="bg-blue-500 text-white px-6 py-2 rounded focus:outline-none hover:bg-blue-600 transition-colors duration-300">Submit</button>
             </div>
           </div>
         </div>
-        <br />
-        {invoiceDetails && <InvoiceComponent invoiceDetails={invoiceDetails} />} {/* Render InvoiceComponent if invoice details are available */}
       </div>
-      <Footer />
-    </>
+      <br />
+      {invoiceDetails && <InvoiceComponent invoiceDetails={invoiceDetails} />} {/* Render InvoiceComponent if invoice details are available */}
+    </div>
+    <Footer />
+  </>
+  
   );
 }
 
