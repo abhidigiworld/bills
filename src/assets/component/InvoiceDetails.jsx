@@ -89,8 +89,8 @@ function InvoiceDetails({ invoiceId }) {
 
     return (
         <>
-            <div className='printdata border-2 my-4 font-mono mx-4'>
-                <p className="text-lg font-bold bg-gray-300 text-center">Tax Invoice</p>
+            <div className='printdata border-2 my-2 font-mono mx-2'>
+                <p className="text-3xl font-bold bg-gray-300 text-center">Tax Invoice</p>
                 <div className="flex justify-between items-center px-4 py-2 bg-gray-300">
                     <div className="flex items-center">
                         <img src={logo} alt="Your Company Logo" className="w-20 h-20 mr-2" />
@@ -101,13 +101,12 @@ function InvoiceDetails({ invoiceId }) {
                     <div className="text-right">
                         <p className="text-sm font-bold">GSTIN: 070URPS6573P1ZY</p>
                         <p className="text-sm">M.: 9650650297</p>
-                        <p className="text-sm">8447736035</p>
                     </div>
                 </div>
 
                 <div className="flex flex-col content-center bg-gray-300">
                     <p className="text-center">D-435, Gali No.-59,Mahavir Enclave,Part-3,West Delhi-110059</p>
-                    <p className="text-center">E-mail id:bindusharma.manoj99@gmail.com</p>
+                    <p className="text-center">E-mail id:manojsharma.2016m@gmail.com</p>
                 </div>
                 <div className="bg-gray-100 p-4 mb-2">
                     <div className="grid grid-cols-1 gap-4 mt-2 sm:grid-cols-2">

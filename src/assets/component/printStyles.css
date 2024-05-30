@@ -6,7 +6,7 @@
 
   @page {
       size: A4; /* Set page size to A4 */
-      margin: none; /* Remove default margins */
+      margin: Minimum; /* Remove default margins */
   }
 
 }
