@@ -16,6 +16,29 @@ function InvoiceDetails({ invoiceId }) {
     const [grandTotal, setGrandTotal] = useState(0);
     const [grandTotalInWords, setGrandTotalInWords] = useState('');
     const [subtotal, setSubtotal] = useState('');
+    const [firstPart, setFirstPart] = useState('');
+    const [secondPart, setSecondPart] = useState('');
+
+
+    useEffect(() => {
+        if (invoiceDetails.companyName) {
+            // Split the address by the first comma encountered
+            const firstCommaIndex = invoiceDetails.companyName.indexOf(',');
+            if (firstCommaIndex !== -1) {
+                const first = invoiceDetails.companyName.substring(0, firstCommaIndex).trim();
+                const second = invoiceDetails.companyName.substring(firstCommaIndex + 1).trim();
+                setFirstPart(first);
+                setSecondPart(second);
+            } else {
+                // If no comma found, set the whole address in the first part
+                setFirstPart(invoiceDetails.companyName);
+            }
+        } else {
+            // Handle case when companyName is undefined
+            setFirstPart('');
+            setSecondPart('');
+        }
+    }, [invoiceDetails.companyName]);
 
     useEffect(() => {
         const fetchInvoiceDetails = async () => {
@@ -89,7 +112,7 @@ function InvoiceDetails({ invoiceId }) {
                 <div className="bg-gray-100 p-4">
                     <div className="grid grid-cols-1 gap-4 mt-2 sm:grid-cols-2">
                         <div className='text-left'>
-                            <p className="text-sm">M/s: <span className="font-semibold">{invoiceDetails.companyName}</span></p>
+                            <p className="text-sm">M/s: <span className="font-semibold">{firstPart} <br /> {secondPart}  </span></p>
                             <p className="text-sm">GSTIN: <span className="font-semibold">{invoiceDetails.gstin}</span></p>
                             <p className="text-sm">State: <span className="font-semibold">{invoiceDetails.state}</span></p>
                         </div>
