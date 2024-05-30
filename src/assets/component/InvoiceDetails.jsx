@@ -96,7 +96,7 @@ function InvoiceDetails({ invoiceId }) {
                         <img src={logo} alt="Your Company Logo" className="w-20 h-20 mr-2" />
                     </div>
                     <div className="flex-1 text-center">
-                        <p className="text-lg font-bold font-custom text-center fugaz-one-regular">Sakshi Enterprises</p>
+                        <p className="text-4xl  font-custom text-center fugaz-one-regular">Sakshi Enterprises</p>
                     </div>
                     <div className="text-right">
                         <p className="text-sm font-bold">GSTIN: 070URPS6573P1ZY</p>
