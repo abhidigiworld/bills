@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './printStyles.css';
 import axios from 'axios';
 import logo from '../images/LOGO.png';
@@ -24,6 +24,22 @@ function InvoiceComponent({ invoiceDetails }) {
     const [cgstRate, setcgstRate] = useState();
     const [sgstRate, setsgstRate] = useState();
     const [igstRate, setigstRate] = useState();
+    const [firstPart, setFirstPart] = useState('');
+    const [secondPart, setSecondPart] = useState('');
+
+    useEffect(() => {
+        // Split the address by the first comma encountered
+        const firstCommaIndex = invoiceDetails.msInput.indexOf(',');
+        if (firstCommaIndex !== -1) {
+            const first = invoiceDetails.msInput.substring(0, firstCommaIndex).trim();
+            const second = invoiceDetails.msInput.substring(firstCommaIndex + 1).trim();
+            setFirstPart(first);
+            setSecondPart(second);
+        } else {
+            // If no comma found, set the whole address in the first part
+            setFirstPart(invoiceDetails.msInput);
+        }
+    }, [invoiceDetails.msInput])
 
     const addItem = () => {
         const newItem = {
@@ -167,6 +183,9 @@ function InvoiceComponent({ invoiceDetails }) {
         setGrandTotalInWords(event.target.value);
     };
 
+
+
+
     return (
         <>
             <div className="container mx-auto mt-8 px-4 lg:px-8 mb-12 pb-8 font-mono">
@@ -211,7 +230,7 @@ function InvoiceComponent({ invoiceDetails }) {
                         <div className="bg-gray-100 p-4">
                             <div className="grid grid-cols-1 gap-4 mt-2 sm:grid-cols-2">
                                 <div className='text-left'>
-                                    <p className="text-sm">M/s: <span className="font-semibold">{invoiceDetails.msInput}</span></p>
+                                    <p className="text-sm">M/s: <span className="font-semibold">{firstPart} <br /> {secondPart} </span></p>
                                     <p className="text-sm">GSTIN: <span className="font-semibold">{invoiceDetails.gstin}</span></p>
                                     <p className="text-sm">State: <span className="font-semibold">{invoiceDetails.state}</span></p>
                                 </div>
@@ -265,10 +284,10 @@ function InvoiceComponent({ invoiceDetails }) {
                                 </div>
                             </div>
                         </div>
-                        <div className="bg-gray-200 p-4 px-8 flex justify-between">
+                        <div className="bg-gray-200 p-4 px-2 flex justify-between">
                             <div>
                                 <p className="text-sm text-gray-500">Terms & Conditions: </p>
-                                <ul className="list-disc pl-4 text-gray-600 text-left">
+                                <ul className="list-disc pl-4 text-gray-600 text-left tracking-tight">
                                     <li>All disputes are subject to jurisdiction of Delhi Courts</li>
                                     <li>Payment should be made by cash/cheque/draft only.</li>
                                     <li>Late payment will be charged if bill unpaid for 15 days.</li>
