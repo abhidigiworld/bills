@@ -188,7 +188,7 @@ function InvoiceComponent({ invoiceDetails }) {
 
     return (
         <>
-            <div className="container mx-auto mt-8 px-4 lg:px-8 mb-12 pb-8 font-mono">
+            <div className="container mx-auto px-4 lg:px-8 mb-12 pb-8 font-mono">
                 <div className="flex flex-col lg:flex-row gap-4">
                     <div className="flex flex-col space-y-2 w-full lg:w-1/3 print-hidden">
                         <input type="text" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} className="border px-3 py-2 rounded" />
@@ -216,7 +216,7 @@ function InvoiceComponent({ invoiceDetails }) {
                                 <img src={logo} alt="Your Company Logo" className="w-20 h-20 mr-2" />
                             </div>
                             <div className="flex-1 text-center">
-                                <p className="text-lg font-bold font-custom text-center">Sakshi Enterprises</p>
+                                <p className="text-lg font-bold font-custom text-center ">Sakshi Enterprises</p>
                             </div>
                             <div className="text-right">
                                 <p className="text-sm font-bold">GSTIN: 070URPS6573P1ZY</p>
@@ -242,7 +242,7 @@ function InvoiceComponent({ invoiceDetails }) {
                             </div>
                         </div>
 
-                        <div className="bg-gray-100 overflow-x-auto">
+                        <div className="bg-gray-100 overflow-x-auto pb-1">
                             <table className="w-full table-auto sm:min-w-full">
                                 <thead>
                                     <tr className="bg-gray-200">
@@ -269,7 +269,7 @@ function InvoiceComponent({ invoiceDetails }) {
                             </table>
                         </div>
 
-                        <div className="bg-gray-100 p-4">
+                        <div className="bg-gray-100 p-4 ">
                             <div className="grid grid-cols-1 gap-4 mt-2 sm:grid-cols-2">
                                 <div>
                                     <p className="text-sm">Grand Total (In Words): <span className="font-semibold">{grandTotalInWords}</span></p>

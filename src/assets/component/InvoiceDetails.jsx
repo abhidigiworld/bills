@@ -96,7 +96,7 @@ function InvoiceDetails({ invoiceId }) {
                         <img src={logo} alt="Your Company Logo" className="w-20 h-20 mr-2" />
                     </div>
                     <div className="flex-1 text-center">
-                        <p className="text-lg font-bold font-custom text-center">Sakshi Enterprises</p>
+                        <p className="text-lg font-bold font-custom text-center fugaz-one-regular">Sakshi Enterprises</p>
                     </div>
                     <div className="text-right">
                         <p className="text-sm font-bold">GSTIN: 070URPS6573P1ZY</p>
@@ -108,8 +108,8 @@ function InvoiceDetails({ invoiceId }) {
                     <p className="text-center">D-435, Gali No.-59,Mahavir Enclave,Part-3,West Delhi-110059</p>
                     <p className="text-center">E-mail id:manojsharma.2016m@gmail.com</p>
                 </div>
-                <div className="bg-gray-100 p-4 mb-2">
-                    <div className="grid grid-cols-1 gap-4 mt-2 sm:grid-cols-2">
+                <div className="bg-gray-100 p-4 pb-2">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div className='text-left'>
                             <p className="text-sm">M/s: <span className="font-semibold">{firstPart} <br /> {secondPart}  </span></p>
                             <p className="text-sm">GSTIN: <span className="font-semibold">{invoiceDetails.gstin}</span></p>
@@ -122,16 +122,16 @@ function InvoiceDetails({ invoiceId }) {
                         </div>
                     </div>
                 </div>
-                <div className="bg-gray-100 overflow-x-auto">
+                <div className="bg-gray-100 overflow-x-auto p-2">
                     <table className="w-full table-auto sm:min-w-full">
                         <thead>
                             <tr className="bg-gray-200">
-                                <th className="px-2 py-2">S.No</th>
-                                <th className="px-2 py-2">Description</th>
-                                <th className="px-2 py-2">HSN/SAC Code</th>
-                                <th className="px-2 py-2">Quantity</th>
-                                <th className="px-2 py-2">Rate</th>
-                                <th className="px-2 py-2">Total Value</th>
+                                <th className="border px-2 py-2">S.No</th>
+                                <th className="border px-2 py-2">Description</th>
+                                <th className="border px-2 py-2">HSN/SAC Code</th>
+                                <th className="border px-2 py-2">Quantity</th>
+                                <th className="border px-2 py-2">Rate</th>
+                                <th className="border px-2 py-2">Total Value</th>
                             </tr>
                         </thead>
                         <tbody>
