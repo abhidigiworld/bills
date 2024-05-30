@@ -163,6 +163,10 @@ function InvoiceComponent({ invoiceDetails }) {
         console.log('Printing invoice...');
     };
 
+    const handleInputChange = (event) => {
+        setGrandTotalInWords(event.target.value);
+    };
+
     return (
         <>
             <div className="container mx-auto mt-8 px-4 lg:px-8 mb-12 pb-8 font-mono">
@@ -178,15 +182,22 @@ function InvoiceComponent({ invoiceDetails }) {
                         <input type="number" placeholder="SGST Rate" value={sgstRate} onChange={(e) => setsgstRate(e.target.value)} className="border px-3 py-2 rounded" />
                         <input type="number" placeholder="IGST Rate" value={igstRate} onChange={(e) => setigstRate(e.target.value)} className="border px-3 py-2 rounded" />
                         <button onClick={calculateBill} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Generate Bill</button>
+                        <input
+                            type="text"
+                            id="grandTotalInWords"
+                            value={grandTotalInWords}
+                            onChange={handleInputChange}
+                            placeholder="Enter Grand Total In Words"
+                        />
                     </div>
-                    <div className='printdata border w-full lg:w-2/3'>
+                    <div className='printdata border w-full'>
                         <p className="text-lg font-bold bg-gray-300 text-center">Tax Invoice</p>
-                        <div className="flex justify-between items-center px-4 py-2 bg-gray-300">
+                        <div className="flex justify-between items-center px-2 py-2 bg-gray-300">
                             <div className="flex items-center">
-                                <img src={logo} alt="Your Company Logo" className="w-16 h-16 mr-2" />
+                                <img src={logo} alt="Your Company Logo" className="w-20 h-20 mr-2" />
                             </div>
                             <div className="flex-1 text-center">
-                                <p className="text-lg font-bold font-custom">Sakshi Enterprises</p>
+                                <p className="text-lg font-bold font-custom text-center">Sakshi Enterprises</p>
                             </div>
                             <div className="text-right">
                                 <p className="text-sm font-bold">GSTIN: 070URPS6573P1ZY</p>
@@ -254,7 +265,7 @@ function InvoiceComponent({ invoiceDetails }) {
                                 </div>
                             </div>
                         </div>
-                        <div className="bg-gray-200 p-4 px-8 flex flex-col sm:flex-row justify-between">
+                        <div className="bg-gray-200 p-4 px-8 flex justify-between">
                             <div>
                                 <p className="text-sm text-gray-500">Terms & Conditions: </p>
                                 <ul className="list-disc pl-4 text-gray-600 text-left">
@@ -266,12 +277,8 @@ function InvoiceComponent({ invoiceDetails }) {
                             <div className="text-right relative">
                                 <p className="text-sm">For Sakshi Enterprises</p>
                                 <p className="text-sm absolute bottom-0 right-0">Authorised Signatory</p>
-                                {billGenerated && (
-                                    <>
-                                        <img src={signature} alt="Signature" className="absolute top-0 left-0 right-0 mx-auto mt-4 w-32 sm:w-44 h-auto" />
-                                        {/* <img src={stamp} alt="stamp" className="absolute top-0 left-0 right-0 mx-auto mt-4 w-64 sm:w-80 h-auto" /> */}
-                                    </>
-                                )}
+                                <img src={signature} alt="Signature" className="absolute top-0 left-0 right-0 mx-auto mt-4 w-44 h-auto" />
+                                {/* <img src={stamp} alt="stamp" className="absolute top-0 left-0 right-0 mx-auto mt-4 w-80 h-auto" /> */}
                             </div>
                         </div>
                     </div>
