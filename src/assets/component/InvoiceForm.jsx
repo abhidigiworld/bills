@@ -34,6 +34,7 @@ const fetchLastInvoiceNumber = async () => {
         console.error('Invalid invoice number format:', lastInvoice.invoiceNo);
       }
     } else {
+      setInvoiceNo('001');
       console.error('No invoices data found');
     }
   } catch (error) {
