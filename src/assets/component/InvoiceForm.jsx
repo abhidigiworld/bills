@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import InvoiceComponent from './InvoiceComponent';
 import './printStyles.css';
 import Header from './Header';
@@ -18,6 +18,34 @@ function InvoiceForm() {
   const handleDateChange = (e) => {
     setInvoiceDate(e.target.value);
   };
+
+// Function to fetch last invoice number from backend
+const fetchLastInvoiceNumber = async () => {
+  try {
+    const response = await fetch('https://billsbackend-git-main-abhidigiworlds-projects.vercel.app/api/invoices');
+    const data = await response.json();
+    if (data && data.length > 0) {
+      const lastInvoice = data[data.length - 1];
+      const lastInvoiceNumber = parseInt(lastInvoice.invoiceNo, 10);
+      if (!isNaN(lastInvoiceNumber)) {
+        const nextInvoiceNumber = String(lastInvoiceNumber + 1).padStart(3, '0');
+        setInvoiceNo(nextInvoiceNumber);
+      } else {
+        console.error('Invalid invoice number format:', lastInvoice.invoiceNo);
+      }
+    } else {
+      console.error('No invoices data found');
+    }
+  } catch (error) {
+    console.error('Error fetching last invoice number:', error);
+  }
+};
+
+
+
+  useEffect(() => {
+    fetchLastInvoiceNumber();
+  }, []);
 
   const handleSubmit = () => {
     const newErrors = {};
@@ -50,6 +78,7 @@ function InvoiceForm() {
       };
       setInvoiceDetails(newInvoiceDetails); // Set invoice details state
       setSubmitted(true); // Set submitted state to true
+      setErrors('');
     } else {
       setErrors(newErrors); // Set validation errors
     }
@@ -80,7 +109,7 @@ function InvoiceForm() {
                 {errors.stateCode && <p className="text-red-500 text-sm mt-1">{errors.stateCode}</p>}
               </div>
               <div>
-                <input type="text" placeholder="Invoice No" value={invoiceNo} onChange={(e) => setInvoiceNo(e.target.value)} className={`border-2 border-gray-200 w-full px-4 py-2 rounded focus:outline-none ${errors.invoiceNo ? 'border-red-500' : ''}`} />
+                <input type="number" placeholder="Invoice No" value={invoiceNo} onChange={(e) => setInvoiceNo(e.target.value)} className={`border-2 border-gray-200 w-full px-4 py-2 rounded focus:outline-none ${errors.invoiceNo ? 'border-red-500' : ''}`} />
                 {errors.invoiceNo && <p className="text-red-500 text-sm mt-1">{errors.invoiceNo}</p>}
               </div>
               <div>
