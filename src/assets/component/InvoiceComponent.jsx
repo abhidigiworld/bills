@@ -259,7 +259,7 @@ function InvoiceComponent({ invoiceDetails }) {
                             </div>
                             <div className="text-right relative">
                                 <p className="text-sm">For Sakshi Enterprises</p>
-                                <p className="text-sm absolute bottom-0 right-0">Authority Signature</p>
+                                <p className="text-sm absolute bottom-0 right-0">Authorised Signatory</p>
                                 {billGenerated && (
                                     <>
                                         <img src={signature} alt="Signature" className="absolute top-0 left-0 right-0 mx-auto mt-4 w-44 h-auto" />
