@@ -25,6 +25,10 @@ function Bills() {
     fetchBills();
   }, []); // Empty dependency array to ensure the effect runs only once
 
+  const formatDate = (dateString) => {
+    return dateString.slice(0, 10); // Slicing the first 10 characters to get 'YYYY-MM-DD'
+  };
+
   const handleDelete = async (id) => {
     try {
       await axios.delete(`https://billsbackend-git-main-abhidigiworlds-projects.vercel.app/api/invoices/${id}`);
@@ -73,7 +77,7 @@ function Bills() {
                   <td className="px-4 py-2">{bill.state}</td>
                   <td className="px-4 py-2">{bill.stateCode}</td>
                   <td className="px-4 py-2">{bill.invoiceNo}</td>
-                  <td className="px-4 py-2">{bill.invoiceDate}</td>
+                  <td className="px-4 py-2">{formatDate(bill.invoiceDate)}</td>
                   <td className="px-4 py-2 flex justify-center md:justify-end"> {/* Center align on small screens and right align on medium and larger screens */}
                     <button
                       className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 mr-2"

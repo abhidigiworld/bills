@@ -66,11 +66,11 @@ function InvoiceDetails({ invoiceId }) {
 
     return (
         <>
-            <div className='printdata border-2 my-12 font-mono mx-12'>
+            <div className='printdata border-2 my-12 font-mono mx-4 relative'>
                 <p className="text-lg font-bold bg-gray-300 text-center">Tax Invoice</p>
                 <div className="flex justify-between items-center px-4 py-2 bg-gray-300">
                     <div className="flex items-center">
-                        <img src={logo} alt="Your Company Logo" className="w-16 h-16 mr-2" />
+                        <img src={logo} alt="Your Company Logo" className="w-16 h-16 mr-2 absolute" />
                     </div>
                     <div className="flex-1 text-center">
                         <p className="text-lg font-bold font-custom">Sakshi Enterprises</p>
@@ -104,23 +104,23 @@ function InvoiceDetails({ invoiceId }) {
                     <table className="w-full table-auto sm:min-w-full">
                         <thead>
                             <tr className="bg-gray-200">
-                                <th className="px-4 py-2">S.No</th>
-                                <th className="px-4 py-2">Description</th>
-                                <th className="px-4 py-2">HSN/SAC Code</th>
-                                <th className="px-4 py-2">Quantity</th>
-                                <th className="px-4 py-2">Rate</th>
-                                <th className="px-4 py-2">Total Value</th>
+                                <th className="px-2 py-2">S.No</th>
+                                <th className="px-2 py-2">Description</th>
+                                <th className="px-2 py-2">HSN/SAC Code</th>
+                                <th className="px-2 py-2">Quantity</th>
+                                <th className="px-2 py-2">Rate</th>
+                                <th className="px-2 py-2">Total Value</th>
                             </tr>
                         </thead>
                         <tbody>
                             {items.map((item, index) => (
                                 <tr key={index} className="text-center">
-                                    <td className="border px-4 py-2">{index + 1}</td>
-                                    <td className="border px-4 py-2">{item.description}</td>
-                                    <td className="border px-4 py-2">{item.hsnAsc}</td>
-                                    <td className="border px-4 py-2">{item.quantity}</td>
-                                    <td className="border px-4 py-2">{item.rate}</td>
-                                    <td className="border px-4 py-2">{item.totalValue}</td>
+                                    <td className="border px-2 py-2">{index + 1}</td>
+                                    <td className="border px-2 py-2">{item.description}</td>
+                                    <td className="border px-2 py-2">{item.hsnAsc}</td>
+                                    <td className="border px-2 py-2">{item.quantity}</td>
+                                    <td className="border px-2 py-2">{item.rate}</td>
+                                    <td className="border px-2 py-2">{item.totalValue}</td>
                                 </tr>
                             ))}
                         </tbody>
