@@ -66,7 +66,7 @@ function InvoiceDetails({ invoiceId }) {
 
     return (
         <>
-            <div className='printdata border-2 my-12 font-mono'>
+            <div className='printdata border-2 my-12 font-mono mx-12'>
                 <p className="text-lg font-bold bg-gray-300 text-center">Tax Invoice</p>
                 <div className="flex justify-between items-center px-4 py-2 bg-gray-300">
                     <div className="flex items-center">
