@@ -165,127 +165,125 @@ function InvoiceComponent({ invoiceDetails }) {
 
     return (
         <>
-            <div className="container mx-auto mt-8 px-4 lg:px-8 mb-12 pb-8">
-                <div className="flex flex-col lg:flex-row gap-4">
-                    <div className="flex flex-col space-y-2 w-1/3 print-hidden">
-                        <input type="text" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} className="border px-3 py-2 rounded" />
-                        <input type="text" placeholder="HSN/SAC Code" value={hsnAsc} onChange={(e) => setHsnAsc(e.target.value)} className="border px-3 py-2 rounded" />
-                        <input type="number" placeholder="Quantity" value={quantity} onChange={(e) => setQuantity(e.target.value)} className="border px-3 py-2 rounded" />
-                        <input type="number" placeholder="Rate" value={rate} onChange={(e) => setRate(e.target.value)} className="border px-3 py-2 rounded" />
-                        <button onClick={addItem} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add</button>
-                        <input type="number" placeholder="Freight Charges" value={freight} onChange={(e) => setfreight(e.target.value)} className="border px-3 py-2 rounded" />
-                        <input type="number" placeholder="CGST Rate" value={cgstRate} onChange={(e) => setcgstRate(e.target.value)} className="border px-3 py-2 rounded" />
-                        <input type="number" placeholder="SGST Rate" value={sgstRate} onChange={(e) => setsgstRate(e.target.value)} className="border px-3 py-2 rounded" />
-                        <input type="number" placeholder="IGST Rate" value={igstRate} onChange={(e) => setigstRate(e.target.value)} className="border px-3 py-2 rounded" />
-                        <button onClick={calculateBill} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Generate Bill</button>
-                    </div>
-                    <div className='printdata border'>
-                        <p className="text-lg font-bold bg-gray-300 text-center">Tax Invoice</p>
-                        <div className="flex justify-between px-4 py-2 bg-gray-300">
-                            <div className="flex items-center">
-                                <img src={logo} alt="Your Company Logo" class="w-16 h-16 mr-2" />
-                                <p className="text-lg font-bold">Sakshi Enterprises</p>
-                            </div>
-                            <div className="text-right">
-                                <p className="text-sm">GSTIN: 070URPS6573P1ZY</p>
-                                <p className="text-sm">M.: 9650650297</p>
-                            </div>
-                        </div>
-                        <div className="bg-gray-100 p-4">
-                            <div className="grid grid-cols-1 gap-4 mt-2 sm:grid-cols-2"> {/* Responsive grid for invoice details */}
-                                <div className='text-left'>
-                                    <p className="text-sm">M/s: <span className="font-semibold">{invoiceDetails.msInput}</span></p>
-                                    <p className="text-sm">GSTIN: <span className="font-semibold">{invoiceDetails.gstin}</span></p>
-                                    <p className="text-sm">State: <span className="font-semibold">{invoiceDetails.state}</span></p>
-                                </div>
-                                <div className='text-left'>
-                                    <p className="text-sm">State Code: <span className="font-semibold">{invoiceDetails.stateCode}</span></p>
-                                    <p className="text-sm">Invoice No: <span className="font-semibold">{invoiceDetails.invoiceNo}</span></p>
-                                    <p className="text-sm">Invoice Date: <span className="font-semibold">{invoiceDetails.invoiceDate}</span></p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="bg-gray-100">
-                            <table className="w-full table-auto sm:min-w-full"> {/* Set minimum width for smaller screens */}
-                                <thead>
-                                    <tr className="bg-gray-200">
-                                        <th className="px-4 py-2">S.No</th>
-                                        <th className="px-4 py-2">Description</th>
-                                        <th className="px-4 py-2">HSN/SAC Code</th>
-                                        <th className="px-4 py-2">Quantity</th>
-                                        <th className="px-4 py-2">Rate</th>
-                                        <th className="px-4 py-2">Total Value</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {items.map((item, index) => (
-                                        <tr key={index} className="text-center">
-                                            <td className="border px-4 py-2">{index + 1}</td>
-                                            <td className="border px-4 py-2">{item.description}</td>
-                                            <td className="border px-4 py-2">{item.hsnAsc}</td>
-                                            <td className="border px-4 py-2">{item.quantity}</td>
-                                            <td className="border px-4 py-2">{item.rate}</td>
-                                            <td className="border px-4 py-2">{item.totalValue}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div className="bg-gray-100 p-4">
-                            <div className="grid grid-cols-1 gap-4 mt-2 sm:grid-cols-2"> {/* Responsive grid for invoice summary */}
-                                <div>
-                                    <p className="text-sm">Grand Total (In Words): <span className="font-semibold">{grandTotalInWords}</span></p>
-                                </div>
-                                <div className='text-left'>
-                                    <p className="text-sm">Total: <span className="font-semibold">{total}</span></p>
-                                    <p className="text-sm">Freight Charges: <span className="font-semibold">{freight}</span></p>
-                                    <p className="text-sm">CGST: <span className="font-semibold">{cgst}</span></p>
-                                    <p className="text-sm">SGST: <span className="font-semibold">{sgst}</span></p>
-                                    <p className="text-sm">IGST: <span className="font-semibold">{igst}</span></p>
-                                    <p className="text-sm">Grand Total: <span className="font-semibold">{grandTotal}</span></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="bg-gray-200 p-4 px-8 flex justify-between">
-                            <div>
-                                <p className="text-sm text-gray-500">Terms & Conditions: </p>
-                                <ul className="list-disc pl-4 text-gray-600 text-left">
-                                    <li>All disputes are subject to jurisdiction of Delhi Courts</li>
-                                    <li>Payment should be made by cash/cheque/draft only.</li>
-                                    <li>Late payment will be charged if bill unpaid for 15 days.</li>
-                                </ul>
-                            </div>
-                            <div className="text-right relative">
-                                <p className="text-sm">For Sakshi Enterprises</p>
-                                <p className="text-sm absolute bottom-0 right-0">Authorised Signatory</p>
-                                {billGenerated && (
-                                    <>
-                                        <img src={signature} alt="Signature" className="absolute top-0 left-0 right-0 mx-auto mt-4 w-44 h-auto" />
-                                        <img src={stamp} alt="stamp" className="absolute top-0 left-0 right-0 mx-auto mt-4 w-80 h-auto" />
-                                    </>
-                                )}
-
-
-                            </div>
-                        </div>
-                    </div>
-
+        <div className="container mx-auto mt-8 px-4 lg:px-8 mb-12 pb-8">
+            <div className="flex flex-col lg:flex-row gap-4">
+                <div className="flex flex-col space-y-2 w-full lg:w-1/3 print-hidden">
+                    <input type="text" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} className="border px-3 py-2 rounded" />
+                    <input type="text" placeholder="HSN/SAC Code" value={hsnAsc} onChange={(e) => setHsnAsc(e.target.value)} className="border px-3 py-2 rounded" />
+                    <input type="number" placeholder="Quantity" value={quantity} onChange={(e) => setQuantity(e.target.value)} className="border px-3 py-2 rounded" />
+                    <input type="number" placeholder="Rate" value={rate} onChange={(e) => setRate(e.target.value)} className="border px-3 py-2 rounded" />
+                    <button onClick={addItem} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add</button>
+                    <input type="number" placeholder="Freight Charges" value={freight} onChange={(e) => setfreight(e.target.value)} className="border px-3 py-2 rounded" />
+                    <input type="number" placeholder="CGST Rate" value={cgstRate} onChange={(e) => setcgstRate(e.target.value)} className="border px-3 py-2 rounded" />
+                    <input type="number" placeholder="SGST Rate" value={sgstRate} onChange={(e) => setsgstRate(e.target.value)} className="border px-3 py-2 rounded" />
+                    <input type="number" placeholder="IGST Rate" value={igstRate} onChange={(e) => setigstRate(e.target.value)} className="border px-3 py-2 rounded" />
+                    <button onClick={calculateBill} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Generate Bill</button>
                 </div>
-                <div className="flex justify-end mt-4">
-                    <button onClick={handleSave} className="bg-green-500 text-white px-4 py-2 rounded mr-2 hover:bg-green-600 print-hidden">Save</button>
-                    <button onClick={handlePrint} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 print-hidden">Print</button>
+                <div className='printdata border w-full lg:w-2/3'>
+                    <p className="text-lg font-bold bg-gray-300 text-center">Tax Invoice</p>
+                    <div className="flex flex-col sm:flex-row justify-between px-4 py-2 bg-gray-300">
+                        <div className="flex items-center">
+                            <img src={logo} alt="Your Company Logo" className="w-12 h-12 sm:w-16 sm:h-16 mr-2" />
+                            <p className="text-lg font-bold">Sakshi Enterprises</p>
+                        </div>
+                        <div className="text-right">
+                            <p className="text-sm">GSTIN: 070URPS6573P1ZY</p>
+                            <p className="text-sm">M.: 9650650297</p>
+                        </div>
+                    </div>
+                    <div className="bg-gray-100 p-4">
+                        <div className="grid grid-cols-1 gap-4 mt-2 sm:grid-cols-2">
+                            <div className='text-left'>
+                                <p className="text-sm">M/s: <span className="font-semibold">{invoiceDetails.msInput}</span></p>
+                                <p className="text-sm">GSTIN: <span className="font-semibold">{invoiceDetails.gstin}</span></p>
+                                <p className="text-sm">State: <span className="font-semibold">{invoiceDetails.state}</span></p>
+                            </div>
+                            <div className='text-left'>
+                                <p className="text-sm">State Code: <span className="font-semibold">{invoiceDetails.stateCode}</span></p>
+                                <p className="text-sm">Invoice No: <span className="font-semibold">{invoiceDetails.invoiceNo}</span></p>
+                                <p className="text-sm">Invoice Date: <span className="font-semibold">{invoiceDetails.invoiceDate}</span></p>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div className="bg-gray-100 overflow-x-auto">
+                        <table className="w-full table-auto sm:min-w-full">
+                            <thead>
+                                <tr className="bg-gray-200">
+                                    <th className="px-2 sm:px-4 py-2">S.No</th>
+                                    <th className="px-2 sm:px-4 py-2">Description</th>
+                                    <th className="px-2 sm:px-4 py-2">HSN/SAC Code</th>
+                                    <th className="px-2 sm:px-4 py-2">Quantity</th>
+                                    <th className="px-2 sm:px-4 py-2">Rate</th>
+                                    <th className="px-2 sm:px-4 py-2">Total Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {items.map((item, index) => (
+                                    <tr key={index} className="text-center">
+                                        <td className="border px-2 sm:px-4 py-2">{index + 1}</td>
+                                        <td className="border px-2 sm:px-4 py-2">{item.description}</td>
+                                        <td className="border px-2 sm:px-4 py-2">{item.hsnAsc}</td>
+                                        <td className="border px-2 sm:px-4 py-2">{item.quantity}</td>
+                                        <td className="border px-2 sm:px-4 py-2">{item.rate}</td>
+                                        <td className="border px-2 sm:px-4 py-2">{item.totalValue}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+    
+                    <div className="bg-gray-100 p-4">
+                        <div className="grid grid-cols-1 gap-4 mt-2 sm:grid-cols-2">
+                            <div>
+                                <p className="text-sm">Grand Total (In Words): <span className="font-semibold">{grandTotalInWords}</span></p>
+                            </div>
+                            <div className='text-left'>
+                                <p className="text-sm">Total: <span className="font-semibold">{total}</span></p>
+                                <p className="text-sm">Freight Charges: <span className="font-semibold">{freight}</span></p>
+                                <p className="text-sm">CGST: <span className="font-semibold">{cgst}</span></p>
+                                <p className="text-sm">SGST: <span className="font-semibold">{sgst}</span></p>
+                                <p className="text-sm">IGST: <span className="font-semibold">{igst}</span></p>
+                                <p className="text-sm">Grand Total: <span className="font-semibold">{grandTotal}</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="bg-gray-200 p-4 px-8 flex flex-col sm:flex-row justify-between">
+                        <div>
+                            <p className="text-sm text-gray-500">Terms & Conditions: </p>
+                            <ul className="list-disc pl-4 text-gray-600 text-left">
+                                <li>All disputes are subject to jurisdiction of Delhi Courts</li>
+                                <li>Payment should be made by cash/cheque/draft only.</li>
+                                <li>Late payment will be charged if bill unpaid for 15 days.</li>
+                            </ul>
+                        </div>
+                        <div className="text-right relative">
+                            <p className="text-sm">For Sakshi Enterprises</p>
+                            <p className="text-sm absolute bottom-0 right-0">Authorised Signatory</p>
+                            {billGenerated && (
+                                <>
+                                    <img src={signature} alt="Signature" className="absolute top-0 left-0 right-0 mx-auto mt-4 w-32 sm:w-44 h-auto" />
+                                    <img src={stamp} alt="stamp" className="absolute top-0 left-0 right-0 mx-auto mt-4 w-64 sm:w-80 h-auto" />
+                                </>
+                            )}
+                        </div>
+                    </div>
                 </div>
             </div>
-            {saveSuccess && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white p-4 rounded shadow-md">
-                        <p className="text-green-500 font-bold">Invoice saved successfully!</p>
-                    </div>
+            <div className="flex justify-end mt-4">
+                <button onClick={handleSave} className="bg-green-500 text-white px-4 py-2 rounded mr-2 hover:bg-green-600 print-hidden">Save</button>
+                <button onClick={handlePrint} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 print-hidden">Print</button>
+            </div>
+        </div>
+        {saveSuccess && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="bg-white p-4 rounded shadow-md">
+                    <p className="text-green-500 font-bold">Invoice saved successfully!</p>
                 </div>
-            )}
-        </>
+            </div>
+        )}
+    </>
+    
     );
 }
 
