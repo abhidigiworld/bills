@@ -66,14 +66,14 @@ function InvoiceDetails({ invoiceId }) {
 
     return (
         <>
-            <div className='printdata border-2 my-12 font-mono mx-4 relative'>
+            <div className='printdata border-2 my-4 font-mono mx-4'>
                 <p className="text-lg font-bold bg-gray-300 text-center">Tax Invoice</p>
                 <div className="flex justify-between items-center px-4 py-2 bg-gray-300">
                     <div className="flex items-center">
-                        <img src={logo} alt="Your Company Logo" className="w-16 h-16 mr-2 absolute" />
+                        <img src={logo} alt="Your Company Logo" className="w-20 h-20 mr-2" />
                     </div>
                     <div className="flex-1 text-center">
-                        <p className="text-lg font-bold font-custom">Sakshi Enterprises</p>
+                        <p className="text-lg font-bold font-custom text-center">Sakshi Enterprises</p>
                     </div>
                     <div className="text-right">
                         <p className="text-sm font-bold">GSTIN: 070URPS6573P1ZY</p>
@@ -157,7 +157,7 @@ function InvoiceDetails({ invoiceId }) {
                         <p className="text-sm">For Sakshi Enterprises</p>
                         <p className="text-sm absolute bottom-0 right-0">Authorised Signatory</p>
                         <img src={signature} alt="Signature" className="absolute top-0 left-0 right-0 mx-auto mt-4 w-44 h-auto" />
-                        <img src={stamp} alt="stamp" className="absolute top-0 left-0 right-0 mx-auto mt-4 w-80 h-auto" />
+                        {/* <img src={stamp} alt="stamp" className="absolute top-0 left-0 right-0 mx-auto mt-4 w-80 h-auto" /> */}
                     </div>
                 </div>
             </div>
