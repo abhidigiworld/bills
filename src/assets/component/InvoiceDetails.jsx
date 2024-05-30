@@ -15,7 +15,7 @@ function InvoiceDetails({ invoiceId }) {
     const [igst, setIGST] = useState(0);
     const [grandTotal, setGrandTotal] = useState(0);
     const [grandTotalInWords, setGrandTotalInWords] = useState('');
-    const [subtotal,setSubtotal]=useState('');
+    const [subtotal, setSubtotal] = useState('');
 
     useEffect(() => {
         const fetchInvoiceDetails = async () => {
@@ -62,16 +62,18 @@ function InvoiceDetails({ invoiceId }) {
     const formatDate = (dateString) => {
         return dateString.slice(0, 10); // Slicing the first 10 characters to get 'YYYY-MM-DD'
     };
-    
+
 
     return (
         <>
-            <div className='printdata border my-12 font-mono'>
+            <div className='printdata border-2 my-12 font-mono'>
                 <p className="text-lg font-bold bg-gray-300 text-center">Tax Invoice</p>
-                <div className="flex justify-between px-4 py-2 bg-gray-300">
+                <div className="flex justify-between items-center px-4 py-2 bg-gray-300">
                     <div className="flex items-center">
                         <img src={logo} alt="Your Company Logo" className="w-16 h-16 mr-2" />
-                        <p className="text-lg font-bold">Sakshi Enterprises</p>
+                    </div>
+                    <div className="flex-1 text-center">
+                        <p className="text-lg font-bold font-custom">Sakshi Enterprises</p>
                     </div>
                     <div className="text-right">
                         <p className="text-sm font-bold">GSTIN: 070URPS6573P1ZY</p>
@@ -79,10 +81,11 @@ function InvoiceDetails({ invoiceId }) {
                         <p className="text-sm">8447736035</p>
                     </div>
                 </div>
+
                 <div className="flex flex-col content-center bg-gray-300">
-                        <p  className="text-center">D-435, Gali No.-59,Mahavir Enclave,Part-3,West Delhi-110059</p>
-                        <p className="text-center">E-mail id:bindusharma.manoj99@gmail.com</p>
-                    </div>
+                    <p className="text-center">D-435, Gali No.-59,Mahavir Enclave,Part-3,West Delhi-110059</p>
+                    <p className="text-center">E-mail id:bindusharma.manoj99@gmail.com</p>
+                </div>
                 <div className="bg-gray-100 p-4">
                     <div className="grid grid-cols-1 gap-4 mt-2 sm:grid-cols-2">
                         <div className='text-left'>
@@ -97,7 +100,7 @@ function InvoiceDetails({ invoiceId }) {
                         </div>
                     </div>
                 </div>
-                <div className="bg-gray-100">
+                <div className="bg-gray-100 overflow-x-auto">
                     <table className="w-full table-auto sm:min-w-full">
                         <thead>
                             <tr className="bg-gray-200">
@@ -123,6 +126,7 @@ function InvoiceDetails({ invoiceId }) {
                         </tbody>
                     </table>
                 </div>
+
                 <div className="bg-gray-100 p-4">
                     <div className="grid grid-cols-1 gap-4 mt-2 sm:grid-cols-2">
                         <div>
