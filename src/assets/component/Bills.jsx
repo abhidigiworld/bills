@@ -45,7 +45,7 @@ function Bills() {
   return (
     <>
       <Header />
-      <div className="container mx-auto print-hidden">
+      <div className="container mx-auto print-hidden mb-12 pb-12">
         <h1 className="text-2xl font-bold mb-4">All Bills</h1>
         {alertMessage && (
           <div className="bg-green-200 text-green-800 border border-green-600 py-2 px-4 mb-4">
