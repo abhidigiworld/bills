@@ -165,7 +165,7 @@ function InvoiceComponent({ invoiceDetails }) {
 
     return (
         <>
-        <div className="container mx-auto mt-8 px-4 lg:px-8 mb-12 pb-8">
+        <div className="container mx-auto mt-8 px-4 lg:px-8 mb-12 pb-8 font-mono">
             <div className="flex flex-col lg:flex-row gap-4">
                 <div className="flex flex-col space-y-2 w-full lg:w-1/3 print-hidden">
                     <input type="text" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} className="border px-3 py-2 rounded" />
@@ -184,12 +184,17 @@ function InvoiceComponent({ invoiceDetails }) {
                     <div className="flex flex-col sm:flex-row justify-between px-4 py-2 bg-gray-300">
                         <div className="flex items-center">
                             <img src={logo} alt="Your Company Logo" className="w-12 h-12 sm:w-16 sm:h-16 mr-2" />
-                            <p className="text-lg font-bold">Sakshi Enterprises</p>
+                            <p className="text-lg font-bold text-center">Sakshi Enterprises</p>
                         </div>
                         <div className="text-right">
-                            <p className="text-sm">GSTIN: 070URPS6573P1ZY</p>
+                            <p className="text-sm font-bold">GSTIN: 070URPS6573P1ZY</p>
                             <p className="text-sm">M.: 9650650297</p>
+                            <p className="text-sm">8447736035</p>
                         </div>
+                    </div>
+                    <div className="flex flex-col content-center bg-gray-300">
+                        <p  className="text-center">D-435, Gali No.-59,Mahavir Enclave,Part-3,West Delhi-110059</p>
+                        <p className="text-center">E-mail id:bindusharma.manoj99@gmail.com</p>
                     </div>
                     <div className="bg-gray-100 p-4">
                         <div className="grid grid-cols-1 gap-4 mt-2 sm:grid-cols-2">

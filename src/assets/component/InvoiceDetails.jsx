@@ -59,10 +59,14 @@ function InvoiceDetails({ invoiceId }) {
         console.log('Printing invoice...');
     };
 
+    const formatDate = (dateString) => {
+        return dateString.slice(0, 10); // Slicing the first 10 characters to get 'YYYY-MM-DD'
+    };
+    
 
     return (
         <>
-            <div className='printdata border my-12 '>
+            <div className='printdata border my-12 font-mono'>
                 <p className="text-lg font-bold bg-gray-300 text-center">Tax Invoice</p>
                 <div className="flex justify-between px-4 py-2 bg-gray-300">
                     <div className="flex items-center">
@@ -70,10 +74,15 @@ function InvoiceDetails({ invoiceId }) {
                         <p className="text-lg font-bold">Sakshi Enterprises</p>
                     </div>
                     <div className="text-right">
-                        <p className="text-sm">GSTIN: 070URPS6573P1ZY</p>
+                        <p className="text-sm font-bold">GSTIN: 070URPS6573P1ZY</p>
                         <p className="text-sm">M.: 9650650297</p>
+                        <p className="text-sm">8447736035</p>
                     </div>
                 </div>
+                <div className="flex flex-col content-center bg-gray-300">
+                        <p  className="text-center">D-435, Gali No.-59,Mahavir Enclave,Part-3,West Delhi-110059</p>
+                        <p className="text-center">E-mail id:bindusharma.manoj99@gmail.com</p>
+                    </div>
                 <div className="bg-gray-100 p-4">
                     <div className="grid grid-cols-1 gap-4 mt-2 sm:grid-cols-2">
                         <div className='text-left'>
@@ -84,7 +93,7 @@ function InvoiceDetails({ invoiceId }) {
                         <div className='text-left'>
                             <p className="text-sm">State Code: <span className="font-semibold">{invoiceDetails.stateCode}</span></p>
                             <p className="text-sm">Invoice No: <span className="font-semibold">{invoiceDetails.invoiceNo}</span></p>
-                            <p className="text-sm">Invoice Date: <span className="font-semibold">{invoiceDetails.invoiceDate}</span></p>
+                            <p className="text-sm">Invoice Date: <span className="font-semibold">{formatDate(invoiceDetails.invoiceDate)}</span></p>
                         </div>
                     </div>
                 </div>
