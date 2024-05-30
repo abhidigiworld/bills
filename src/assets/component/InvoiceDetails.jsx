@@ -109,7 +109,7 @@ function InvoiceDetails({ invoiceId }) {
                     <p className="text-center">D-435, Gali No.-59,Mahavir Enclave,Part-3,West Delhi-110059</p>
                     <p className="text-center">E-mail id:bindusharma.manoj99@gmail.com</p>
                 </div>
-                <div className="bg-gray-100 p-4">
+                <div className="bg-gray-100 p-4 mb-2">
                     <div className="grid grid-cols-1 gap-4 mt-2 sm:grid-cols-2">
                         <div className='text-left'>
                             <p className="text-sm">M/s: <span className="font-semibold">{firstPart} <br /> {secondPart}  </span></p>
