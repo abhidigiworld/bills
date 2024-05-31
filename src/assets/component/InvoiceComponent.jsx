@@ -246,23 +246,23 @@ function InvoiceComponent({ invoiceDetails }) {
                             <table className="w-full table-auto sm:min-w-full">
                                 <thead>
                                     <tr className="bg-gray-200">
-                                        <th className="px-2 sm:px-4 py-2">S.No</th>
-                                        <th className="px-2 sm:px-4 py-2">Description</th>
-                                        <th className="px-2 sm:px-4 py-2">HSN/SAC Code</th>
-                                        <th className="px-2 sm:px-4 py-2">Quantity</th>
-                                        <th className="px-2 sm:px-4 py-2">Rate</th>
-                                        <th className="px-2 sm:px-4 py-2">Total Value</th>
+                                        <th className="border px-1 sm:px-2 py-1">S.No</th>
+                                        <th className="border px-1 sm:px-2 py-1">Description</th>
+                                        <th className="border px-1 sm:px-2 py-1">HSN/SAC Code</th>
+                                        <th className="border px-1 sm:px-2 py-1">Quantity</th>
+                                        <th className="border px-1 sm:px-2 py-1">Rate</th>
+                                        <th className="border px-1 sm:px-2 py-1">Total Value</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {items.map((item, index) => (
                                         <tr key={index} className="text-center">
-                                            <td className="border px-2 sm:px-4 py-2">{index + 1}</td>
-                                            <td className="border px-2 sm:px-4 py-2">{item.description}</td>
-                                            <td className="border px-2 sm:px-4 py-2">{item.hsnAsc}</td>
-                                            <td className="border px-2 sm:px-4 py-2">{item.quantity}</td>
-                                            <td className="border px-2 sm:px-4 py-2">{item.rate}</td>
-                                            <td className="border px-2 sm:px-4 py-2">{item.totalValue}</td>
+                                            <td className="border px-1 sm:px-2 py-1">{index + 1}</td>
+                                            <td className="border px-1 sm:px-2 py-1">{item.description}</td>
+                                            <td className="border px-1 sm:px-2 py-1">{item.hsnAsc}</td>
+                                            <td className="border px-1 sm:px-2 py-1">{item.quantity}</td>
+                                            <td className="border px-1 sm:px-2 py-1">{item.rate}</td>
+                                            <td className="border px-1 sm:px-2 py-1">{item.totalValue}</td>
                                         </tr>
                                     ))}
                                 </tbody>
