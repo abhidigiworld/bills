@@ -30,16 +30,22 @@ function Bills() {
   };
 
   const handleDelete = async (id) => {
-    try {
-      await axios.delete(`https://billsbackend-git-main-abhidigiworlds-projects.vercel.app/api/invoices/${id}`);
-      // Update the local state by filtering out the deleted invoice
-      setBills(bills.filter((bill) => bill._id !== id));
-      setAlertMessage('Invoice deleted successfully');
-    } catch (error) {
-      console.error('Error deleting bill:', error);
-      setAlertMessage('An error occurred while deleting the invoice');
+    // Show a confirmation dialog
+    const userConfirmed = window.confirm("Are you sure you want to delete this invoice?");
+
+    if (userConfirmed) {
+      try {
+        await axios.delete(`https://billsbackend-git-main-abhidigiworlds-projects.vercel.app/api/invoices/${id}`);
+        // Update the local state by filtering out the deleted invoice
+        setBills(bills.filter((bill) => bill._id !== id));
+        setAlertMessage('Invoice deleted successfully');
+      } catch (error) {
+        console.error('Error deleting bill:', error);
+        setAlertMessage('An error occurred while deleting the invoice');
+      }
     }
   };
+
 
   // Function to handle view details button click
   const handleViewDetails = (id) => {
