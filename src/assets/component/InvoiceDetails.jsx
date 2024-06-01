@@ -18,6 +18,10 @@ function InvoiceDetails({ invoiceId }) {
     const [subtotal, setSubtotal] = useState('');
     const [firstPart, setFirstPart] = useState('');
     const [secondPart, setSecondPart] = useState('');
+    const [gstper , setgstper]=useState('');
+    const [igstper,setigstper]=useState('');
+    const [cgstper,setcgstper]=useState('');
+    const [sgstper, setsgstper]=useState('');
 
 
     useEffect(() => {
@@ -61,7 +65,7 @@ function InvoiceDetails({ invoiceId }) {
                 setSGST(sgst);
                 setIGST(igst);
                 setGrandTotal(total);
-                // Convert grand total to words
+              
                 // Function to convert total to words can be implemented here
                 setGrandTotalInWords('Grand Total in words');
             } catch (error) {
@@ -71,6 +75,28 @@ function InvoiceDetails({ invoiceId }) {
 
         fetchInvoiceDetails();
     }, [invoiceId]);
+
+useEffect(() => {
+    const roundToTwoDecimals = (num) => Math.round(num * 100) / 100;
+
+    // Parse strings to numbers before performing calculations
+    const parsedCgst = parseFloat(invoiceDetails?.cgst) || 0;
+    const parsedSgst = parseFloat(invoiceDetails?.sgst) || 0;
+    const parsedIgst = parseFloat(invoiceDetails?.igst) || 0;
+    const parsedTotal = parseFloat(total) || 0;
+    const parsedSubtotal = parseFloat(subtotal) || 0;
+
+    const gstPer = roundToTwoDecimals(((parsedCgst + parsedSgst + parsedIgst) / parsedTotal) * 100);
+    const cgstPer = roundToTwoDecimals((parsedCgst / parsedSubtotal) * 100);
+    const sgstPer = roundToTwoDecimals((parsedSgst / parsedSubtotal) * 100);
+    const igstPer = roundToTwoDecimals((parsedIgst / parsedSubtotal) * 100);
+
+    setgstper(isNaN(gstPer) ? 0 : gstPer);
+    setcgstper(isNaN(cgstPer) ? 0 : cgstPer);
+    setigstper(isNaN(igstPer) ? 0 : igstPer);
+    setsgstper(isNaN(sgstPer)? 0 : sgstPer);
+}, [invoiceDetails.cgst]);
+
 
     // Render nothing if invoiceDetails is empty
     if (Object.keys(invoiceDetails).length === 0) {
@@ -170,15 +196,15 @@ function InvoiceDetails({ invoiceId }) {
                             <td className="border border-black px-1 py-1">{invoiceDetails.freightCharges}</td>
                         </tr>
                         <tr className="bg-gray-0">
-                            <td colSpan="2" className="border border-black px-1 py-1">CGST:</td>
+                            <td colSpan="2" className="border border-black px-1 py-1">CGST:{cgstper} %</td>
                             <td className="border border-black px-1 py-1">{invoiceDetails.cgst}</td>
                         </tr>
                         <tr className="bg-gray-0">
-                            <td colSpan="2" className="border border-black px-1 py-1">SGST:</td>
+                            <td colSpan="2" className="border border-black px-1 py-1">SGST:{sgstper} %</td>
                             <td className="border border-black px-1 py-1">{invoiceDetails.sgst}</td>
                         </tr>
                         <tr className="bg-gray-0">
-                            <td colSpan="2" className="border border-black px-1 py-1">IGST:</td>
+                            <td colSpan="2" className="border border-black px-1 py-1">IGST:{igstper} % </td>
                             <td className="border border-black px-1 py-1">{invoiceDetails.igst}</td>
                         </tr>
                         <tr className="bg-gray-0">
