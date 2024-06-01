@@ -83,15 +83,17 @@ function InvoiceDetails({ invoiceId }) {
     };
 
     const formatDate = (dateString) => {
-        return dateString.slice(0, 10); // Slicing the first 10 characters to get 'YYYY-MM-DD'
+        const [year, month, day] = dateString.slice(0, 10).split('-');
+        return `${day}-${month}-${year}`;
     };
 
 
     return (
         <>
             <div className='printdata border-2 font-mono'>
-                <p className="text-2xl font-bold bg-gray-300 text-center">Tax Invoice</p>
-                <div className="flex justify-between items-center px-4 py-2 bg-gray-300">
+                <div className='bg-gradient-to-r from-blue-500 to-purple-500 text-white pb-2 mb-4'>
+                <p className="text-2xl font-bold text-center">Tax Invoice</p>
+                <div className="flex justify-between items-center px-4 py-2">
                     <div className="flex items-center">
                         <img src={logo} alt="Your Company Logo" className="w-20 h-auto mr-2" />
                     </div>
@@ -104,33 +106,34 @@ function InvoiceDetails({ invoiceId }) {
                     </div>
                 </div>
 
-                <div className="flex flex-col content-center bg-gray-300">
+                <div className="flex flex-col content-center">
                     <p className="text-sm text-center">D-435, Gali No.-59,Mahavir Enclave,Part-3,West Delhi-110059</p>
                     <p className="text-sm text-center">E-mail id: manojsharma.2016m@gmail.com</p>
                 </div>
-
-                <table className='bg-gray-100 w-full'>
+                </div>
+                <table className='bg-gray-100 w-full pt-2'>
                     <thead>
                         <tr>
                             <td colSpan="2" className="border border-black px-2 py-1">M/s:</td>
-                            <td colSpan="3" className="border border-black px-2 py-1"><span className="font-semibold">{firstPart} <br /> {secondPart}</span></td>
+                            <td colSpan="2" className="border border-black px-2 py-1"><span className="font-semibold">{firstPart} <br /> {secondPart}</span></td>
                             <td colSpan="2" className="border border-black px-2 py-1">Invoice No:</td>
                             <td colSpan="2" className="border border-black px-2 py-1"><span className="font-semibold">{invoiceDetails.invoiceNo}</span></td>
                         </tr>
                         <tr>
                             <td colSpan="2" className="border border-black px-2 py-1">GSTIN:</td>
-                            <td colSpan="3" className="border border-black px-2 py-1"><span className="font-semibold">{invoiceDetails.gstin}</span></td>
+                            <td colSpan="2" className="border border-black px-2 py-1"><span className="font-semibold">{invoiceDetails.gstin}</span></td>
                             <td colSpan="2" className="border border-black px-2 py-1">Date:</td>
-                            <td colSpan="2" className="border border-black px-2 py-1"><span className="font-semibold">{formatDate(invoiceDetails.invoiceDate)}</span></td>
+                            <td colSpan="4" className="border border-black px-2 py-1"><span className="font-semibold">{formatDate(invoiceDetails.invoiceDate)}</span></td>
                         </tr>
                         <tr>
                             <td colSpan="2" className="border border-black px-2 py-1">State:</td>
                             <td colSpan="2" className="border border-black px-2 py-1"><span className="font-semibold">{invoiceDetails.state}</span></td>
-                            <td colSpan="2" className="border border-black px-2 py-1">State Code:</td>
+                            <td colSpan="1" className="border border-black px-2 py-1">State Code:</td>
                             <td colSpan="4" className="border border-black px-2 py-1"><span className="font-semibold">{invoiceDetails.stateCode}</span></td>
                         </tr>
                     </thead>
                 </table>
+
 
                 <div className="bg-gray-100 overflow-x-auto">
                     <table className="w-full table-auto sm:min-w-full mb-1">
@@ -185,7 +188,7 @@ function InvoiceDetails({ invoiceId }) {
                     </table>
                 </div>
 
-                <div className="bg-gray-200 p-4 px-8 flex justify-between">
+                <div className="bg-gray-200 p-4 px-8 flex justify-between mt-2">
                     <div>
                         <p className="text-xs text-gray-500">Terms & Conditions: </p>
                         <ul className="list-disc pl-2 text-sm text-gray-600 text-left">
