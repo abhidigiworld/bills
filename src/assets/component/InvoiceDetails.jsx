@@ -89,11 +89,11 @@ function InvoiceDetails({ invoiceId }) {
 
     return (
         <>
-            <div className='printdata border-2 my-2 font-mono mx-2'>
+            <div className='printdata border-2  font-mono '>
                 <p className="text-2xl font-bold bg-gray-300 text-center">Tax Invoice</p>
                 <div className="flex justify-between items-center px-4 py-2 bg-gray-300">
                     <div className="flex items-center">
-                        <img src={logo} alt="Your Company Logo" className="w-16 h-16 mr-2" />
+                        <img src={logo} alt="Your Company Logo" className="w-20 h-auto mr-2" />
                     </div>
                     <div className="flex-1 text-center">
                         <p className="text-3xl font-custom text-center fugaz-one-regular">Sakshi Enterprises</p>
@@ -110,7 +110,7 @@ function InvoiceDetails({ invoiceId }) {
                 </div>
 
                 <div className="bg-gray-100 overflow-x-auto ">
-                    <table className="w-full table-auto sm:min-w-full">
+                    <table className="w-full table-auto sm:min-w-full mb-1">
                         <thead>
                             <tr className="bg-gray-200">
                                 <th className="border px-1 py-1">S.No</th>
@@ -133,33 +133,33 @@ function InvoiceDetails({ invoiceId }) {
                                 </tr>
                             ))}
                             <tr className="bg-gray-200">
-                                <td colSpan="4" className="border px-1 py-1">Grand Total (In Words): <span className="font-semibold">{invoiceDetails.grandTotalInWords}</span></td>
-                                <td className="border px-1 py-1">Subtotal:</td>
+                                <td colSpan="3" rowSpan="6" className="border px-1 py-1">Grand Total (In Words): <span className="font-semibold">{invoiceDetails.grandTotalInWords}</span></td>
+                                <td colSpan="2" className="border px-1 py-1">Subtotal:</td>
                                 <td className="border px-1 py-1">{subtotal !== undefined ? subtotal.toFixed(2) : '-'}</td>
                             </tr>
                             <tr className="bg-gray-200">
-                                <td colSpan="4"></td>
-                                <td className="border px-1 py-1">Freight</td>
+                                
+                                <td colSpan="2" className="border px-1 py-1">Freight</td>
                                 <td className="border px-1 py-1">{invoiceDetails.freightCharges}</td>
                             </tr>
                             <tr className="bg-gray-200">
-                                <td colSpan="4"></td>
-                                <td className="border px-1 py-1">CGST:</td>
+                                
+                                <td colSpan="2"  className="border px-1 py-1">CGST:</td>
                                 <td className="border px-1 py-1">{invoiceDetails.cgst}</td>
                             </tr>
                             <tr className="bg-gray-200">
-                                <td colSpan="4"></td>
-                                <td className="border px-1 py-1">SGST:</td>
+                                
+                                <td colSpan="2" className="border px-1 py-1">SGST:</td>
                                 <td className="border px-1 py-1">{invoiceDetails.sgst}</td>
                             </tr>
                             <tr className="bg-gray-200">
-                                <td colSpan="4"></td>
-                                <td className="border px-1 py-1">IGST:</td>
+                                
+                                <td colSpan="2" className="border px-1 py-1">IGST:</td>
                                 <td className="border px-1 py-1">{invoiceDetails.igst}</td>
                             </tr>
                             <tr className="bg-gray-200">
-                                <td colSpan="4"></td>
-                                <td className="border px-1 py-1">Grand Total:</td>
+                                
+                                <td colSpan="2"  className="border px-1 py-1">Grand Total:</td>
                                 <td className="border px-1 py-1">{invoiceDetails.grandTotal}</td>
                             </tr>
                         </tbody>
