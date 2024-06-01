@@ -30,3 +30,8 @@
   font-weight: 400;
   font-style: normal;
 }
+
+.custom-width {
+  width: 120px; /* Adjust the width as needed */
+}
+

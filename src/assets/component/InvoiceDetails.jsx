@@ -90,8 +90,8 @@ function InvoiceDetails({ invoiceId }) {
 
     return (
         <>
-            <div className='printdata border-2 font-mono'>
-                <div className='bg-gradient-to-r from-blue-500 to-purple-500 text-white pb-2 mb-4'>
+        <div className='printdata  font-mono'>
+            <div className='bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-t-lg mb-4'>
                 <p className="text-2xl font-bold text-center">Tax Invoice</p>
                 <div className="flex justify-between items-center px-4 py-2">
                     <div className="flex items-center">
@@ -105,111 +105,113 @@ function InvoiceDetails({ invoiceId }) {
                         <p className="text-sm">M.: 9650650297</p>
                     </div>
                 </div>
-
+    
                 <div className="flex flex-col content-center">
                     <p className="text-sm text-center">D-435, Gali No.-59,Mahavir Enclave,Part-3,West Delhi-110059</p>
                     <p className="text-sm text-center">E-mail id: manojsharma.2016m@gmail.com</p>
                 </div>
-                </div>
-                <table className='bg-gray-100 w-full pt-2'>
+            </div>
+    
+            <table className='bg-gray-0 w-full mb-2'>
+                <thead>
+                    <tr>
+                        <td colSpan="2" className="border border-black px-2 py-1">M/s:</td>
+                        <td colSpan="1" className="border border-black px-2 py-1"><span className="font-semibold">{firstPart} <br /> {secondPart}</span></td>
+                        <td colSpan="2" className="border border-black px-2 py-1">Invoice No:</td>
+                        <td colSpan="2" className="border border-black px-2 py-1"><span className="font-semibold">{invoiceDetails.invoiceNo}</span></td>
+                    </tr>
+                    <tr>
+                        <td colSpan="2" className="border border-black px-2 py-1">GSTIN:</td>
+                        <td colSpan="1" className="border border-black px-2 py-1"><span className="font-semibold">{invoiceDetails.gstin}</span></td>
+                        <td colSpan="2" className="border border-black px-2 py-1">Date:</td>
+                        <td colSpan="2" className="border border-black px-2 py-1 custom-width"><span className="font-semibold">{formatDate(invoiceDetails.invoiceDate)}</span></td>
+                    </tr>
+                    <tr>
+                        <td colSpan="2" className="border border-black px-2 py-1">State:</td>
+                        <td colSpan="1" className="border border-black px-2 py-1"><span className="font-semibold">{invoiceDetails.state}</span></td>
+                        <td colSpan="2" className="border border-black px-2 py-1">State Code:</td>
+                        <td colSpan="2" className="border border-black px-2 py-1"><span className="font-semibold">{invoiceDetails.stateCode}</span></td>
+                    </tr>
+                </thead>
+            </table>
+    
+    
+            <div className="overflow-x-auto">
+                <table className="w-full table-auto sm:min-w-full mb-1">
                     <thead>
-                        <tr>
-                            <td colSpan="2" className="border border-black px-2 py-1">M/s:</td>
-                            <td colSpan="2" className="border border-black px-2 py-1"><span className="font-semibold">{firstPart} <br /> {secondPart}</span></td>
-                            <td colSpan="2" className="border border-black px-2 py-1">Invoice No:</td>
-                            <td colSpan="2" className="border border-black px-2 py-1"><span className="font-semibold">{invoiceDetails.invoiceNo}</span></td>
-                        </tr>
-                        <tr>
-                            <td colSpan="2" className="border border-black px-2 py-1">GSTIN:</td>
-                            <td colSpan="2" className="border border-black px-2 py-1"><span className="font-semibold">{invoiceDetails.gstin}</span></td>
-                            <td colSpan="2" className="border border-black px-2 py-1">Date:</td>
-                            <td colSpan="4" className="border border-black px-2 py-1"><span className="font-semibold">{formatDate(invoiceDetails.invoiceDate)}</span></td>
-                        </tr>
-                        <tr>
-                            <td colSpan="2" className="border border-black px-2 py-1">State:</td>
-                            <td colSpan="2" className="border border-black px-2 py-1"><span className="font-semibold">{invoiceDetails.state}</span></td>
-                            <td colSpan="1" className="border border-black px-2 py-1">State Code:</td>
-                            <td colSpan="4" className="border border-black px-2 py-1"><span className="font-semibold">{invoiceDetails.stateCode}</span></td>
+                        <tr className="bg-gray-200">
+                            <th className="border border-black py-1">S.No</th>
+                            <th className="border border-black py-1">Description</th>
+                            <th className="border border-black py-1">HSN/SAC Code</th>
+                            <th className="border border-black py-1">Quantity</th>
+                            <th className="border border-black py-1">Rate</th>
+                            <th className="border border-black py-1">Total Value</th>
                         </tr>
                     </thead>
+    
+                    <tbody>
+                        {items.map((item, index) => (
+                            <tr key={index} className="text-center">
+                                <td className="border border-black py-1">{index + 1}</td>
+                                <td className="border border-black py-1">{item.description}</td>
+                                <td className="border border-black py-1">{item.hsnAsc}</td>
+                                <td className="border border-black py-1">{item.quantity}</td>
+                                <td className="border border-black py-1">{item.rate}</td>
+                                <td className="border border-black py-1">{item.totalValue}</td>
+                            </tr>
+                        ))}
+                        <tr className="bg-gray-0">
+                            <td colSpan="3" rowSpan="6" className="border border-black px-1 py-1">Grand Total (In Words): <span className="font-semibold">{invoiceDetails.grandTotalInWords}</span></td>
+                            <td colSpan="2" className="border border-black px-1 py-1">Subtotal:</td>
+                            <td className="border border-black px-1 py-1">{subtotal !== undefined ? subtotal.toFixed(2) : '-'}</td>
+                        </tr>
+                        <tr className="bg-gray-0">
+                            <td colSpan="2" className="border border-black px-1 py-1">Freight</td>
+                            <td className="border border-black px-1 py-1">{invoiceDetails.freightCharges}</td>
+                        </tr>
+                        <tr className="bg-gray-0">
+                            <td colSpan="2" className="border border-black px-1 py-1">CGST:</td>
+                            <td className="border border-black px-1 py-1">{invoiceDetails.cgst}</td>
+                        </tr>
+                        <tr className="bg-gray-0">
+                            <td colSpan="2" className="border border-black px-1 py-1">SGST:</td>
+                            <td className="border border-black px-1 py-1">{invoiceDetails.sgst}</td>
+                        </tr>
+                        <tr className="bg-gray-0">
+                            <td colSpan="2" className="border border-black px-1 py-1">IGST:</td>
+                            <td className="border border-black px-1 py-1">{invoiceDetails.igst}</td>
+                        </tr>
+                        <tr className="bg-gray-0">
+                            <td colSpan="2" className="border border-black px-1 py-1">Grand Total:</td>
+                            <td className="border border-black px-1 py-1">{invoiceDetails.grandTotal}</td>
+                        </tr>
+                    </tbody>
                 </table>
-
-
-                <div className="bg-gray-100 overflow-x-auto">
-                    <table className="w-full table-auto sm:min-w-full mb-1">
-                        <thead>
-                            <tr className="bg-gray-200">
-                                <th className="border border-black py-1">S.No</th>
-                                <th className="border border-black py-1">Description</th>
-                                <th className="border border-black py-1">HSN/SAC Code</th>
-                                <th className="border border-black py-1">Quantity</th>
-                                <th className="border border-black py-1">Rate</th>
-                                <th className="border border-black py-1">Total Value</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            {items.map((item, index) => (
-                                <tr key={index} className="text-center">
-                                    <td className="border border-black py-1">{index + 1}</td>
-                                    <td className="border border-black py-1">{item.description}</td>
-                                    <td className="border border-black py-1">{item.hsnAsc}</td>
-                                    <td className="border border-black py-1">{item.quantity}</td>
-                                    <td className="border border-black py-1">{item.rate}</td>
-                                    <td className="border border-black py-1">{item.totalValue}</td>
-                                </tr>
-                            ))}
-                            <tr className="bg-gray-100">
-                                <td colSpan="3" rowSpan="6" className="border border-black px-1 py-1">Grand Total (In Words): <span className="font-semibold">{invoiceDetails.grandTotalInWords}</span></td>
-                                <td colSpan="2" className="border border-black px-1 py-1">Subtotal:</td>
-                                <td className="border border-black px-1 py-1">{subtotal !== undefined ? subtotal.toFixed(2) : '-'}</td>
-                            </tr>
-                            <tr className="bg-gray-100">
-                                <td colSpan="2" className="border border-black px-1 py-1">Freight</td>
-                                <td className="border border-black px-1 py-1">{invoiceDetails.freightCharges}</td>
-                            </tr>
-                            <tr className="bg-gray-100">
-                                <td colSpan="2" className="border border-black px-1 py-1">CGST:</td>
-                                <td className="border border-black px-1 py-1">{invoiceDetails.cgst}</td>
-                            </tr>
-                            <tr className="bg-gray-100">
-                                <td colSpan="2" className="border border-black px-1 py-1">SGST:</td>
-                                <td className="border border-black px-1 py-1">{invoiceDetails.sgst}</td>
-                            </tr>
-                            <tr className="bg-gray-100">
-                                <td colSpan="2" className="border border-black px-1 py-1">IGST:</td>
-                                <td className="border border-black px-1 py-1">{invoiceDetails.igst}</td>
-                            </tr>
-                            <tr className="bg-gray-100">
-                                <td colSpan="2" className="border border-black px-1 py-1">Grand Total:</td>
-                                <td className="border border-black px-1 py-1">{invoiceDetails.grandTotal}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+            </div>
+    
+            <div className="bg-gray-200 p-4 px-8 flex justify-between mt-2">
+                <div>
+                    <p className="text-xs text-gray-500">Terms & Conditions: </p>
+                    <ul className="list-disc pl-2 text-sm text-gray-600 text-left">
+                        <li>All disputes are subject to jurisdiction of Delhi Courts</li>
+                        <li>Payment should be made by cash/cheque/draft only.</li>
+                        <li>Late payment will be charged if bill unpaid for 15 days.</li>
+                    </ul>
                 </div>
-
-                <div className="bg-gray-200 p-4 px-8 flex justify-between mt-2">
-                    <div>
-                        <p className="text-xs text-gray-500">Terms & Conditions: </p>
-                        <ul className="list-disc pl-2 text-sm text-gray-600 text-left">
-                            <li>All disputes are subject to jurisdiction of Delhi Courts</li>
-                            <li>Payment should be made by cash/cheque/draft only.</li>
-                            <li>Late payment will be charged if bill unpaid for 15 days.</li>
-                        </ul>
-                    </div>
-                    <div className="text-right relative">
-                        <p className="text-sm">For Sakshi Enterprises</p>
-                        <p className="text-sm absolute bottom-0 right-0">Authorised Signatory</p>
-                        <img src={signature} alt="Signature" className="absolute top-0 left-0 right-0 mx-auto mt-4 w-36 h-auto" />
-                        {/* <img src={stamp} alt="stamp" className="absolute top-0 left-0 right-0 mx-auto mt-4 w-80 h-auto" /> */}
-                    </div>
+                <div className="text-right relative">
+                    <p className="text-sm">For Sakshi Enterprises</p>
+                    <p className="text-sm absolute bottom-0 right-0">Authorised Signatory</p>
+                    <img src={signature} alt="Signature" className="absolute top-0 left-0 right-0 mx-auto mt-4 w-36 h-auto" />
+                    {/* <img src={stamp} alt="stamp" className="absolute top-0 left-0 right-0 mx-auto mt-4 w-80 h-auto" /> */}
                 </div>
             </div>
-
-            <div className='mb-12 pb-10 text-center'>
-                <button onClick={handlePrint} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 print-hidden">Print</button>
-            </div>
-        </>
+        </div>
+    
+        <div className='mb-12 pb-10 mt-4 text-center'>
+            <button onClick={handlePrint} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 print-hidden">Print</button>
+        </div>
+    </>
+    
     );
 }
 
