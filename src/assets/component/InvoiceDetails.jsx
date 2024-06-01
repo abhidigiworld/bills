@@ -89,7 +89,7 @@ function InvoiceDetails({ invoiceId }) {
 
     return (
         <>
-            <div className='printdata border-2 font-mono '>
+            <div className='printdata border-2 font-mono'>
                 <p className="text-2xl font-bold bg-gray-300 text-center">Tax Invoice</p>
                 <div className="flex justify-between items-center px-4 py-2 bg-gray-300">
                     <div className="flex items-center">
@@ -108,41 +108,52 @@ function InvoiceDetails({ invoiceId }) {
                     <p className="text-sm text-center">D-435, Gali No.-59,Mahavir Enclave,Part-3,West Delhi-110059</p>
                     <p className="text-sm text-center">E-mail id: manojsharma.2016m@gmail.com</p>
                 </div>
-                <div className="bg-gray-100 p-4 pb-2">
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <div className='text-left'>
-                            <p className="text-sm">M/s: <span className="font-semibold">{firstPart} <br /> {secondPart}  </span></p>
-                            <p className="text-sm">GSTIN: <span className="font-semibold">{invoiceDetails.gstin}</span></p>
-                            <p className="text-sm">State: <span className="font-semibold">{invoiceDetails.state}</span></p>
-                        </div>
-                        <div className='text-left'>
-                            <p className="text-sm">State Code: <span className="font-semibold">{invoiceDetails.stateCode}</span></p>
-                            <p className="text-sm">Invoice No: <span className="font-semibold">{invoiceDetails.invoiceNo}</span></p>
-                            <p className="text-sm">Invoice Date: <span className="font-semibold">{formatDate(invoiceDetails.invoiceDate)}</span></p>
-                        </div>
-                    </div>
-                </div>
-                <div className="bg-gray-100 overflow-x-auto ">
+
+                <table className='bg-gray-100 w-full'>
+                    <thead>
+                        <tr>
+                            <td colSpan="2" className="border border-black px-2 py-1">M/s:</td>
+                            <td colSpan="3" className="border border-black px-2 py-1"><span className="font-semibold">{firstPart} <br /> {secondPart}</span></td>
+                            <td colSpan="2" className="border border-black px-2 py-1">Invoice No:</td>
+                            <td colSpan="2" className="border border-black px-2 py-1"><span className="font-semibold">{invoiceDetails.invoiceNo}</span></td>
+                        </tr>
+                        <tr>
+                            <td colSpan="2" className="border border-black px-2 py-1">GSTIN:</td>
+                            <td colSpan="3" className="border border-black px-2 py-1"><span className="font-semibold">{invoiceDetails.gstin}</span></td>
+                            <td colSpan="2" className="border border-black px-2 py-1">Date:</td>
+                            <td colSpan="2" className="border border-black px-2 py-1"><span className="font-semibold">{formatDate(invoiceDetails.invoiceDate)}</span></td>
+                        </tr>
+                        <tr>
+                            <td colSpan="2" className="border border-black px-2 py-1">State:</td>
+                            <td colSpan="2" className="border border-black px-2 py-1"><span className="font-semibold">{invoiceDetails.state}</span></td>
+                            <td colSpan="2" className="border border-black px-2 py-1">State Code:</td>
+                            <td colSpan="4" className="border border-black px-2 py-1"><span className="font-semibold">{invoiceDetails.stateCode}</span></td>
+                        </tr>
+                    </thead>
+                </table>
+
+                <div className="bg-gray-100 overflow-x-auto">
                     <table className="w-full table-auto sm:min-w-full mb-1">
                         <thead>
                             <tr className="bg-gray-200">
-                                <th className="border border-black px-1 py-1">S.No</th>
-                                <th className="border border-black px-1 py-1">Description</th>
-                                <th className="border border-black px-1 py-1">HSN/SAC Code</th>
-                                <th className="border border-black px-1 py-1">Quantity</th>
-                                <th className="border border-black px-1 py-1">Rate</th>
-                                <th className="border border-black px-1 py-1">Total Value</th>
+                                <th className="border border-black py-1">S.No</th>
+                                <th className="border border-black py-1">Description</th>
+                                <th className="border border-black py-1">HSN/SAC Code</th>
+                                <th className="border border-black py-1">Quantity</th>
+                                <th className="border border-black py-1">Rate</th>
+                                <th className="border border-black py-1">Total Value</th>
                             </tr>
                         </thead>
+
                         <tbody>
                             {items.map((item, index) => (
                                 <tr key={index} className="text-center">
-                                    <td className="border border-black px-1 py-1">{index + 1}</td>
-                                    <td className="border border-black px-1 py-1">{item.description}</td>
-                                    <td className="border border-black px-1 py-1">{item.hsnAsc}</td>
-                                    <td className="border border-black px-1 py-1">{item.quantity}</td>
-                                    <td className="border border-black px-1 py-1">{item.rate}</td>
-                                    <td className="border border-black px-1 py-1">{item.totalValue}</td>
+                                    <td className="border border-black py-1">{index + 1}</td>
+                                    <td className="border border-black py-1">{item.description}</td>
+                                    <td className="border border-black py-1">{item.hsnAsc}</td>
+                                    <td className="border border-black py-1">{item.quantity}</td>
+                                    <td className="border border-black py-1">{item.rate}</td>
+                                    <td className="border border-black py-1">{item.totalValue}</td>
                                 </tr>
                             ))}
                             <tr className="bg-gray-100">
@@ -196,6 +207,7 @@ function InvoiceDetails({ invoiceId }) {
                 <button onClick={handlePrint} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 print-hidden">Print</button>
             </div>
         </>
+
 
 
     );
