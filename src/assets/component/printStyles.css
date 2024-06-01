@@ -1,12 +1,26 @@
 @media print {
+
   /* Hide all elements by default */
   .print-hidden {
-      display: none !important;
+    display: none !important;
   }
 
   @page {
-      size: A4; /* Set page size to A4 */
-      margin: Minimum; /* Remove default margins */
+    size: A4;
+    /* Set page size to A4 */
+    margin: Minimum;
+    /* Remove default margins */
+  }
+
+  .printdata * {
+    font-size: 12px;
+    /* You can adjust this value as needed */
+  }
+
+  /* Additional adjustments for specific elements if needed */
+  .printdata .text-2xl {
+    font-size: 18px;
+    /* Example: reducing the size of text-2xl class */
   }
 
 }
