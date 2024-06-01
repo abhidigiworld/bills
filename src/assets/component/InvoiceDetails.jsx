@@ -90,13 +90,13 @@ function InvoiceDetails({ invoiceId }) {
     return (
         <>
             <div className='printdata border-2 my-2 font-mono mx-2'>
-                <p className="text-3xl font-bold bg-gray-300 text-center">Tax Invoice</p>
+                <p className="text-2xl font-bold bg-gray-300 text-center">Tax Invoice</p>
                 <div className="flex justify-between items-center px-4 py-2 bg-gray-300">
                     <div className="flex items-center">
-                        <img src={logo} alt="Your Company Logo" className="w-20 h-20 mr-2" />
+                        <img src={logo} alt="Your Company Logo" className="w-16 h-16 mr-2" />
                     </div>
                     <div className="flex-1 text-center">
-                        <p className="text-4xl  font-custom text-center fugaz-one-regular">Sakshi Enterprises</p>
+                        <p className="text-3xl font-custom text-center fugaz-one-regular">Sakshi Enterprises</p>
                     </div>
                     <div className="text-right">
                         <p className="text-sm font-bold">GSTIN: 070URPS6573P1ZY</p>
@@ -105,71 +105,71 @@ function InvoiceDetails({ invoiceId }) {
                 </div>
 
                 <div className="flex flex-col content-center bg-gray-300">
-                    <p className="text-center">D-435, Gali No.-59,Mahavir Enclave,Part-3,West Delhi-110059</p>
-                    <p className="text-center">E-mail id:manojsharma.2016m@gmail.com</p>
+                    <p className="text-sm text-center">D-435, Gali No.-59,Mahavir Enclave,Part-3,West Delhi-110059</p>
+                    <p className="text-sm text-center">E-mail id: manojsharma.2016m@gmail.com</p>
                 </div>
-                <div className="bg-gray-100 p-4 pb-2">
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <div className='text-left'>
-                            <p className="text-sm">M/s: <span className="font-semibold">{firstPart} <br /> {secondPart}  </span></p>
-                            <p className="text-sm">GSTIN: <span className="font-semibold">{invoiceDetails.gstin}</span></p>
-                            <p className="text-sm">State: <span className="font-semibold">{invoiceDetails.state}</span></p>
-                        </div>
-                        <div className='text-left'>
-                            <p className="text-sm">State Code: <span className="font-semibold">{invoiceDetails.stateCode}</span></p>
-                            <p className="text-sm">Invoice No: <span className="font-semibold">{invoiceDetails.invoiceNo}</span></p>
-                            <p className="text-sm">Invoice Date: <span className="font-semibold">{formatDate(invoiceDetails.invoiceDate)}</span></p>
-                        </div>
-                    </div>
-                </div>
-                <div className="bg-gray-100 overflow-x-auto p-2">
+
+                <div className="bg-gray-100 overflow-x-auto ">
                     <table className="w-full table-auto sm:min-w-full">
                         <thead>
                             <tr className="bg-gray-200">
-                                <th className="border px-2 py-2">S.No</th>
-                                <th className="border px-2 py-2">Description</th>
-                                <th className="border px-2 py-2">HSN/SAC Code</th>
-                                <th className="border px-2 py-2">Quantity</th>
-                                <th className="border px-2 py-2">Rate</th>
-                                <th className="border px-2 py-2">Total Value</th>
+                                <th className="border px-1 py-1">S.No</th>
+                                <th className="border px-1 py-1">Description</th>
+                                <th className="border px-1 py-1">HSN/SAC Code</th>
+                                <th className="border px-1 py-1">Quantity</th>
+                                <th className="border px-1 py-1">Rate</th>
+                                <th className="border px-1 py-1">Total Value</th>
                             </tr>
                         </thead>
                         <tbody>
                             {items.map((item, index) => (
                                 <tr key={index} className="text-center">
-                                    <td className="border px-2 py-2">{index + 1}</td>
-                                    <td className="border px-2 py-2">{item.description}</td>
-                                    <td className="border px-2 py-2">{item.hsnAsc}</td>
-                                    <td className="border px-2 py-2">{item.quantity}</td>
-                                    <td className="border px-2 py-2">{item.rate}</td>
-                                    <td className="border px-2 py-2">{item.totalValue}</td>
+                                    <td className="border px-1 py-1">{index + 1}</td>
+                                    <td className="border px-1 py-1">{item.description}</td>
+                                    <td className="border px-1 py-1">{item.hsnAsc}</td>
+                                    <td className="border px-1 py-1">{item.quantity}</td>
+                                    <td className="border px-1 py-1">{item.rate}</td>
+                                    <td className="border px-1 py-1">{item.totalValue}</td>
                                 </tr>
                             ))}
+                            <tr className="bg-gray-200">
+                                <td colSpan="4" className="border px-1 py-1">Grand Total (In Words): <span className="font-semibold">{invoiceDetails.grandTotalInWords}</span></td>
+                                <td className="border px-1 py-1">Subtotal:</td>
+                                <td className="border px-1 py-1">{subtotal !== undefined ? subtotal.toFixed(2) : '-'}</td>
+                            </tr>
+                            <tr className="bg-gray-200">
+                                <td colSpan="4"></td>
+                                <td className="border px-1 py-1">Freight</td>
+                                <td className="border px-1 py-1">{invoiceDetails.freightCharges}</td>
+                            </tr>
+                            <tr className="bg-gray-200">
+                                <td colSpan="4"></td>
+                                <td className="border px-1 py-1">CGST:</td>
+                                <td className="border px-1 py-1">{invoiceDetails.cgst}</td>
+                            </tr>
+                            <tr className="bg-gray-200">
+                                <td colSpan="4"></td>
+                                <td className="border px-1 py-1">SGST:</td>
+                                <td className="border px-1 py-1">{invoiceDetails.sgst}</td>
+                            </tr>
+                            <tr className="bg-gray-200">
+                                <td colSpan="4"></td>
+                                <td className="border px-1 py-1">IGST:</td>
+                                <td className="border px-1 py-1">{invoiceDetails.igst}</td>
+                            </tr>
+                            <tr className="bg-gray-200">
+                                <td colSpan="4"></td>
+                                <td className="border px-1 py-1">Grand Total:</td>
+                                <td className="border px-1 py-1">{invoiceDetails.grandTotal}</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
 
-                <div className="bg-gray-100 p-4">
-                    <div className="grid grid-cols-1 gap-4 mt-2 sm:grid-cols-2">
-                        <div>
-                            <p className="text-sm">Grand Total (In Words): <span className="font-semibold">{invoiceDetails.grandTotalInWords}</span></p>
-                        </div>
-                        <div className='text-left'>
-                            <p className="text-sm">Total: <span className="font-semibold">{subtotal !== undefined ? subtotal.toFixed(2) : '-'}</span></p>
-                            <p className="text-sm">Freight Charges: <span className="font-semibold">{invoiceDetails.freightCharges}</span></p>
-                            <p className="text-sm">CGST: <span className="font-semibold">{invoiceDetails.cgst}</span></p>
-                            <p className="text-sm">SGST: <span className="font-semibold">{invoiceDetails.sgst}</span></p>
-                            <p className="text-sm">IGST: <span className="font-semibold">{invoiceDetails.igst}</span></p>
-                            <p className="text-sm">Grand Total: <span className="font-semibold">{invoiceDetails.grandTotal}</span></p>
-                        </div>
-                    </div>
-                </div>
-
-
                 <div className="bg-gray-200 p-4 px-8 flex justify-between">
                     <div>
-                        <p className="text-sm text-gray-500">Terms & Conditions: </p>
-                        <ul className="list-disc pl-4 text-gray-600 text-left">
+                        <p className="text-xs text-gray-500">Terms & Conditions: </p>
+                        <ul className="list-disc pl-2 text-sm text-gray-600 text-left">
                             <li>All disputes are subject to jurisdiction of Delhi Courts</li>
                             <li>Payment should be made by cash/cheque/draft only.</li>
                             <li>Late payment will be charged if bill unpaid for 15 days.</li>
@@ -178,15 +178,17 @@ function InvoiceDetails({ invoiceId }) {
                     <div className="text-right relative">
                         <p className="text-sm">For Sakshi Enterprises</p>
                         <p className="text-sm absolute bottom-0 right-0">Authorised Signatory</p>
-                        <img src={signature} alt="Signature" className="absolute top-0 left-0 right-0 mx-auto mt-4 w-44 h-auto" />
+                        <img src={signature} alt="Signature" className="absolute top-0 left-0 right-0 mx-auto mt-4 w-36 h-auto" />
                         {/* <img src={stamp} alt="stamp" className="absolute top-0 left-0 right-0 mx-auto mt-4 w-80 h-auto" /> */}
                     </div>
                 </div>
             </div>
+
             <div className='mb-12 pb-10 text-center'>
                 <button onClick={handlePrint} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 print-hidden">Print</button>
             </div>
         </>
+
     );
 }
 
