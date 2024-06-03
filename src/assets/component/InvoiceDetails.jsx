@@ -231,10 +231,10 @@ function InvoiceDetails({ invoiceId }) {
 
             <div className='mb-12 pb-10 mt-4 text-center'>
                 <div className="flex flex-wrap justify-center gap-4 mt-4">
-                    <button onClick={() => handlePrint(true, true)} className="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 print-hidden">Print with Sign and Stamp</button>
-                    <button onClick={() => handlePrint(true, false)} className="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 print-hidden">Print with Sign</button>
-                    <button onClick={() => handlePrint(false, true)} className="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 print-hidden">Print with Stamp</button>
-                    <button onClick={() => handlePrint(false, false)} className="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 print-hidden">Print without Sign and Stamp</button>
+                    <button onClick={() => handlePrint(true, true)} className="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-700 print-hidden  transition duration-300 shadow-2xl shadow-blue-500/50 hover:shadow-none">Print with Sign and Stamp</button>
+                    <button onClick={() => handlePrint(true, false)} className="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-700 print-hidden  transition duration-300 shadow-2xl shadow-blue-500/50 hover:shadow-none">Print with Sign</button>
+                    <button onClick={() => handlePrint(false, true)} className="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-700 print-hidden  transition duration-300 shadow-2xl shadow-blue-500/50 hover:shadow-none">Print with Stamp</button>
+                    <button onClick={() => handlePrint(false, false)} className="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-700 print-hidden  transition duration-300 shadow-2xl shadow-blue-500/50 hover:shadow-none">Print without Sign and Stamp</button>
                 </div>
             </div>
 

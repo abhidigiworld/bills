@@ -111,13 +111,13 @@ function Bills() {
                     <td className="px-4 py-2">{formatDate(bill.invoiceDate)}</td>
                     <td className="px-4 py-2 flex justify-center md:justify-end">
                       <button
-                        className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 mr-2"
+                        className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 mr-2 transition duration-300 shadow-2xl shadow-red-500/50 hover:shadow-none"
                         onClick={() => handleDelete(bill._id)}
                       >
                         Delete
                       </button>
                       <button
-                        className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                        className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition duration-300 shadow-2xl shadow-blue-500/50 hover:shadow-none"
                         onClick={() => handleViewDetails(bill._id)}
                       >
                         View Details
