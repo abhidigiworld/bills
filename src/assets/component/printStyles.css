@@ -8,8 +8,7 @@
   @page {
     size: A4;
     /* Set page size to A4 */
-    margin: Minimum;
-    /* Remove default margins */
+    margin: default;
   }
 
   .printdata * {
