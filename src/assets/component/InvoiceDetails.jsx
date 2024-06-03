@@ -131,11 +131,7 @@ function InvoiceDetails({ invoiceId }) {
                         <p className="text-sm text-center">E-mail id: manojsharma.2016m@gmail.com</p>
                     </div>
                 </div>
-
-
-
-
-                <table className='bg-gray-0 w-full mb-2'>
+                <table className='w-full mb-2'>
                     <thead>
                         <tr>
                             <td colSpan="2" className="border border-black px-2 py-1">M/s:</td>
