@@ -171,7 +171,7 @@ function InvoiceComponent({ invoiceDetails }) {
     const myfunc = () => {
         setTimeout(() => {
             setSaveSuccess(false);
-        }, 500);
+        }, 1000);
     };
 
     const handlePrint = () => {
