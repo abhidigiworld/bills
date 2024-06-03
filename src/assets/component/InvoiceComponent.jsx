@@ -219,7 +219,7 @@ function InvoiceComponent({ invoiceDetails }) {
                                 <p className="text-4xl font-bold font-custom text-center fugaz-one-regular">Sakshi Enterprises</p>
                             </div>
                             <div className="text-right">
-                                <p className="text-sm font-bold">GSTIN: 070URPS6573P1ZY</p>
+                                <p className="text-sm font-bold">GSTIN: 07OURPS6573P1ZY</p>
                                 <p className="text-sm">M.: 9650650297</p>
                             </div>
                         </div>
