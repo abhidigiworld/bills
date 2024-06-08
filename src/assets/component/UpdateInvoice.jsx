@@ -87,12 +87,14 @@ const UpdateInvoice = ({ invoice, onClose }) => {
                 <div className="relative bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-t-lg mb-4">
                     <p className="text-2xl font-bold text-center">Update Invoice</p>
                     <div className="flex justify-between items-center relative">
-                        <div className="flex-1 text-center pt-2" style={{ marginLeft: '155px' }}>
+                        <div className="flex-1 text-center pt-2" >
                             <p className="text-3xl font-custom fugaz-one-regular">Sakshi Enterprises</p>
                         </div>
                     </div>
                 </div>
-                <table className='w-full mb-2'>
+                
+                <div className="overflow-x-auto">
+                <table className='w-full mb-2 '>
                     <thead>
                         <tr>
                             <td colSpan="2" className="border border-black px-2 py-1">M/s:</td>
@@ -156,6 +158,7 @@ const UpdateInvoice = ({ invoice, onClose }) => {
                         </tr>
                     </thead>
                 </table>
+                </div>
 
                 <div className="overflow-x-auto">
                     <table className="w-full table-auto sm:min-w-full mb-1">

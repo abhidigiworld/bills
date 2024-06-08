@@ -131,28 +131,31 @@ function InvoiceDetails({ invoiceId }) {
                         <p className="text-sm text-center">E-mail id: manojsharma.2016m@gmail.com</p>
                     </div>
                 </div>
-                <table className='w-full mb-2'>
-                    <thead>
-                        <tr>
-                            <td colSpan="2" className="border border-black px-2 py-1">M/s:</td>
-                            <td colSpan="1" className="border border-black px-2 py-1"><span className="font-semibold">{firstPart} <br /> {secondPart}</span></td>
-                            <td colSpan="2" className="border border-black px-2 py-1">Invoice No:</td>
-                            <td colSpan="2" className="border border-black px-2 py-1"><span className="font-semibold">{invoiceDetails.invoiceNo}</span></td>
-                        </tr>
-                        <tr>
-                            <td colSpan="2" className="border border-black px-2 py-1">GSTIN:</td>
-                            <td colSpan="1" className="border border-black px-2 py-1"><span className="font-semibold">{invoiceDetails.gstin}</span></td>
-                            <td colSpan="2" className="border border-black px-2 py-1">Date:</td>
-                            <td colSpan="2" className="border border-black px-2 py-1 custom-width"><span className="font-semibold">{formatDate(invoiceDetails.invoiceDate)}</span></td>
-                        </tr>
-                        <tr>
-                            <td colSpan="2" className="border border-black px-2 py-1">State:</td>
-                            <td colSpan="1" className="border border-black px-2 py-1"><span className="font-semibold">{invoiceDetails.state}</span></td>
-                            <td colSpan="2" className="border border-black px-2 py-1">State Code:</td>
-                            <td colSpan="2" className="border border-black px-2 py-1"><span className="font-semibold">{invoiceDetails.stateCode}</span></td>
-                        </tr>
-                    </thead>
-                </table>
+
+                <div className="overflow-x-auto">
+                    <table className='w-full mb-2'>
+                        <thead>
+                            <tr>
+                                <td colSpan="2" className="border border-black px-2 py-1">M/s:</td>
+                                <td colSpan="1" className="border border-black px-2 py-1"><span className="font-semibold">{firstPart} <br /> {secondPart}</span></td>
+                                <td colSpan="2" className="border border-black px-2 py-1">Invoice No:</td>
+                                <td colSpan="2" className="border border-black px-2 py-1"><span className="font-semibold">{invoiceDetails.invoiceNo}</span></td>
+                            </tr>
+                            <tr>
+                                <td colSpan="2" className="border border-black px-2 py-1">GSTIN:</td>
+                                <td colSpan="1" className="border border-black px-2 py-1"><span className="font-semibold">{invoiceDetails.gstin}</span></td>
+                                <td colSpan="2" className="border border-black px-2 py-1">Date:</td>
+                                <td colSpan="2" className="border border-black px-2 py-1 custom-width"><span className="font-semibold">{formatDate(invoiceDetails.invoiceDate)}</span></td>
+                            </tr>
+                            <tr>
+                                <td colSpan="2" className="border border-black px-2 py-1">State:</td>
+                                <td colSpan="1" className="border border-black px-2 py-1"><span className="font-semibold">{invoiceDetails.state}</span></td>
+                                <td colSpan="2" className="border border-black px-2 py-1">State Code:</td>
+                                <td colSpan="2" className="border border-black px-2 py-1"><span className="font-semibold">{invoiceDetails.stateCode}</span></td>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
 
                 <div className="overflow-x-auto">
                     <table className="w-full table-auto sm:min-w-full mb-1">
