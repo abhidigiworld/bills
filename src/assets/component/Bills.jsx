@@ -4,15 +4,17 @@ import axios from 'axios';
 import Header from './Header';
 import Footer from './Footer';
 import InvoiceDetails from './InvoiceDetails';
+import UpdateInvoice from './UpdateInvoice'; 
 
 function Bills() {
   const [bills, setBills] = useState([]);
   const [alertMessage, setAlertMessage] = useState('');
-  const [selectedInvoice, setSelectedInvoice] = useState(null); // State to track the selected invoice
-  const [searchTerm, setSearchTerm] = useState(''); // State to track the search term
+  const [selectedInvoice, setSelectedInvoice] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isUpdating, setIsUpdating] = useState(false); 
+  const [invoiceToUpdate, setInvoiceToUpdate] = useState(null);
 
   useEffect(() => {
-    // Function to fetch all bills from the server
     const fetchBills = async () => {
       try {
         const response = await axios.get('https://billsbackend-git-main-abhidigiworlds-projects.vercel.app/api/invoices');
@@ -22,22 +24,18 @@ function Bills() {
       }
     };
 
-    // Call the fetchBills function when the component mounts
     fetchBills();
-  }, []); // Empty dependency array to ensure the effect runs only once
+  }, [invoiceToUpdate]);
 
   const formatDate = (dateString) => {
-    return dateString.slice(0, 10); // Slicing the first 10 characters to get 'YYYY-MM-DD'
+    return dateString.slice(0, 10);
   };
 
   const handleDelete = async (id) => {
-    // Show a confirmation dialog
     const userConfirmed = window.confirm("Are you sure you want to delete this invoice?");
-
     if (userConfirmed) {
       try {
         await axios.delete(`https://billsbackend-git-main-abhidigiworlds-projects.vercel.app/api/invoices/${id}`);
-        // Update the local state by filtering out the deleted invoice
         setBills(bills.filter((bill) => bill._id !== id));
         setAlertMessage('Invoice deleted successfully');
       } catch (error) {
@@ -47,17 +45,24 @@ function Bills() {
     }
   };
 
-  // Function to handle view details button click
   const handleViewDetails = (id) => {
     setSelectedInvoice(id);
   };
 
-  // Function to handle search input change
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
 
-  // Filtered bills based on search term
+  const handleUpdate = (bill) => {
+    setInvoiceToUpdate(bill);
+    setIsUpdating(true);
+  };
+
+  const handleUpdateClose = () => {
+    setIsUpdating(false);
+    setInvoiceToUpdate(null);
+  };
+
   const filteredBills = bills.filter((bill) =>
     bill.invoiceNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
     bill.companyName.toLowerCase().includes(searchTerm.toLowerCase())
@@ -117,10 +122,16 @@ function Bills() {
                         Delete
                       </button>
                       <button
-                        className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition duration-300 shadow-2xl shadow-blue-500/50 hover:shadow-none"
+                        className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mr-2 transition duration-300 shadow-2xl shadow-blue-500/50 hover:shadow-none"
                         onClick={() => handleViewDetails(bill._id)}
                       >
                         View Details
+                      </button>
+                      <button
+                        className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 transition duration-300 shadow-2xl shadow-yellow-500/50 hover:shadow-none"
+                        onClick={() => handleUpdate(bill)}
+                      >
+                        Update
                       </button>
                     </td>
                   </tr>
@@ -136,8 +147,25 @@ function Bills() {
           </table>
         </div>
       </div>
+      
+      <div>
+      {isUpdating ? (
+        <UpdateInvoice invoice={invoiceToUpdate} onClose={handleUpdateClose} />
+      ) : selectedInvoice ? (
+        <InvoiceDetails invoiceId={selectedInvoice} />
+      ) : (
+        <>
+          <h1 className="text-2xl font-bold mb-4">All Bills</h1>
+          {alertMessage && (
+            <div className="bg-green-200 text-green-800 border border-green-600  mb-4">
+              {alertMessage}
+            </div>
+          )}
+         
+        </>
+      )}
+    </div>
       <Footer />
-      {selectedInvoice && <InvoiceDetails invoiceId={selectedInvoice} />}
     </>
   );
 }
