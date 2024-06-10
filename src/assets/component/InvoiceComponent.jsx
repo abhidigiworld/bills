@@ -137,6 +137,7 @@ function InvoiceComponent({ invoiceDetails }) {
         return words.trim();
     };
 
+
     const handleSave = async () => {
         try {
             const response = await axios.post('https://billsbackend-git-main-abhidigiworlds-projects.vercel.app/api/invoices', {
@@ -194,23 +195,90 @@ function InvoiceComponent({ invoiceDetails }) {
             <div className="container mx-auto px-4 lg:px-8 mb-12 pb-8 font-mono">
                 <div className="flex flex-col lg:flex-row gap-4">
                     <div className="flex flex-col space-y-2 w-full lg:w-1/3 print-hidden">
-                        <input type="text" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} className="border px-3 py-2 rounded" />
-                        <input type="text" placeholder="HSN/SAC Code" value={hsnAsc} onChange={(e) => setHsnAsc(e.target.value)} className="border px-3 py-2 rounded" />
-                        <input type="number" placeholder="Quantity" value={quantity} onChange={(e) => setQuantity(e.target.value)} className="border px-3 py-2 rounded" />
-                        <input type="number" placeholder="Rate" value={rate} onChange={(e) => setRate(e.target.value)} className="border px-3 py-2 rounded" />
-                        <button onClick={addItem} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add</button>
-                        <input type="number" placeholder="Freight Charges" value={freight} onChange={(e) => setfreight(e.target.value)} className="border px-3 py-2 rounded" />
-                        <input type="number" placeholder="CGST Rate" value={cgstRate} onChange={(e) => setcgstRate(e.target.value)} className="border px-3 py-2 rounded" />
-                        <input type="number" placeholder="SGST Rate" value={sgstRate} onChange={(e) => setsgstRate(e.target.value)} className="border px-3 py-2 rounded" />
-                        <input type="number" placeholder="IGST Rate" value={igstRate} onChange={(e) => setigstRate(e.target.value)} className="border px-3 py-2 rounded" />
-                        <button onClick={calculateBill} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Generate Bill</button>
-                        <input
-                            type="text"
-                            id="grandTotalInWords"
-                            value={grandTotalInWords}
-                            onChange={handleInputChange}
-                            placeholder="Enter Grand Total In Words"
-                        />
+                        <div className="p-4 bg-white shadow-lg rounded-lg space-y-4">
+                            <input
+                                type="text"
+                                placeholder="Description"
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                className="border px-3 py-2 rounded w-full"
+                            />
+                            <input
+                                type="text"
+                                placeholder="HSN/SAC Code"
+                                value={hsnAsc}
+                                onChange={(e) => setHsnAsc(e.target.value)}
+                                className="border px-3 py-2 rounded w-full"
+                            />
+                            <input
+                                type="number"
+                                placeholder="Quantity"
+                                value={quantity}
+                                onChange={(e) => setQuantity(e.target.value)}
+                                className="border px-3 py-2 rounded w-full"
+                            />
+                            <input
+                                type="number"
+                                placeholder="Rate"
+                                value={rate}
+                                onChange={(e) => setRate(e.target.value)}
+                                className="border px-3 py-2 rounded w-full"
+                            />
+                            <button
+                                onClick={addItem}
+                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
+                            >
+                                Add
+                            </button>
+                        </div>
+
+                        <div className="p-4 bg-white shadow-lg rounded-lg space-y-4">
+                            <input
+                                type="number"
+                                placeholder="Freight Charges"
+                                value={freight}
+                                onChange={(e) => setfreight(e.target.value)}
+                                className="border px-3 py-2 rounded w-full"
+                            />
+                            <input
+                                type="number"
+                                placeholder="CGST Rate"
+                                value={cgstRate}
+                                onChange={(e) => setcgstRate(e.target.value)}
+                                className="border px-3 py-2 rounded w-full"
+                            />
+                            <input
+                                type="number"
+                                placeholder="SGST Rate"
+                                value={sgstRate}
+                                onChange={(e) => setsgstRate(e.target.value)}
+                                className="border px-3 py-2 rounded w-full"
+                            />
+                            <input
+                                type="number"
+                                placeholder="IGST Rate"
+                                value={igstRate}
+                                onChange={(e) => setigstRate(e.target.value)}
+                                className="border px-3 py-2 rounded w-full"
+                            />
+
+                            <input
+                                type="text"
+                                id="grandTotalInWords"
+                                value={grandTotalInWords}
+                                onChange={handleInputChange}
+                                placeholder="Enter Grand Total In Words"
+                                className="border px-3 py-2 rounded w-full"
+                            />
+
+                            <button
+                                onClick={calculateBill}
+                                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300"
+                            >
+                                Generate Bill
+                            </button>
+                        </div>
+
                     </div>
                     <div className='printdata w-full'>
                         <div className="relative bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-t-lg ">
@@ -232,7 +300,7 @@ function InvoiceComponent({ invoiceDetails }) {
                                 <p className="text-sm text-center">E-mail id: manojsharma.2016m@gmail.com</p>
                             </div>
                         </div>
-                        <table className='bg-gray-0 w-full mb-2 mt-2'>
+                        <table className='bg-gray-0 w-full mb-2 mt-2 overflow-x-auto'>
                             <thead>
                                 <tr>
                                     <td colSpan="2" className="border border-black px-2 py-1">M/s:</td>
@@ -256,57 +324,57 @@ function InvoiceComponent({ invoiceDetails }) {
                         </table>
 
                         <div className="overflow-x-auto">
-                    <table className="w-full table-auto sm:min-w-full mb-1">
-                        <thead>
-                            <tr className="bg-gray-200">
-                                <th className="border border-black py-1">S.No</th>
-                                <th className="border border-black py-1">Description</th>
-                                <th className="border border-black py-1">HSN/SAC Code</th>
-                                <th className="border border-black py-1">Quantity</th>
-                                <th className="border border-black py-1">Rate</th>
-                                <th className="border border-black py-1">Total Value</th>
-                            </tr>
-                        </thead>
+                            <table className="w-full table-auto sm:min-w-full mb-1">
+                                <thead>
+                                    <tr className="bg-gray-200">
+                                        <th className="border border-black py-1">S.No</th>
+                                        <th className="border border-black py-1">Description</th>
+                                        <th className="border border-black py-1">HSN/SAC Code</th>
+                                        <th className="border border-black py-1">Quantity</th>
+                                        <th className="border border-black py-1">Rate</th>
+                                        <th className="border border-black py-1">Total Value</th>
+                                    </tr>
+                                </thead>
 
-                        <tbody>
-                            {items.map((item, index) => (
-                                <tr key={index} className="text-center">
-                                    <td className="border border-black py-1">{index + 1}</td>
-                                    <td className="border border-black py-1">{item.description}</td>
-                                    <td className="border border-black py-1">{item.hsnAsc}</td>
-                                    <td className="border border-black py-1">{item.quantity}</td>
-                                    <td className="border border-black py-1">{item.rate}</td>
-                                    <td className="border border-black py-1">{item.totalValue}</td>
-                                </tr>
-                            ))}
-                            <tr className="bg-gray-0">
-                                <td colSpan="3" rowSpan="6" className="border border-black px-1 py-1">Grand Total (In Words): <span className="font-semibold">{grandTotalInWords}</span></td>
-                                <td colSpan="2" className="border border-black px-1 py-1">Subtotal:</td>
-                                <td className="border border-black px-1 py-1">{total !== undefined ? total.toFixed(2) : '-'}</td>
-                            </tr>
-                            <tr className="bg-gray-0">
-                                <td colSpan="2" className="border border-black px-1 py-1">Freight</td>
-                                <td className="border border-black px-1 py-1">{freight}</td>
-                            </tr>
-                            <tr className="bg-gray-0">
-                                <td colSpan="2" className="border border-black px-1 py-1">CGST:{cgstRate} %</td>
-                                <td className="border border-black px-1 py-1">{cgst}</td>
-                            </tr>
-                            <tr className="bg-gray-0">
-                                <td colSpan="2" className="border border-black px-1 py-1">SGST:{sgstRate} %</td>
-                                <td className="border border-black px-1 py-1">{sgst}</td>
-                            </tr>
-                            <tr className="bg-gray-0">
-                                <td colSpan="2" className="border border-black px-1 py-1">IGST:{igstRate} % </td>
-                                <td className="border border-black px-1 py-1">{igst}</td>
-                            </tr>
-                            <tr className="bg-gray-0">
-                                <td colSpan="2" className="border border-black px-1 py-1">Grand Total:</td>
-                                <td className="border border-black px-1 py-1">{grandTotal}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                                <tbody>
+                                    {items.map((item, index) => (
+                                        <tr key={index} className="text-center">
+                                            <td className="border border-black py-1">{index + 1}</td>
+                                            <td className="border border-black py-1">{item.description}</td>
+                                            <td className="border border-black py-1">{item.hsnAsc}</td>
+                                            <td className="border border-black py-1">{item.quantity}</td>
+                                            <td className="border border-black py-1">{item.rate}</td>
+                                            <td className="border border-black py-1">{item.totalValue}</td>
+                                        </tr>
+                                    ))}
+                                    <tr className="bg-gray-0">
+                                        <td colSpan="3" rowSpan="6" className="border border-black px-1 py-1">Grand Total (In Words): <span className="font-semibold">{grandTotalInWords}</span></td>
+                                        <td colSpan="2" className="border border-black px-1 py-1">Subtotal:</td>
+                                        <td className="border border-black px-1 py-1">{total !== undefined ? total.toFixed(2) : '-'}</td>
+                                    </tr>
+                                    <tr className="bg-gray-0">
+                                        <td colSpan="2" className="border border-black px-1 py-1">Freight</td>
+                                        <td className="border border-black px-1 py-1">{freight}</td>
+                                    </tr>
+                                    <tr className="bg-gray-0">
+                                        <td colSpan="2" className="border border-black px-1 py-1">CGST:{cgstRate} %</td>
+                                        <td className="border border-black px-1 py-1">{cgst}</td>
+                                    </tr>
+                                    <tr className="bg-gray-0">
+                                        <td colSpan="2" className="border border-black px-1 py-1">SGST:{sgstRate} %</td>
+                                        <td className="border border-black px-1 py-1">{sgst}</td>
+                                    </tr>
+                                    <tr className="bg-gray-0">
+                                        <td colSpan="2" className="border border-black px-1 py-1">IGST:{igstRate} % </td>
+                                        <td className="border border-black px-1 py-1">{igst}</td>
+                                    </tr>
+                                    <tr className="bg-gray-0">
+                                        <td colSpan="2" className="border border-black px-1 py-1">Grand Total:</td>
+                                        <td className="border border-black px-1 py-1">{grandTotal}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                         <div className="p-4 px-2 flex justify-between">
                             <div>
                                 <p className="text-sm text-gray-500">Terms & Conditions: </p>

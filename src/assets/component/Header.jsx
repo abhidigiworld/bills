@@ -5,7 +5,7 @@ import logo from '../images/LOGO.png';
 
 function Header() {
   return (
-    <header className="bg-blue-500 text-white py-4 print-hidden">
+    <header className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 print-hidden">
       <div className="container mx-auto flex justify-between items-center">
         <h1 className="text-2xl font-bold flex items-center">
           <Link to={'/Main'} className="flex items-center">
