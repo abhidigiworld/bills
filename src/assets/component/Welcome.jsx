@@ -9,7 +9,7 @@ function WelcomePage() {
   return (
     <>
       <Header />
-      <div className=" bg-indigo-50 min-h-screen flex flex-col justify-center items-center">
+      <div className="bg-indigo-50 h-screen flex flex-col justify-center items-center">
         <div className='flex flex-row justify-center items-center'>
           <div className="hidden md:block">
             <img
