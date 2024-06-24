@@ -2,7 +2,7 @@
 
   /* Hide all elements by default */
   .print-hidden {
-    display: none !important;
+    display: none;
   }
 
   @page {
@@ -10,7 +10,7 @@
     /* Set page size to A4 */
   }
 
-  .printdata * {
+  .printdata {
     font-size: 12px;
     /* You can adjust this value as needed */
   }

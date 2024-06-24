@@ -111,11 +111,11 @@ function InvoiceDetails({ invoiceId }) {
 
     return (
         <>
-            <div className='printdata font-mono'>
-                <div className="relative bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-t-lg mb-4">
+            <div className='printdata font-mono m-auto'>
+                <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-t-lg ">
                     <p className="text-2xl font-bold text-center">Tax Invoice</p>
                     <div className="flex justify-between items-center relative">
-                        <div className="absolute" style={{ top: '-20px', left: '-10px' }}>
+                        <div className="absolute" style={{ top: '0px', left: '-10px' }}>
                             <img src={logo} alt="Your Company Logo" className="w-32 h-auto" />
                         </div>
                         <div className="flex-1 text-center pt-2" style={{ marginLeft: '155px' }}>

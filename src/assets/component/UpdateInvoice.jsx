@@ -82,7 +82,7 @@ const UpdateInvoice = ({ invoice, onClose }) => {
     }, [subtotal, freightCharges, cgst, sgst, igst]);
 
     return (
-        <div className="mb-12">
+        <div className="mb-12 print-hidden">
             <div className='printdata font-mono'>
                 <div className="relative bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-t-lg mb-4">
                     <p className="text-2xl font-bold text-center">Update Invoice</p>

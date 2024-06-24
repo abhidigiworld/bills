@@ -195,7 +195,7 @@ function InvoiceComponent({ invoiceDetails }) {
             <div className="container mx-auto px-4 lg:px-8 mb-12 pb-8 font-mono">
                 <div className="flex flex-col lg:flex-row gap-4">
                     <div className="flex flex-col space-y-2 w-full lg:w-1/3 print-hidden">
-                        <div className="p-4 bg-white shadow-lg rounded-lg space-y-4">
+                        <div className="p-4 bg-white shadow-lg rounded-lg space-y-4 print-hidden">
                             <input
                                 type="text"
                                 placeholder="Description"
@@ -232,7 +232,7 @@ function InvoiceComponent({ invoiceDetails }) {
                             </button>
                         </div>
 
-                        <div className="p-4 bg-white shadow-lg rounded-lg space-y-4">
+                        <div className="p-4 bg-white shadow-lg rounded-lg space-y-4 print-hidden">
                             <input
                                 type="number"
                                 placeholder="Freight Charges"
@@ -281,7 +281,7 @@ function InvoiceComponent({ invoiceDetails }) {
 
                     </div>
                     <div className='printdata w-full'>
-                        <div className="relative bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-t-lg ">
+                        <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-t-lg ">
                             <p className="text-2xl font-bold text-center">Tax Invoice</p>
                             <div className="flex justify-between items-center relative">
                                 <div className="absolute" style={{ top: '-20px', left: '-10px' }}>
