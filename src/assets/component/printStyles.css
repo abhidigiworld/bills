@@ -1,50 +1,39 @@
 @media print {
-
-  /* Hide all elements by default */
+  /* Hide all elements with .print-hidden */
   .print-hidden {
-    display: none;
+    display: none !important; /* Ensure elements hidden */
   }
 
+  /* Define A4 page size */
   @page {
     size: A4;
-    /* Set page size to A4 */
+    margin: 12cm; /* Set standard 1cm margins */
   }
 
+  /* Adjust general font size */
   .printdata {
-    font-size: 12px;
-    /* You can adjust this value as needed */
+    font-size: 12px; /* Standard font size for print */
   }
 
-  /* Additional adjustments for specific elements if needed */
+  /* Example: Adjusting specific elements */
   .printdata .text-2xl {
-    font-size: 18px;
-    /* Example: reducing the size of text-2xl class */
+    font-size: 18px; /* Example: Adjusting larger headings */
   }
 
-}
-
-.fugaz-one-regular {
-  font-family: "Fugaz One", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-}
-
-.custom-width {
-  width: 120px; /* Adjust the width as needed */
-}
-
-@keyframes customBounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
+  /* Animation adjustment (if necessary) */
+  @keyframes customBounce {
+    0%, 20%, 50%, 80%, 100% {
+      transform: translateY(0);
+    }
+    40% {
+      transform: translateY(-30px);
+    }
+    60% {
+      transform: translateY(-15px);
+    }
   }
-  40% {
-    transform: translateY(-30px);
-  }
-  60% {
-    transform: translateY(-15px);
-  }
-}
 
-.animate-custom-bounce {
-  animation: customBounce 2s infinite;
+  .animate-custom-bounce {
+    animation: customBounce 2s infinite;
+  }
 }
