@@ -20,6 +20,10 @@
     font-size: 18px; /* Example: Adjusting larger headings */
   }
 
+  .custom-width{
+    width: 120px;
+  }
+
   /* Animation adjustment (if necessary) */
   @keyframes customBounce {
     0%, 20%, 50%, 80%, 100% {

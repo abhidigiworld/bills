@@ -176,8 +176,7 @@ function InvoiceComponent({ invoiceDetails }) {
     };
 
     const handlePrint = () => {
-        window.print();
-        console.log('Printing invoice...');
+        alert("Print the bill from view bills after saving");
     };
 
     const handleInputChange = (event) => {
