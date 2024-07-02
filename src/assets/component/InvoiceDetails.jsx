@@ -132,8 +132,8 @@ function InvoiceDetails({ invoiceId }) {
                     </div>
                 </div>
 
-                <div className="overflow-x-auto">
-                    <table className='w-full mb-2'>
+                <div className="overflow-x-auto mr-1">
+                    <table className='w-full mb-2 '>
                         <thead>
                             <tr>
                                 <td colSpan="2" className="border border-black px-2 py-1">M/s:</td>
@@ -157,7 +157,7 @@ function InvoiceDetails({ invoiceId }) {
                     </table>
                 </div>
 
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto mr-1">
                     <table className="w-full table-auto sm:min-w-full mb-1">
                         <thead>
                             <tr className="bg-gray-200">
