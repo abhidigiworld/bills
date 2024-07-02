@@ -189,6 +189,11 @@ function InvoiceComponent({ invoiceDetails }) {
         return `${day}-${month}-${year}`;
     };
 
+    const handleTotalValueChange = (e, id) => {
+        const newValue = e.target.value;
+        setItems(items.map(item => item.id === id ? { ...item, totalValue: newValue } : item));
+    };
+
     return (
         <>
             <div className="container mx-auto px-4 lg:px-8 mb-12 pb-8 font-mono">
@@ -343,7 +348,15 @@ function InvoiceComponent({ invoiceDetails }) {
                                             <td className="border border-black py-1">{item.hsnAsc}</td>
                                             <td className="border border-black py-1">{item.quantity}</td>
                                             <td className="border border-black py-1">{item.rate}</td>
-                                            <td className="border border-black py-1">{item.totalValue}</td>
+                                            <td className="border border-black py-1">
+                                                <input
+                                                    type="text"
+                                                    value={item.totalValue}
+                                                    onChange={(e) => handleTotalValueChange(e, item.id)}
+                                                    className="border border-black py-1"
+                                                />
+                                            </td>
+
                                         </tr>
                                     ))}
                                     <tr className="bg-gray-0">
