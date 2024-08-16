@@ -379,7 +379,7 @@ function InvoiceComponent({ invoiceDetails }) {
                                                     type="text"
                                                     value={item.description}
                                                     onChange={(e) => handleInputChange2(e, item.id, 'description')}
-                                                    className="border border-black py-1"
+                                                    // className="border border-black py-1"
                                                 />
                                             </td>
                                             <td className="border border-black py-1">
@@ -387,7 +387,7 @@ function InvoiceComponent({ invoiceDetails }) {
                                                     type="text"
                                                     value={item.hsnAsc}
                                                     onChange={(e) => handleInputChange2(e, item.id, 'hsnAsc')}
-                                                    className="border border-black py-1"
+                                                    // className="border border-black py-1"
                                                 />
                                             </td>
                                             <td className="border border-black py-1">
@@ -395,7 +395,7 @@ function InvoiceComponent({ invoiceDetails }) {
                                                     type="number"
                                                     value={item.quantity}
                                                     onChange={(e) => handleQuantityOrRateChange(e, item.id, 'quantity')}
-                                                    className="border border-black py-1"
+                                                    // className="border border-black py-1"
                                                 />
                                             </td>
                                             <td className="border border-black py-1">
@@ -403,7 +403,7 @@ function InvoiceComponent({ invoiceDetails }) {
                                                     type="number"
                                                     value={item.rate}
                                                     onChange={(e) => handleQuantityOrRateChange(e, item.id, 'rate')}
-                                                    className="border border-black py-1"
+                                                    // className="border border-black py-1"
                                                 />
                                             </td>
                                             <td className="border border-black py-1">
@@ -411,7 +411,7 @@ function InvoiceComponent({ invoiceDetails }) {
                                                     type="text"
                                                     value={item.totalValue}
                                                     onChange={(e) => handleTotalValueChange(e, item.id)}
-                                                    className="border border-black py-1"
+                                                    // className="border border-black py-1"
                                                 />
                                             </td>
                                         </tr>
