@@ -112,7 +112,7 @@ function InvoiceDetails({ invoiceId }) {
     return (
         <>
             <div className='printdata font-mono m-auto'>
-                <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-t-lg ">
+                <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-t-lg mr-1 ">
                     <p className="text-2xl font-bold text-center">Tax Invoice</p>
                     <div className="flex justify-between items-center relative">
                         <div className="absolute" style={{ top: '0px', left: '-10px' }}>

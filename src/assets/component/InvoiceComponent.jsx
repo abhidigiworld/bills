@@ -43,6 +43,7 @@ function InvoiceComponent({ invoiceDetails }) {
 
     const addItem = () => {
         const newItem = {
+            id: items.length + 1,
             description: description,
             hsnAsc: hsnAsc,
             quantity: quantity,
@@ -173,6 +174,35 @@ function InvoiceComponent({ invoiceDetails }) {
         setTimeout(() => {
             setSaveSuccess(false);
         }, 1000);
+    };
+
+    const handleInputChange2 = (e, id, field) => {
+        const value = e.target.value;
+        setItems(items.map(item => 
+            item.id === id 
+                ? { ...item, [field]: field === 'quantity' || field === 'rate' ? parseFloat(value) || 0 : value } 
+                : item
+        ));
+    };
+
+    const calculateTotalValue = (quantity, rate) => {
+        return (quantity * rate).toFixed(2);
+    };
+
+    const handleQuantityOrRateChange = (e, id, field) => {
+        const value = e.target.value;
+        setItems(items.map(item => {
+            if (item.id === id) {
+                const newQuantity = field === 'quantity' ? value : item.quantity;
+                const newRate = field === 'rate' ? value : item.rate;
+                return {
+                    ...item,
+                    [field]: parseFloat(value) || 0,
+                    totalValue: calculateTotalValue(newQuantity, newRate)
+                };
+            }
+            return item;
+        }));
     };
 
     const handlePrint = () => {
@@ -342,12 +372,40 @@ function InvoiceComponent({ invoiceDetails }) {
 
                                 <tbody>
                                     {items.map((item, index) => (
-                                        <tr key={index} className="text-center">
+                                        <tr key={item.id} className="text-center">
                                             <td className="border border-black py-1">{index + 1}</td>
-                                            <td className="border border-black py-1">{item.description}</td>
-                                            <td className="border border-black py-1">{item.hsnAsc}</td>
-                                            <td className="border border-black py-1">{item.quantity}</td>
-                                            <td className="border border-black py-1">{item.rate}</td>
+                                            <td className="border border-black py-1">
+                                                <input
+                                                    type="text"
+                                                    value={item.description}
+                                                    onChange={(e) => handleInputChange2(e, item.id, 'description')}
+                                                    className="border border-black py-1"
+                                                />
+                                            </td>
+                                            <td className="border border-black py-1">
+                                                <input
+                                                    type="text"
+                                                    value={item.hsnAsc}
+                                                    onChange={(e) => handleInputChange2(e, item.id, 'hsnAsc')}
+                                                    className="border border-black py-1"
+                                                />
+                                            </td>
+                                            <td className="border border-black py-1">
+                                                <input
+                                                    type="number"
+                                                    value={item.quantity}
+                                                    onChange={(e) => handleQuantityOrRateChange(e, item.id, 'quantity')}
+                                                    className="border border-black py-1"
+                                                />
+                                            </td>
+                                            <td className="border border-black py-1">
+                                                <input
+                                                    type="number"
+                                                    value={item.rate}
+                                                    onChange={(e) => handleQuantityOrRateChange(e, item.id, 'rate')}
+                                                    className="border border-black py-1"
+                                                />
+                                            </td>
                                             <td className="border border-black py-1">
                                                 <input
                                                     type="text"
@@ -356,7 +414,6 @@ function InvoiceComponent({ invoiceDetails }) {
                                                     className="border border-black py-1"
                                                 />
                                             </td>
-
                                         </tr>
                                     ))}
                                     <tr className="bg-gray-0">
