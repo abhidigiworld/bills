@@ -129,7 +129,8 @@ function InvoiceDetails({ invoiceId }) {
     return (
         <>
             <div className='printdata font-mono m-auto'>
-                <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-t-lg mr-1 ">
+                <div className="bg-gradient-to-r from-indigo-400 to-violet-400
+ text-white p-4 rounded-t-lg mr-1 ">
                     <p className="text-2xl font-bold text-center">Tax Invoice</p>
                     <div className="flex justify-between items-center relative">
                         <div className="absolute" style={{ top: '0px', left: '-10px' }}>
@@ -150,7 +151,7 @@ function InvoiceDetails({ invoiceId }) {
                 </div>
 
                 <div className="overflow-x-auto mr-1">
-                    <table className='w-full mb-2 '>
+                    <table className='w-full mb-2 mt-0.5 '>
                         <thead>
                             <tr>
                                 <td colSpan="2" className="border border-black px-2 py-1">M/s:</td>
@@ -265,43 +266,87 @@ function InvoiceDetails({ invoiceId }) {
                 </div>
             </div>
 
-            <div className='mb-2 pb-10 mt-4 text-center print-hidden'>
-                <div className="flex flex-wrap justify-center gap-4 mt-4">
-                    <button onClick={() => handlePrint(true, true)} className="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-700 print-hidden  transition duration-300 shadow-2xl shadow-blue-500/50 hover:shadow-none">Print with Sign and Stamp</button>
-                    <button onClick={() => handlePrint(true, false)} className="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-700 print-hidden  transition duration-300 shadow-2xl shadow-blue-500/50 hover:shadow-none">Print with Sign</button>
-                    <button onClick={() => handlePrint(false, true)} className="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-700 print-hidden  transition duration-300 shadow-2xl shadow-blue-500/50 hover:shadow-none">Print with Stamp</button>
-                    <button onClick={() => handlePrint(false, false)} className="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-700 print-hidden  transition duration-300 shadow-2xl shadow-blue-500/50 hover:shadow-none">Print without Sign and Stamp</button>
+            <div className="mb-8 p-4 bg-white rounded-lg shadow-md print-hidden">
+                {/* Section Title */}
+                <h2 className="text-base font-bold text-center text-gray-800 mb-4">
+                    Print Options and Row Settings
+                </h2>
+
+                {/* Main Content Wrapper */}
+                <div className="flex justify-between items-start mb-4">
+                    {/* Right Section: Print Buttons */}
+                    <div className="flex flex-col w-1/2 pl-2">
+                        <p className="text-sm text-gray-700 mb-2">
+                            Choose the format for printing:
+                        </p>
+                        <div className="flex flex-wrap justify-start gap-2 mt-2">
+                            <button
+                                onClick={() => handlePrint(true, true)}
+                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300 shadow-sm hover:shadow-none"
+                            >
+                                Print with Sign and Stamp
+                            </button>
+                            <button
+                                onClick={() => handlePrint(true, false)}
+                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300 shadow-sm hover:shadow-none"
+                            >
+                                Print with Sign
+                            </button>
+                            <button
+                                onClick={() => handlePrint(false, true)}
+                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300 shadow-sm hover:shadow-none"
+                            >
+                                Print with Stamp
+                            </button>
+                            <button
+                                onClick={() => handlePrint(false, false)}
+                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300 shadow-sm hover:shadow-none"
+                            >
+                                Print without Sign and Stamp
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Left Section: Adjustment Options */}
+                    <div className="flex flex-col w-1/2 pr-2">
+                        <h3 className="text-sm font-semibold text-gray-800 mb-2">
+                            Adjust Row Height and Visibility:
+                        </h3>
+
+                        {/* Show/Hide Row Button */}
+                        <button
+                            onClick={toggleVisibility}
+                            className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out shadow-sm hover:shadow-none"
+                        >
+                            {isVisible ? 'Hide' : 'Show'} Second Row
+                        </button>
+
+                        {/* Row Height Input */}
+                        <div className="flex items-center text-sm font-medium text-gray-700 mt-4">
+                            <label className="mr-2">Set Row Height (px):</label>
+                            <input
+                                type="number"
+                                value={userHeight}
+                                onChange={handleHeightChange}
+                                className="border p-2 text-sm rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
+
+                        {/* Row Count Input */}
+                        <div className="flex items-center text-sm font-medium text-gray-700 mt-4">
+                            <label className="mr-2">Enter Number of Rows:</label>
+                            <input
+                                type="number"
+                                value={numRows}
+                                onChange={handleInputChange}
+                                min="1"
+                                placeholder="Number of rows"
+                                className="border p-2 text-sm rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div className="flex mb-12 print:hidden justify-center space-x-4 p-6">
-                <label className="flex items-center text-lg font-medium text-gray-700">
-                    Set Row Height (px):
-                    <input
-                        type="number"
-                        value={userHeight}
-                        onChange={handleHeightChange}
-                        className="border p-2 ml-2 rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </label>
-
-                <button
-                    onClick={toggleVisibility}
-                    className="mt-2 p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-                >
-                    {isVisible ? 'Hide' : 'Show'} Second Row
-                </button>
-
-                <input
-                    type="number"
-                    value={numRows}
-                    onChange={handleInputChange}
-                    min="1"
-                    placeholder="Enter number of rows"
-                    className="border p-2 ml-2 rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-            </div>
-
-
         </>
     );
 }
