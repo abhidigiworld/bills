@@ -44,15 +44,13 @@ function Login() {
     <>
       <div className="flex flex-col min-h-screen bg-gradient-to-r from-sky-300 to-violet-400 p-4">
         {/* Glassy Header */}
-        <div class="flex items-center justify-center h-auto bg-transparent mt-2">
-          <header className="w-full sm:w-3/5 py-4 bg-white bg-opacity-30 backdrop-filter backdrop-blur-lg text-white text-center font-bold text-4xl shadow-lg rounded-xl animate-fade-in">
-            <h1 className="tracking-wider text-shadow-lg text-white drop-shadow-lg">
+        <div className="flex items-center justify-center h-auto bg-transparent mt-2">
+          <header className="w-full sm:w-3/5 py-4 text-white text-center font-bold text-4xl rounded-xl animate-fade-in">
+            <h1 className="tracking-wider text-shadow-lg text-white drop-shadow-lg font-sans">
               Sakshi Enterprises
             </h1>
           </header>
         </div>
-
-
 
         {/* Main Content */}
         <div className="flex justify-center items-center w-full h-full mt-2">
@@ -112,9 +110,11 @@ function Login() {
                   </div>
                   <button
                     type="submit"
-                    className="bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded-lg w-full transform transition-transform duration-200 hover:scale-105 focus:outline-none focus:shadow-outline"
+                    className="bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded-lg w-full transform transition-transform duration-200 hover:scale-105 focus:outline-none focus:shadow-outline "
                   >
+
                     Log In
+                    <span className='hover:animate-ping'>  .......✈</span>
                   </button>
                 </form>
               </div>
@@ -122,6 +122,7 @@ function Login() {
           </div>
         </div>
       </div>
+
 
     </>
   );

@@ -25,6 +25,23 @@ function InvoiceDetails({ invoiceId }) {
     const [showSignature, setShowSignature] = useState(true);
     const [showStamp, setShowStamp] = useState(true);
 
+    const [userHeight, setUserHeight] = useState(30);
+    const [isVisible, setIsVisible] = useState(false);
+    const [numRows, setNumRows] = useState(1);
+
+    const handleInputChange = (event) => {
+        setNumRows(Number(event.target.value)); // Update number of rows
+    };
+
+    const handleHeightChange = (e) => {
+        const height = e.target.value ? parseInt(e.target.value, 10) : 0;
+        setUserHeight(height);
+    };
+
+    const toggleVisibility = () => {
+        setIsVisible(!isVisible);
+    };
+
     useEffect(() => {
         if (invoiceDetails.companyName) {
             const firstCommaIndex = invoiceDetails.companyName.indexOf(',');
@@ -161,24 +178,40 @@ function InvoiceDetails({ invoiceId }) {
                     <table className="w-full table-auto sm:min-w-full mb-1">
                         <thead>
                             <tr className="bg-gray-200">
-                                <th className="border border-black py-1">S.No</th>
-                                <th className="border border-black py-1">Description</th>
-                                <th className="border border-black py-1">HSN/SAC Code</th>
-                                <th className="border border-black py-1">Quantity</th>
-                                <th className="border border-black py-1">Rate</th>
-                                <th className="border border-black py-1">Total Value</th>
+                                <th className="border border-black py-0.5">S.No</th>
+                                <th className="border border-black py-0.5">Description</th>
+                                <th className="border border-black py-0.5">HSN/SAC Code</th>
+                                <th className="border border-black py-0.5">Quantity</th>
+                                <th className="border border-black py-0.5">Rate</th>
+                                <th className="border border-black py-0.5">Total Value</th>
                             </tr>
                         </thead>
-
                         <tbody>
                             {items.map((item, index) => (
                                 <tr key={index} className="text-center">
-                                    <td className="border border-black py-1">{index + 1}</td>
-                                    <td className="border border-black py-1">{item.description}</td>
-                                    <td className="border border-black py-1">{item.hsnAsc}</td>
-                                    <td className="border border-black py-1">{item.quantity}</td>
-                                    <td className="border border-black py-1">{item.rate}</td>
-                                    <td className="border border-black py-1">{item.totalValue}</td>
+                                    <td className="border border-black p-0.5">{index + 1}</td>
+                                    <td className="border border-black p-0.5">{item.description}</td>
+                                    <td className="border border-black p-0.5">{item.hsnAsc}</td>
+                                    <td className="border border-black p-0.5">{item.quantity}</td>
+                                    <td className="border border-black p-0.5">{item.rate}</td>
+                                    <td className="border border-black p-0.5">{item.totalValue}</td>
+                                </tr>
+                            ))}
+                            {Array.from({ length: numRows }).map((_, index) => (
+                                <tr
+                                    key={index}
+                                    className="border border-black"
+                                    style={{
+                                        height: `${userHeight}px`,
+                                        display: isVisible ? 'table-row' : 'none',
+                                    }}
+                                >
+                                    <td className="border border-black"></td>
+                                    <td className="border border-black"></td>
+                                    <td className="border border-black"></td>
+                                    <td className="border border-black"></td>
+                                    <td className="border border-black"></td>
+                                    <td className="border border-black"></td>
                                 </tr>
                             ))}
                             <tr className="bg-gray-0">
@@ -210,7 +243,7 @@ function InvoiceDetails({ invoiceId }) {
                     </table>
                 </div>
 
-                <div className="p-4 px-8 flex justify-between mt-2">
+                <div className="p-2 px-8 flex justify-between mt-2">
                     <div>
                         <p className="text-xs text-gray-500">Terms & Conditions: </p>
                         <ul className="list-disc pl-2 text-sm text-gray-600 text-left">
@@ -232,7 +265,7 @@ function InvoiceDetails({ invoiceId }) {
                 </div>
             </div>
 
-            <div className='mb-12 pb-10 mt-4 text-center'>
+            <div className='mb-2 pb-10 mt-4 text-center print-hidden'>
                 <div className="flex flex-wrap justify-center gap-4 mt-4">
                     <button onClick={() => handlePrint(true, true)} className="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-700 print-hidden  transition duration-300 shadow-2xl shadow-blue-500/50 hover:shadow-none">Print with Sign and Stamp</button>
                     <button onClick={() => handlePrint(true, false)} className="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-700 print-hidden  transition duration-300 shadow-2xl shadow-blue-500/50 hover:shadow-none">Print with Sign</button>
@@ -240,6 +273,34 @@ function InvoiceDetails({ invoiceId }) {
                     <button onClick={() => handlePrint(false, false)} className="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-700 print-hidden  transition duration-300 shadow-2xl shadow-blue-500/50 hover:shadow-none">Print without Sign and Stamp</button>
                 </div>
             </div>
+            <div className="flex mb-12 print:hidden justify-center space-x-4 p-6">
+                <label className="flex items-center text-lg font-medium text-gray-700">
+                    Set Row Height (px):
+                    <input
+                        type="number"
+                        value={userHeight}
+                        onChange={handleHeightChange}
+                        className="border p-2 ml-2 rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                </label>
+
+                <button
+                    onClick={toggleVisibility}
+                    className="mt-2 p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                >
+                    {isVisible ? 'Hide' : 'Show'} Second Row
+                </button>
+
+                <input
+                    type="number"
+                    value={numRows}
+                    onChange={handleInputChange}
+                    min="1"
+                    placeholder="Enter number of rows"
+                    className="border p-2 ml-2 rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+            </div>
+
 
         </>
     );
