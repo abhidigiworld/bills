@@ -7,6 +7,8 @@ import WelcomePage from './assets/component/Welcome.jsx'
 import InvoiceForm from './assets/component/InvoiceForm.jsx'
 import Login from './assets/component/Login.jsx'
 import Bills from './assets/component/Bills.jsx'
+import AddEmployee from './assets/component/AddEmployee.jsx'
+import SalarySlip from './assets/component/SalarySlip.jsx'
 
 const router= createBrowserRouter([
   {
@@ -24,6 +26,14 @@ const router= createBrowserRouter([
   {
     path: '/new-bill',
     element: <InvoiceForm/>
+  },
+  {
+    path: '/new-employee',
+    element: <AddEmployee/>
+  },
+  {
+    path: '/new-Salary',
+    element: <SalarySlip/>
   }
 ])
 
