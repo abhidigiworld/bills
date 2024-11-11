@@ -14,7 +14,7 @@ function AddEmployee() {
 
     const fetchEmployees = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/api/employees');
+            const response = await axios.get('https://billsbackend-git-main-abhidigiworlds-projects.vercel.app/api/employees');
             setEmployees(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
             console.error("Error fetching employees:", error);
