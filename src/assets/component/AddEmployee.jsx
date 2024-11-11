@@ -24,15 +24,15 @@ function AddEmployee() {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        
         if (name === 'dateOfJoining') {
-            const formattedDate = new Date(value).toISOString().split('T')[0];            
+            const formattedDate = value.split('T')[0];;
             setEmployee({ ...employee, [name]: formattedDate });
         } else {
             setEmployee({ ...employee, [name]: value });
         }
     };
-    
+
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -47,18 +47,32 @@ function AddEmployee() {
     };
 
     const handleEdit = (emp) => {
-        setEmployee(emp);
+        // Format the date to 'yyyy-MM-dd' for the input field
+        const formattedDate = new Date(emp.dateOfJoining).toISOString().split('T')[0]; // Get the date part only
+        setEmployee({
+            ...emp, // Spread the other employee properties
+            dateOfJoining: formattedDate, // Update the dateOfJoining to the formatted date
+        });
         setIsEditing(true);
     };
 
+
     const handleDelete = async (id) => {
-        await axios.delete(`https://billsbackend-git-main-abhidigiworlds-projects.vercel.app/api/employees/${id}`);
-        fetchEmployees();
+        const isConfirmed = window.confirm("Are you sure you want to delete this employee?");
+        if (isConfirmed) {
+            try {
+                await axios.delete(`https://billsbackend-git-main-abhidigiworlds-projects.vercel.app/api/employees/${id}`);
+                fetchEmployees();  // Re-fetch employees after deletion
+            } catch (error) {
+                console.error("Error deleting employee:", error);
+            }
+        }
     };
+
 
     return (
         <>
-            <Header/>
+            <Header />
             <div className="p-6 bg-indigo-50 min-h-screen mb-8">
                 <h2 className="text-2xl font-bold mb-6 text-center text-blue-600">{isEditing ? 'Edit Employee' : 'Add Employee'}</h2>
 
@@ -137,7 +151,7 @@ function AddEmployee() {
                                 {employees.map((emp) => (
                                     <tr key={emp._id} className="hover:bg-gray-100 transition duration-200">
                                         <td className="px-6 py-4 border-b border-gray-200">{emp.name}</td>
-                                        <td className="px-6 py-4 border-b border-gray-200">{emp.dateOfJoining}</td>
+                                        <td className="px-6 py-4 border-b border-gray-200">{emp.dateOfJoining.split('T')[0]}</td>
                                         <td className="px-6 py-4 border-b border-gray-200">{emp.grossSalary}</td>
                                         <td className="px-6 py-4 border-b border-gray-200">{emp.status}</td>
                                         <td className="px-6 py-4 border-b border-gray-200 flex gap-2">
@@ -163,7 +177,7 @@ function AddEmployee() {
                     )}
                 </div>
             </div>
-            <Footer/>
+            <Footer />
         </>
     );
 }
