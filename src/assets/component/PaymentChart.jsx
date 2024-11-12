@@ -9,19 +9,18 @@ function PaymentChart() {
       .then(response => {
         const data = response.data;
 
-        // Set months for the x-axis
-        const months = ["April", "May", "June", "July", "August", "September", "October", "November", "December", "January", "February", "March"];
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        
+        // Initialize an array for storing the total payments per month (initialized to 0)
+        const paymentData = new Array(12).fill(0); 
 
-        // Calculate total payments for each month
-        const paymentData = months.map(() => 0);  // Initialize all payments to 0
-
+        // Loop through all invoices
         data.forEach(invoice => {
           const invoiceDate = new Date(invoice.invoiceDate);
-          const monthIndex = invoiceDate.getMonth(); // Get the month index from the invoice date
+          const monthIndex = invoiceDate.getMonth(); // Get the month index (0 = January, 1 = February, etc.)
 
-          // Sum up all items' total values for each invoice
-          const totalInvoiceValue = invoice.items.reduce((sum, item) => sum + item.totalValue, 0);
-          paymentData[monthIndex] += totalInvoiceValue; // Add the invoice total to the corresponding month
+          // Add the grand total of the invoice to the respective month
+          paymentData[monthIndex] += invoice.grandTotal;
         });
 
         setChartData(paymentData);  // Set the data for the chart
@@ -30,41 +29,39 @@ function PaymentChart() {
   }, []);
 
   const maxValue = Math.max(...chartData);  // Find the maximum payment value for scaling
-  const months = ["April", "May", "June", "July", "August", "September", "October", "November", "December", "January", "February", "March"];
+  const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
   return (
-    <>
-      <div className="w-full mt-10 px-4 pb-6">
-        <div className="p-4 w-full bg-gradient-to-r from-blue-300 via-purple-100 to-pink-200 shadow-lg rounded-xl">
-          <h6 className="text-center text-2xl font-semibold text-white mb-6 animate-pulse">Monthly Payment Overview</h6>
-          <div className="flex justify-center gap-6 flex-wrap">
-            {chartData.length > 0 ? (
-              chartData.map((value, index) => (
+    <div className="w-full mt-10 px-2 pb-6">
+      <div className="p-4 w-full bg-gradient-to-r from-blue-300 via-purple-100 to-pink-200 shadow-lg rounded-xl">
+        <h6 className="text-center text-2xl font-semibold text-grey-700 mb-6 animate-pulse">Monthly Billing Overview</h6>
+        <div className="flex justify-center gap-6 flex-wrap">
+          {chartData.length > 0 ? (
+            chartData.map((value, index) => (
+              value > 0 && (
                 <div key={index} className="relative flex flex-col items-center w-16 sm:w-20 lg:w-12">
                   <div
-                    className="bg-gradient-to-t from-blue-500 to-blue-700 rounded-md hover:from-blue-700 hover:to-blue-500 transition-all duration-300 ease-in-out"
+                    className="bg-gradient-to-t from-blue-500 to-blue-700 rounded-md hover:from-blue-700 hover:to-blue-500 hover:animate-pulse transition-all duration-300 ease-in-out"
                     style={{
-                      height: `${(value / maxValue) * 250}px`, // Height grows upward
-                      width: '100%',
-                      position: 'relative', // Ensure the bar's height is controlled properly
-                      bottom: 0, // Ensure it stays at the bottom of the container
+                      height: `${(value / maxValue) * 300}px`,  
+                      width: '80%',
+                      position: 'relative',
+                      bottom: 0, 
                     }}
                   >
-                    {/* Optional: Adding pulsing animation to the bars */}
-                    <div className="w-full h-full animate-pulse bg-opacity-50 rounded-md"></div>
+                    <div className="w-full h-full animate-pulse bg-opacity-80 rounded-md"></div>
                   </div>
-                  {/* Month and value should be positioned below the bars */}
                   <span className="text-sm text-gray-800 mt-2">{months[index]}</span>
                   <span className="text-sm text-gray-800 mt-1">₹{value.toFixed(2)}</span>
                 </div>
-              ))
-            ) : (
-              <p className="text-center text-gray-200">Loading data...</p>
-            )}
-          </div>
+              )
+            ))
+          ) : (
+            <p className="text-center text-gray-200">Loading data...</p>
+          )}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
