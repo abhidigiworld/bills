@@ -10,14 +10,14 @@ function WelcomePage() {
   return (
     <>
       <Header />
-      <div className="bg-indigo-50 min-h-screen flex flex-col justify-center items-center px-4 pt-8 pb-8">
+      <div className=" min-h-screen flex flex-col justify-center items-center px-4 pt-8 pb-8">
         <p className='bg-red-100 p-2 border-2 border-red-500 rounded-xl text-red-600 animate-pulse mb-6'>
           Don't touch the salary slip and add employee button; it is under development.
         </p>
         <div className="flex flex-col md:flex-row items-center justify-center gap-8 mb-8">
           <div className="hidden md:block w-full max-w-xs">
             <img
-              src={bouncingImage}
+              src="https://i.pinimg.com/originals/46/71/c6/4671c6bfaa611757647e91a3aca2ba4f.gif"
               alt="Bouncing Image"
               className="animate-custom-bounce w-full h-auto"
             />
