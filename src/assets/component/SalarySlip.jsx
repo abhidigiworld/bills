@@ -55,7 +55,7 @@ function SalarySlip() {
     return (
         <>
             <Header />
-            <div className="p-6 max-w-xl mx-auto bg-white shadow-lg rounded-lg">
+            <div className="p-6 max-w-xl mx-auto bg-white shadow-lg rounded-lg mb-8 mt-6">
                 <h2 className="text-2xl font-semibold text-center mb-4">Generate Salary Slip</h2>
 
                 <select

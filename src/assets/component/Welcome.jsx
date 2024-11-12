@@ -22,12 +22,33 @@ function WelcomePage() {
               className="animate-custom-bounce w-full h-auto"
             />
           </div>
-          <div className="flex flex-col  flex-wrap md:flex-row gap-4 w-full max-w-xs sm:max-w-md md:max-w-lg">
-            <Link to="/existing-bills" className="bg-blue-500 text-white px-6 py-3 rounded-md shadow-md hover:bg-blue-600 transition duration-300 shadow-2xl hover:shadow-none">View Existing Bills</Link>
-            <Link to="/new-bill" className="bg-green-500 text-white px-6 py-3 rounded-md shadow-md hover:bg-green-600 transition duration-300 shadow-2xl hover:shadow-none">Create New Bill</Link>
-            <Link to="/new-employee" className="bg-green-500 text-white px-6 py-3 rounded-md shadow-md hover:bg-green-600 transition duration-300 shadow-2xl hover:shadow-none">Add New Employee</Link>
-            <Link to="/new-Salary" className="bg-green-500 text-white px-6 py-3 rounded-md shadow-md hover:bg-green-600 transition duration-300 shadow-2xl hover:shadow-none">Salary Slip</Link>
+          <div className="flex flex-col flex-wrap md:flex-row gap-4 w-full max-w-xs sm:max-w-md md:max-w-lg">
+            <Link
+              to="/existing-bills"
+              className="bg-blue-500 text-white px-6 py-3 rounded-md shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-in-out hover:bg-blue-600 hover:translate-y-1"
+            >
+              View Existing Bills
+            </Link>
+            <Link
+              to="/new-bill"
+              className="bg-green-500 text-white px-6 py-3 rounded-md shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-in-out hover:bg-green-600 hover:translate-y-1"
+            >
+              Create New Bill
+            </Link>
+            <Link
+              to="/new-employee"
+              className="bg-green-500 text-white px-6 py-3 rounded-md shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-in-out hover:bg-green-600 hover:translate-y-1"
+            >
+              Add New Employee
+            </Link>
+            <Link
+              to="/new-Salary"
+              className="bg-green-500 text-white px-6 py-3 rounded-md shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-in-out hover:bg-green-600 hover:translate-y-1"
+            >
+              Salary Slip
+            </Link>
           </div>
+
         </div>
         <div className="w-full md:w-3/4 text-center mt-4">
           <PaymentChart />
