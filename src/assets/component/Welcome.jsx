@@ -50,7 +50,7 @@ function WelcomePage() {
           </div>
 
         </div>
-        <div className="w-full md:w-3/4 text-center mt-4">
+        <div className="w-full text-center mt-4">
           <PaymentChart />
         </div>
       </div>
