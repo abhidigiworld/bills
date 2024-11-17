@@ -12,7 +12,10 @@ function WelcomePage() {
       <Header />
       <div className=" min-h-screen flex flex-col justify-center items-center px-4 pt-8 pb-8">
         <p className='bg-red-100 p-2 border-2 border-red-500 rounded-xl text-red-600 animate-pulse mb-6'>
-          Don't touch the salary slip and add employee button; it is under development.
+          The "Salary Slip" button is currently under development. Please check back later.
+        </p>
+        <p className='bg-green-100 p-2 border-2 border-green-500 rounded-xl text-green-600 animate-pulse mb-6'>
+          You can use the 'Add Employee' button to add a new employee or update an existing one.
         </p>
         <div className="flex flex-col md:flex-row items-center justify-center gap-8 mb-4">
           <div className="hidden md:block w-full max-w-xs">
