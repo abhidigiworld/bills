@@ -273,9 +273,9 @@ function InvoiceDetails({ invoiceId }) {
                 </h2>
 
                 {/* Main Content Wrapper */}
-                <div className="flex justify-between items-start mb-4">
+                <div className="flex flex-col md:flex-row justify-between items-start mb-4 gap-4">
                     {/* Right Section: Print Buttons */}
-                    <div className="flex flex-col w-1/2 pl-2">
+                    <div className="flex flex-col w-full md:w-1/2 pl-0 md:pl-2">
                         <p className="text-sm text-gray-700 mb-2">
                             Choose the format for printing:
                         </p>
@@ -308,7 +308,7 @@ function InvoiceDetails({ invoiceId }) {
                     </div>
 
                     {/* Left Section: Adjustment Options */}
-                    <div className="flex flex-col w-1/2 pr-2">
+                    <div className="flex flex-col w-full md:w-1/2 pr-0 md:pr-2">
                         <h3 className="text-sm font-semibold text-gray-800 mb-2">
                             Adjust Row Height and Visibility:
                         </h3>
@@ -322,8 +322,8 @@ function InvoiceDetails({ invoiceId }) {
                         </button>
 
                         {/* Row Height Input */}
-                        <div className="flex items-center text-sm font-medium text-gray-700 mt-4">
-                            <label className="mr-2">Set Row Height (px):</label>
+                        <div className="flex flex-col md:flex-row items-center text-sm font-medium text-gray-700 mt-4">
+                            <label className="mr-2 md:mb-0 mb-2">Set Row Height (px):</label>
                             <input
                                 type="number"
                                 value={userHeight}
@@ -333,8 +333,8 @@ function InvoiceDetails({ invoiceId }) {
                         </div>
 
                         {/* Row Count Input */}
-                        <div className="flex items-center text-sm font-medium text-gray-700 mt-4">
-                            <label className="mr-2">Enter Number of Rows:</label>
+                        <div className="flex flex-col md:flex-row items-center text-sm font-medium text-gray-700 mt-4">
+                            <label className="mr-2 md:mb-0 mb-2">Enter Number of Rows:</label>
                             <input
                                 type="number"
                                 value={numRows}
@@ -346,6 +346,7 @@ function InvoiceDetails({ invoiceId }) {
                         </div>
                     </div>
                 </div>
+
             </div>
         </>
     );
