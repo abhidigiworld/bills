@@ -32,7 +32,22 @@ function SalarySlip() {
 
     const handleEmployeeSelect = (e) => {
         const emp = employees.find(emp => emp._id === e.target.value);
-        setSelectedEmployee(emp);
+        setSelectedEmployee({
+            ...emp,
+            dateOfJoining: formatDate(emp.dateOfJoining),
+        });
+    };
+
+    const handleMonthChange = (e) => {
+        setSalarySlip({ ...salarySlip, month: e.target.value });
+    };
+
+    const formatDate = (date) => {
+        const d = new Date(date);
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const year = d.getFullYear();
+        return `${day}-${month}-${year}`;
     };
 
     const calculateInHand = () => {
@@ -44,6 +59,11 @@ function SalarySlip() {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setSalarySlip({ ...salarySlip, [name]: parseFloat(value) || 0 });
+    };
+
+    const handleEmployeeDetailsChange = (e) => {
+        const { name, value } = e.target;
+        setSelectedEmployee({ ...selectedEmployee, [name]: value });
     };
 
     const handleSubmit = async () => {
@@ -76,50 +96,67 @@ function SalarySlip() {
                 {selectedEmployee && (
                     <div>
                         <div className="mb-4">
+                            <label className="block text-gray-700 mb-2">Employee Name</label>
                             <input
-                                type="number"
-                                name="workDays"
-                                placeholder="Work Days"
-                                onChange={handleInputChange}
+                                type="text"
+                                name="name"
+                                value={selectedEmployee.name}
+                                onChange={handleEmployeeDetailsChange}
                                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
+
                         <div className="mb-4">
+                            <label className="block text-gray-700 mb-2">Date of Joining</label>
                             <input
-                                type="number"
-                                name="otHours"
-                                placeholder="OT Hours"
-                                onChange={handleInputChange}
+                                type="text"
+                                name="dateOfJoining"
+                                value={selectedEmployee.dateOfJoining}
+                                onChange={handleEmployeeDetailsChange}
                                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
+
                         <div className="mb-4">
+                            <label className="block text-gray-700 mb-2">Gross Salary</label>
                             <input
                                 type="number"
-                                name="otSalary"
-                                placeholder="OT Salary"
-                                onChange={handleInputChange}
+                                name="grossSalary"
+                                value={selectedEmployee.grossSalary}
+                                onChange={handleEmployeeDetailsChange}
                                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
+
                         <div className="mb-4">
-                            <input
-                                type="number"
-                                name="advance"
-                                placeholder="Advance"
-                                onChange={handleInputChange}
+                            <label className="block text-gray-700 mb-2">Month</label>
+                            <select
+                                value={salarySlip.month}
+                                onChange={handleMonthChange}
                                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
+                            >
+                                {[
+                                    'January', 'February', 'March', 'April', 'May',
+                                    'June', 'July', 'August', 'September', 'October',
+                                    'November', 'December',
+                                ].map(month => (
+                                    <option key={month} value={month}>{month}</option>
+                                ))}
+                            </select>
                         </div>
-                        <div className="mb-4">
-                            <input
-                                type="number"
-                                name="esic"
-                                placeholder="ESIC"
-                                onChange={handleInputChange}
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        </div>
+
+                        {['workDays', 'otHours', 'otSalary', 'advance', 'esic'].map(field => (
+                            <div key={field} className="mb-4">
+                                <input
+                                    type="number"
+                                    name={field}
+                                    placeholder={field.replace(/([A-Z])/g, ' $1').toUpperCase()}
+                                    onChange={handleInputChange}
+                                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                            </div>
+                        ))}
+
                         <div className="flex space-x-4">
                             <button
                                 onClick={handleSubmit}
