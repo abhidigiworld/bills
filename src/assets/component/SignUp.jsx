@@ -28,7 +28,7 @@ function SignUp() {
     }
 
     try {
-      const response = await axios.post('https://your-backend-url.com/signup', { name, email, password });
+      const response = await axios.post('https://billsbackend-git-main-abhidigiworlds-projects.vercel.app/signup', { name, email, password });
       if (response.data.success) {
         navigate('/login');
       } else {
