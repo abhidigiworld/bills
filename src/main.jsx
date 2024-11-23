@@ -10,6 +10,7 @@ import Bills from './assets/component/Bills.jsx'
 import AddEmployee from './assets/component/AddEmployee.jsx'
 import SalarySlip from './assets/component/SalarySlip.jsx'
 import ErrorPage from './assets/component/ErrorPage.jsx'
+import SignUp from './assets/component/SignUp.jsx'
 
 const router= createBrowserRouter([
   {
@@ -35,6 +36,10 @@ const router= createBrowserRouter([
   {
     path: '/new-Salary',
     element: <SalarySlip/>
+  },
+  {
+    path: '/signup',
+    element: <SignUp/>
   },
   {
     path: '*',

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import logo from '../images/LOGO1.jpeg';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -117,6 +117,12 @@ function Login() {
                     <span className='hover:animate-ping'>  .......✈</span>
                   </button>
                 </form>
+                <p className="text-center mt-4 text-sm">
+                  Don't have an account?{' '}
+                  <Link to="/signup" className="text-violet-700 font-bold hover:underline">
+                    Sign Up
+                  </Link>
+                </p>
               </div>
             </div>
           </div>
