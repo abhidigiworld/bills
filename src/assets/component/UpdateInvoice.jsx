@@ -1,4 +1,4 @@
-import React, { useState , useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const UpdateInvoice = ({ invoice, onClose }) => {
@@ -65,21 +65,40 @@ const UpdateInvoice = ({ invoice, onClose }) => {
     const calculateGrandTotal = () => {
         // Calculate subtotal
         const subtotal = calculateSubtotal();
-        
+
         // Calculate total taxes (sum of CGST, SGST, IGST)
         const totalTaxes = parseFloat(cgst) + parseFloat(sgst) + parseFloat(igst);
-        
+
         // Calculate grand total (subtotal + freight charges + total taxes)
         const grandTotal = subtotal + parseFloat(freightCharges) + totalTaxes;
-        
+
         // Set the calculated grand total
         setGrandTotal(grandTotal.toFixed(2));
     };
-    
+
+    const handleDeleteItem = (index) => {
+        const newItems = items.filter((_, i) => i !== index); // Filter out the item at the given index
+        setItems(newItems);
+    };
+
+
     // Call calculateGrandTotal whenever any of the relevant values change
     useEffect(() => {
         calculateGrandTotal();
     }, [subtotal, freightCharges, cgst, sgst, igst]);
+
+    const addNewItemRow = () => {
+        setItems([
+            ...items,
+            {
+                description: '',
+                quantity: 0,
+                rate: 0,
+                totalValue: 0, // Add any other default fields here
+            },
+        ]);
+    };
+
 
     return (
         <div className="mb-12 print-hidden">
@@ -92,72 +111,72 @@ const UpdateInvoice = ({ invoice, onClose }) => {
                         </div>
                     </div>
                 </div>
-                
+
                 <div className="overflow-x-auto">
-                <table className='w-full mb-2 '>
-                    <thead>
-                        <tr>
-                            <td colSpan="2" className="border border-black px-2 py-1">M/s:</td>
-                            <td colSpan="1" className="border border-black px-2 py-1">
-                                <input
-                                    type="text"
-                                    className="w-full px-3 py-2 border rounded"
-                                    value={companyName}
-                                    onChange={(e) => setCompanyName(e.target.value)}
-                                />
-                            </td>
-                            <td colSpan="2" className="border border-black px-2 py-1">Invoice No:</td>
-                            <td colSpan="2" className="border border-black px-2 py-1">
-                                <input
-                                    type="text"
-                                    className="w-full px-3 py-2 border rounded"
-                                    value={invoiceNo}
-                                    onChange={(e) => setInvoiceNo(e.target.value)}
-                                />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colSpan="2" className="border border-black px-2 py-1">GSTIN:</td>
-                            <td colSpan="1" className="border border-black px-2 py-1">
-                                <input
-                                    type="text"
-                                    className="w-full px-3 py-2 border rounded"
-                                    value={gstin}
-                                    onChange={(e) => setGstin(e.target.value)}
-                                />
-                            </td>
-                            <td colSpan="2" className="border border-black px-2 py-1">Date:</td>
-                            <td colSpan="2" className="border border-black px-2 py-1 custom-width">
-                                <input
-                                    type="date"
-                                    className="w-full px-3 py-2 border rounded bg-white text-black"
-                                    value={invoiceDate}
-                                    onChange={(e) => setInvoiceDate(e.target.value)}
-                                />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colSpan="2" className="border border-black px-2 py-1">State:</td>
-                            <td colSpan="1" className="border border-black px-2 py-1">
-                                <input
-                                    type="text"
-                                    className="w-full px-3 py-2 border rounded"
-                                    value={state}
-                                    onChange={(e) => setState(e.target.value)}
-                                />
-                            </td>
-                            <td colSpan="2" className="border border-black px-2 py-1">State Code:</td>
-                            <td colSpan="2" className="border border-black px-2 py-1">
-                                <span className="font-semibold"><input
-                                    type="text"
-                                    className="w-full px-3 py-2 border rounded"
-                                    value={stateCode}
-                                    onChange={(e) => setStateCode(e.target.value)}
-                                /></span>
-                            </td>
-                        </tr>
-                    </thead>
-                </table>
+                    <table className='w-full mb-2 '>
+                        <thead>
+                            <tr>
+                                <td colSpan="2" className="border border-black px-2 py-1">M/s:</td>
+                                <td colSpan="1" className="border border-black px-2 py-1">
+                                    <input
+                                        type="text"
+                                        className="w-full px-3 py-2 border rounded"
+                                        value={companyName}
+                                        onChange={(e) => setCompanyName(e.target.value)}
+                                    />
+                                </td>
+                                <td colSpan="2" className="border border-black px-2 py-1">Invoice No:</td>
+                                <td colSpan="2" className="border border-black px-2 py-1">
+                                    <input
+                                        type="text"
+                                        className="w-full px-3 py-2 border rounded"
+                                        value={invoiceNo}
+                                        onChange={(e) => setInvoiceNo(e.target.value)}
+                                    />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colSpan="2" className="border border-black px-2 py-1">GSTIN:</td>
+                                <td colSpan="1" className="border border-black px-2 py-1">
+                                    <input
+                                        type="text"
+                                        className="w-full px-3 py-2 border rounded"
+                                        value={gstin}
+                                        onChange={(e) => setGstin(e.target.value)}
+                                    />
+                                </td>
+                                <td colSpan="2" className="border border-black px-2 py-1">Date:</td>
+                                <td colSpan="2" className="border border-black px-2 py-1 custom-width">
+                                    <input
+                                        type="date"
+                                        className="w-full px-3 py-2 border rounded bg-white text-black"
+                                        value={invoiceDate}
+                                        onChange={(e) => setInvoiceDate(e.target.value)}
+                                    />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colSpan="2" className="border border-black px-2 py-1">State:</td>
+                                <td colSpan="1" className="border border-black px-2 py-1">
+                                    <input
+                                        type="text"
+                                        className="w-full px-3 py-2 border rounded"
+                                        value={state}
+                                        onChange={(e) => setState(e.target.value)}
+                                    />
+                                </td>
+                                <td colSpan="2" className="border border-black px-2 py-1">State Code:</td>
+                                <td colSpan="2" className="border border-black px-2 py-1">
+                                    <span className="font-semibold"><input
+                                        type="text"
+                                        className="w-full px-3 py-2 border rounded"
+                                        value={stateCode}
+                                        onChange={(e) => setStateCode(e.target.value)}
+                                    /></span>
+                                </td>
+                            </tr>
+                        </thead>
+                    </table>
                 </div>
 
                 <div className="overflow-x-auto">
@@ -170,6 +189,7 @@ const UpdateInvoice = ({ invoice, onClose }) => {
                                 <th className="border border-black py-1">Quantity</th>
                                 <th className="border border-black py-1">Rate</th>
                                 <th className="border border-black py-1">Total Value</th>
+                                <th className="border border-black py-1">Delete</th>
                             </tr>
                         </thead>
 
@@ -214,10 +234,20 @@ const UpdateInvoice = ({ invoice, onClose }) => {
                                             type="number"
                                             className="w-full px-3 py-2 border rounded"
                                             value={item.totalValue} // Use totalValue directly
-                                            readOnly // Make the input read-only to prevent direct editing
+                                            readOnly
                                         />
 
                                     </td>
+                                    <td className="border border-black py-1">
+                                        {/* Delete Button */}
+                                        <button
+                                            className="px-3 py-2 bg-red-500 text-white rounded-full hover:bg-red-700"
+                                            onClick={() => handleDeleteItem(index)}
+                                        >
+                                            X
+                                        </button>
+                                    </td>
+
                                 </tr>
                             ))}
                             <tr className="bg-gray-0">
@@ -230,11 +260,11 @@ const UpdateInvoice = ({ invoice, onClose }) => {
                                     />
                                 </span></td>
                                 <td colSpan="2" className="border border-black px-1 py-1">Subtotal:</td>
-                                <td className="border border-black px-1 py-1">{subtotal.toFixed(2)}</td>
+                                <td colSpan="2" className="border border-black px-1 py-1">{subtotal.toFixed(2)}</td>
                             </tr>
                             <tr className="bg-gray-0">
                                 <td colSpan="2" className="border border-black px-1 py-1">Freight</td>
-                                <td className="border border-black px-1 py-1">
+                                <td className="border border-black px-1 py-1" colSpan="2">
                                     <input
                                         type="number"
                                         className="w-full px-3 py-2 border rounded"
@@ -245,7 +275,7 @@ const UpdateInvoice = ({ invoice, onClose }) => {
                             </tr>
                             <tr className="bg-gray-0">
                                 <td colSpan="2" className="border border-black px-1 py-1">CGST: {cgstper} %</td>
-                                <td className="border border-black px-1 py-1">
+                                <td className="border border-black px-1 py-1" colSpan="2">
                                     <input
                                         type="number"
                                         className="w-full px-3 py-2 border rounded"
@@ -256,7 +286,7 @@ const UpdateInvoice = ({ invoice, onClose }) => {
                             </tr>
                             <tr className="bg-gray-0">
                                 <td colSpan="2" className="border border-black px-1 py-1">SGST: {sgstper} %</td>
-                                <td className="border border-black px-1 py-1">
+                                <td className="border border-black px-1 py-1" colSpan="2">
                                     <input
                                         type="number"
                                         className="w-full px-3 py-2 border rounded"
@@ -267,7 +297,7 @@ const UpdateInvoice = ({ invoice, onClose }) => {
                             </tr>
                             <tr className="bg-gray-0">
                                 <td colSpan="2" className="border border-black px-1 py-1">IGST: {igstper} %</td>
-                                <td className="border border-black px-1 py-1">
+                                <td className="border border-black px-1 py-1" colSpan="2">
                                     <input
                                         type="number"
                                         className="w-full px-3 py-2 border rounded"
@@ -278,7 +308,7 @@ const UpdateInvoice = ({ invoice, onClose }) => {
                             </tr>
                             <tr className="bg-gray-0">
                                 <td colSpan="2" className="border border-black px-1 py-1">Grand Total:</td>
-                                <td className="border border-black px-1 py-1">  <input
+                                <td className="border border-black px-1 py-1" colSpan="2">  <input
                                     type="number"
                                     className="w-full px-3 py-2 border rounded"
                                     value={grandTotal}
@@ -288,6 +318,16 @@ const UpdateInvoice = ({ invoice, onClose }) => {
                         </tbody>
                     </table>
                 </div>
+
+                <div className="flex justify-center mt-4">
+                    <button
+                        onClick={addNewItemRow}
+                        className="bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg hover:bg-purple-700 transition duration-300"
+                    >
+                        + Add Row
+                    </button>
+                </div>
+
 
                 <div className="mt-4 flex justify-center pb-4">
                     <button
