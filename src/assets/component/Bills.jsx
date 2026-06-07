@@ -278,14 +278,13 @@ function Bills() {
         </div>
       </main>
 
-      {/* Details/Update overlays */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8">
-        {isUpdating ? (
-          <UpdateInvoice invoice={invoiceToUpdate} onClose={handleUpdateClose} />
-        ) : selectedInvoice ? (
-          <InvoiceDetails invoiceId={selectedInvoice} />
-        ) : null}
-      </div>
+      {/* Details/Update modals */}
+      {isUpdating && (
+        <UpdateInvoice invoice={invoiceToUpdate} onClose={handleUpdateClose} />
+      )}
+      {selectedInvoice && (
+        <InvoiceDetails invoiceId={selectedInvoice} onClose={() => setSelectedInvoice(null)} />
+      )}
       <Footer />
     </div>
   );

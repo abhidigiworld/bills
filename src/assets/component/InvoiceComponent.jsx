@@ -12,6 +12,7 @@ function InvoiceComponent({ invoiceDetails }) {
     const [hsnAsc, setHsnAsc] = useState('');
     const [quantity, setQuantity] = useState('');
     const [rate, setRate] = useState('');
+    const [totalValueInput, setTotalValueInput] = useState('');
     const [total, setTotal] = useState(0);
     const [freightCharges, setFreightCharges] = useState(0);
     const [cgst, setCgst] = useState(0);
@@ -43,19 +44,25 @@ function InvoiceComponent({ invoiceDetails }) {
     }, [invoiceDetails.msInput])
 
     const addItem = () => {
+        let finalTotal = parseFloat(totalValueInput) || 0;
+        if (!totalValueInput && quantity && rate) {
+            finalTotal = parseFloat(quantity) * parseFloat(rate);
+        }
+
         const newItem = {
             id: items.length + 1,
             description: description,
             hsnAsc: hsnAsc,
             quantity: quantity,
             rate: rate,
-            totalValue: (quantity * rate).toFixed(2)
+            totalValue: finalTotal.toFixed(2)
         };
         setItems([...items, newItem]);
         setDescription('');
         setHsnAsc('');
         setQuantity('');
         setRate('');
+        setTotalValueInput('');
     };
 
     const calculateBill = () => {
@@ -210,10 +217,12 @@ function InvoiceComponent({ invoiceDetails }) {
             if (item.id === id) {
                 const newQuantity = field === 'quantity' ? value : item.quantity;
                 const newRate = field === 'rate' ? value : item.rate;
+                const q = parseFloat(newQuantity);
+                const r = parseFloat(newRate);
                 return {
                     ...item,
-                    [field]: parseFloat(value) || 0,
-                    totalValue: calculateTotalValue(newQuantity, newRate)
+                    [field]: value,
+                    totalValue: (!isNaN(q) && !isNaN(r)) ? (q * r).toFixed(2) : item.totalValue
                 };
             }
             return item;
@@ -272,6 +281,13 @@ function InvoiceComponent({ invoiceDetails }) {
                                 placeholder="Rate"
                                 value={rate}
                                 onChange={(e) => setRate(e.target.value)}
+                                className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                            />
+                            <input
+                                type="number"
+                                placeholder="Total Value (direct whole value)"
+                                value={totalValueInput}
+                                onChange={(e) => setTotalValueInput(e.target.value)}
                                 className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                             />
                             <button

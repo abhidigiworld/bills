@@ -27,20 +27,22 @@ function InvoiceForm() {
       const response = await fetch(`${API_BASE_URL}/api/invoices`);
       const data = await response.json();
       if (data && data.length > 0) {
-        const lastInvoice = data[data.length - 1];
-        const lastInvoiceNumber = parseInt(lastInvoice.invoiceNo, 10);
-        if (!isNaN(lastInvoiceNumber)) {
-          const nextInvoiceNumber = String(lastInvoiceNumber + 1).padStart(3, '0');
-          setInvoiceNo(nextInvoiceNumber);
-        } else {
-          console.error('Invalid invoice number format:', lastInvoice.invoiceNo);
-        }
+        let maxInvoiceNumber = 0;
+        data.forEach((invoice) => {
+          const num = parseInt(invoice.invoiceNo, 10);
+          if (!isNaN(num) && num > maxInvoiceNumber) {
+            maxInvoiceNumber = num;
+          }
+        });
+        
+        const nextInvoiceNumber = String(maxInvoiceNumber + 1).padStart(3, '0');
+        setInvoiceNo(nextInvoiceNumber);
       } else {
         setInvoiceNo('001');
-        console.error('No invoices data found');
       }
     } catch (error) {
       console.error('Error fetching last invoice number:', error);
+      setInvoiceNo('001');
     }
   };
 
