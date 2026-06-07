@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -41,5 +43,40 @@ body.dark {
 }
 
 .company-name {
-  font-family: cursive !important;
+  font-family: 'Outfit', sans-serif !important;
+  letter-spacing: 0.12em;
+  font-weight: 900;
+  text-transform: uppercase;
+  background: linear-gradient(to right, #0b1936, #00b5e2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transition: all 0.3s ease;
+}
+
+.company-name:hover {
+  filter: drop-shadow(0 0 8px rgba(0, 181, 226, 0.5));
+}
+
+body.dark .company-name {
+  background: linear-gradient(to right, #3cc4ec, #ffffff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.company-name-light {
+  font-family: 'Outfit', sans-serif !important;
+  letter-spacing: 0.12em;
+  font-weight: 900;
+  text-transform: uppercase;
+  background: linear-gradient(to right, #3cc4ec, #ffffff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transition: all 0.3s ease;
+}
+
+.company-name-light:hover {
+  filter: drop-shadow(0 0 8px rgba(0, 181, 226, 0.5));
 }

@@ -172,12 +172,12 @@ function Header() {
   const isFallbackAdmin = currentUser && !currentUser.id;
 
   return (
-    <header className="bg-white dark:bg-[#181622] text-slate-800 dark:text-gray-200 border-b border-slate-200 dark:border-[#262235] px-6 py-4 print-hidden transition-colors duration-300 shadow-sm relative">
+    <header className="sticky top-0 z-50 bg-white/85 dark:bg-[#181622]/85 backdrop-blur-md text-slate-800 dark:text-gray-200 border-b border-slate-200/60 dark:border-[#262235]/65 px-6 py-3.5 print-hidden transition-colors duration-300 shadow-sm">
       <div className="container mx-auto flex justify-between items-center">
         <h1 className="text-xl font-bold flex items-center">
           <Link to={'/Main'} className="flex items-center gap-2.5 group">
             <img src={logo} alt="Sakshi Enterprises Logo" className="h-9 w-auto rounded-lg shadow-md border border-slate-200 dark:border-[#3e3857]" />
-            <span className="company-name bg-gradient-to-r from-indigo-600 to-violet-600 dark:from-violet-200 dark:to-indigo-100 bg-clip-text text-transparent tracking-wide font-extrabold transition-all group-hover:opacity-80">
+            <span className="company-name tracking-wider font-black transition-all group-hover:opacity-90">
               SAKSHI ENTERPRISES
             </span>
           </Link>
