@@ -695,29 +695,31 @@ function ManagePayrolls() {
                                 </table>
 
                                 {/* Summary Calculation (Totals) */}
-                                <div className="flex justify-between items-end p-3 border-t border-black bg-slate-50 dark:bg-slate-900/10 print:bg-transparent">
-                                    <div className="text-left text-xs font-bold pr-4 max-w-md">
+                                <div className="flex justify-between items-stretch border-t border-black bg-slate-50 dark:bg-slate-900/10 print:bg-transparent">
+                                    <div className="text-left text-xs font-bold p-3 pr-4 flex flex-col justify-end border-r border-black flex-grow">
                                         <span className="text-slate-500 print:text-gray-500 block uppercase text-[9px] mb-1">Net Pay (In Words):</span>
                                         <span className="font-extrabold text-slate-900 dark:text-white print:text-black">
                                             Rupees {convertNumberToWords(Math.floor(activeSlip.inHandSalary))} Only
                                         </span>
                                     </div>
-                                    <table className="w-80 text-xs flex-shrink-0">
-                                        <tbody>
-                                            <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
-                                                <td className="py-1 font-semibold">Gross Earnings:</td>
-                                                <td className="py-1 text-right font-bold">₹{Math.floor(activeSlip.totalSalary).toLocaleString()}</td>
-                                            </tr>
-                                            <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
-                                                <td className="py-1 font-semibold text-red-600 print:text-black">Total Deductions:</td>
-                                                <td className="py-1 text-right font-bold text-red-500 print:text-black">-₹{Math.floor((activeSlip.esic || 0) + (activeSlip.advance || 0) + (activeSlip.lunchDeduction || 0)).toLocaleString()}</td>
-                                            </tr>
-                                            <tr className="text-sm font-extrabold">
-                                                <td className="py-1.5 uppercase text-slate-900 dark:text-white print:text-black">Net Pay:</td>
-                                                <td className="py-1.5 text-right text-indigo-700 dark:text-violet-400 print:text-black">₹{Math.floor(activeSlip.inHandSalary).toLocaleString()}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                    <div className="p-3 flex-shrink-0 w-80">
+                                        <table className="w-full text-xs">
+                                            <tbody>
+                                                <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
+                                                    <td className="py-1 font-semibold">Gross Earnings:</td>
+                                                    <td className="py-1 text-right font-bold">₹{Math.floor(activeSlip.totalSalary).toLocaleString()}</td>
+                                                </tr>
+                                                <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
+                                                    <td className="py-1 font-semibold text-red-600 print:text-black">Total Deductions:</td>
+                                                    <td className="py-1 text-right font-bold text-red-500 print:text-black">-₹{Math.floor((activeSlip.esic || 0) + (activeSlip.advance || 0) + (activeSlip.lunchDeduction || 0)).toLocaleString()}</td>
+                                                </tr>
+                                                <tr className="text-sm font-extrabold">
+                                                    <td className="py-1.5 uppercase text-slate-900 dark:text-white print:text-black">Net Pay:</td>
+                                                    <td className="py-1.5 text-right text-indigo-700 dark:text-violet-400 print:text-black">₹{Math.floor(activeSlip.inHandSalary).toLocaleString()}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
 
                                 {/* Terms and Signature block */}
