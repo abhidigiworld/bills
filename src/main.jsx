@@ -12,6 +12,7 @@ import SalarySlip from './assets/component/SalarySlip.jsx'
 import ErrorPage from './assets/component/ErrorPage.jsx'
 import SignUp from './assets/component/SignUp.jsx'
 import ForgotPassword from './assets/component/ForgotPassword.jsx'
+import AttendanceRegister from './assets/component/AttendanceRegister.jsx'
 
 // Protected Route Wrapper Component
 const ProtectedRoute = ({ children, requireAdmin }) => {
@@ -59,6 +60,10 @@ const router = createBrowserRouter([
   {
     path: '/new-Salary',
     element: <ProtectedRoute requireAdmin><SalarySlip/></ProtectedRoute>
+  },
+  {
+    path: '/attendance-register',
+    element: <ProtectedRoute requireAdmin><AttendanceRegister/></ProtectedRoute>
   },
   {
     path: '*',

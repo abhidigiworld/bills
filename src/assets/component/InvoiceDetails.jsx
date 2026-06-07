@@ -267,82 +267,84 @@ function InvoiceDetails({ invoiceId }) {
                 </div>
             </div>
 
-            <div className="mb-8 p-4 bg-white rounded-lg shadow-md print-hidden">
+            <div className="mb-8 p-6 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] rounded-[2rem] shadow-xl print-hidden transition-colors duration-300">
                 {/* Section Title */}
-                <h2 className="text-base font-bold text-center text-gray-800 mb-4">
+                <h2 className="text-lg font-bold text-center text-slate-950 dark:text-white mb-4">
                     Print Options and Row Settings
                 </h2>
 
                 {/* Main Content Wrapper */}
-                <div className="flex flex-col md:flex-row justify-between items-start mb-4 gap-4">
+                <div className="flex flex-col md:flex-row justify-between items-start mb-4 gap-6">
                     {/* Right Section: Print Buttons */}
-                    <div className="flex flex-col w-full md:w-1/2 pl-0 md:pl-2">
-                        <p className="text-sm text-gray-700 mb-2">
-                            Choose the format for printing:
+                    <div className="flex flex-col w-full md:w-1/2">
+                        <p className="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+                            Choose Print Format
                         </p>
-                        <div className="flex flex-wrap justify-start gap-2 mt-2">
+                        <div className="flex flex-wrap justify-start gap-2">
                             <button
                                 onClick={() => handlePrint(true, true)}
-                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300 shadow-sm hover:shadow-none"
+                                className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow-sm transition duration-200"
                             >
-                                Print with Sign and Stamp
+                                Print with Sign & Stamp
                             </button>
                             <button
                                 onClick={() => handlePrint(true, false)}
-                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300 shadow-sm hover:shadow-none"
+                                className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow-sm transition duration-200"
                             >
                                 Print with Sign
                             </button>
                             <button
                                 onClick={() => handlePrint(false, true)}
-                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300 shadow-sm hover:shadow-none"
+                                className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow-sm transition duration-200"
                             >
                                 Print with Stamp
                             </button>
                             <button
                                 onClick={() => handlePrint(false, false)}
-                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300 shadow-sm hover:shadow-none"
+                                className="bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-2.5 px-4 rounded-xl text-xs shadow-sm transition duration-200"
                             >
-                                Print without Sign and Stamp
+                                Print Plain Invoice
                             </button>
                         </div>
                     </div>
 
                     {/* Left Section: Adjustment Options */}
-                    <div className="flex flex-col w-full md:w-1/2 pr-0 md:pr-2">
-                        <h3 className="text-sm font-semibold text-gray-800 mb-2">
-                            Adjust Row Height and Visibility:
+                    <div className="flex flex-col w-full md:w-1/2 space-y-4">
+                        <h3 className="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">
+                            Adjust Row Settings
                         </h3>
 
                         {/* Show/Hide Row Button */}
-                        <button
-                            onClick={toggleVisibility}
-                            className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out shadow-sm hover:shadow-none"
-                        >
-                            {isVisible ? 'Hide' : 'Show'} Second Row
-                        </button>
+                        <div>
+                            <button
+                                onClick={toggleVisibility}
+                                className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2 px-4 rounded-xl text-xs shadow-sm transition duration-200"
+                            >
+                                {isVisible ? 'Hide' : 'Show'} Second Row
+                            </button>
+                        </div>
 
                         {/* Row Height Input */}
-                        <div className="flex flex-col md:flex-row items-center text-sm font-medium text-gray-700 mt-4">
-                            <label className="mr-2 md:mb-0 mb-2">Set Row Height (px):</label>
+                        <div className="flex items-center text-sm font-medium">
+                            <label className="mr-3 text-slate-600 dark:text-gray-300 min-w-[150px]">Row Height (px):</label>
                             <input
                                 type="number"
                                 value={userHeight}
                                 onChange={handleHeightChange}
-                                className="border p-2 text-sm rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="px-3 py-1.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition text-center w-28"
                             />
                         </div>
 
                         {/* Row Count Input */}
-                        <div className="flex flex-col md:flex-row items-center text-sm font-medium text-gray-700 mt-4">
-                            <label className="mr-2 md:mb-0 mb-2">Enter Number of Rows:</label>
+                        <div className="flex items-center text-sm font-medium">
+                            <label className="mr-3 text-slate-600 dark:text-gray-300 min-w-[150px]">Number of Rows:</label>
                             <input
                                 type="number"
                                 value={numRows}
                                 onChange={handleInputChange}
                                 min="1"
                                 placeholder="Number of rows"
-                                className="border p-2 text-sm rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="px-3 py-1.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition text-center w-28"
                             />
                         </div>
                     </div>

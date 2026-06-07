@@ -113,8 +113,8 @@ function WelcomePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-indigo-50">
-        <div className="text-xl font-semibold text-indigo-600 animate-pulse">Loading Dashboard...</div>
+      <div className="min-h-screen flex items-center justify-center bg-indigo-50 dark:bg-[#110f18] transition-colors duration-300">
+        <div className="text-xl font-semibold text-indigo-600 dark:text-violet-400 animate-pulse">Loading Dashboard...</div>
       </div>
     );
   }
@@ -122,31 +122,31 @@ function WelcomePage() {
   const isAdmin = currentUser?.role === 'admin';
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen bg-indigo-50 dark:bg-[#110f18] text-slate-800 dark:text-gray-200 transition-colors duration-300">
       <Header />
-      <div className="min-h-screen bg-indigo-50 px-4 py-8">
+      <main className="flex-grow p-4 sm:p-6 md:p-8">
         <div className="max-w-6xl mx-auto">
           {/* Header Message */}
-          <div className="bg-white rounded-3xl p-6 shadow-md mb-8 flex flex-col md:flex-row justify-between items-center bg-opacity-80 backdrop-blur-md">
+          <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] rounded-[2rem] p-6 shadow-xl mb-8 flex flex-col md:flex-row justify-between items-center transition-colors duration-300">
             <div>
-              <h2 className="text-3xl font-extrabold text-indigo-900">
+              <h2 className="text-3xl font-extrabold text-indigo-900 dark:text-white tracking-tight">
                 Welcome back, {currentUser?.name}!
               </h2>
-              <p className="text-gray-600 mt-1">
-                Role: <span className="font-bold text-indigo-600 capitalize">{currentUser?.role}</span>
+              <p className="text-slate-500 dark:text-gray-400 mt-1.5 font-medium">
+                Role: <span className="font-bold text-indigo-600 dark:text-violet-400 capitalize">{currentUser?.role}</span>
               </p>
             </div>
             {isAdmin && (
               <div className="mt-4 md:mt-0 flex gap-2">
                 <Link
                   to="/new-bill"
-                  className="bg-indigo-600 text-white font-bold px-4 py-2 rounded-xl shadow hover:bg-indigo-700 transition"
+                  className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold px-4 py-2.5 rounded-xl shadow-md transition duration-200"
                 >
                   + New Bill
                 </Link>
                 <Link
                   to="/new-employee"
-                  className="bg-indigo-600 text-white font-bold px-4 py-2 rounded-xl shadow hover:bg-indigo-700 transition"
+                  className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold px-4 py-2.5 rounded-xl shadow-md transition duration-200"
                 >
                   + Add Employee
                 </Link>
@@ -155,73 +155,98 @@ function WelcomePage() {
           </div>
 
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-3xl mb-8 shadow-sm text-center font-medium">
+            <div className="bg-red-100 dark:bg-red-950/40 border border-red-400 dark:border-red-900/50 text-red-700 dark:text-red-400 px-6 py-4 rounded-[2rem] mb-8 shadow-sm text-center font-medium">
               {error}
             </div>
           )}
 
           {isAdmin ? (
             /* ADMIN DASHBOARD */
-            <div className="space-y-8">
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="space-y-8 animate-fade-in">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
                 <Link
                   to="/existing-bills"
                   className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
                 >
                   <h3 className="text-lg font-bold">Existing Invoices</h3>
-                  <p className="text-blue-100 text-sm mt-1">View, search, edit, or delete sales records</p>
+                  <p className="text-blue-100 text-xs mt-1 leading-relaxed">View, search, edit, or delete sales records</p>
                 </Link>
                 <Link
                   to="/new-bill"
                   className="bg-gradient-to-br from-teal-500 to-emerald-600 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
                 >
                   <h3 className="text-lg font-bold">Create Invoice</h3>
-                  <p className="text-emerald-100 text-sm mt-1">Generate tax bills and print reports</p>
+                  <p className="text-emerald-100 text-xs mt-1 leading-relaxed">Generate tax bills and print reports</p>
                 </Link>
                 <Link
                   to="/new-employee"
                   className="bg-gradient-to-br from-purple-500 to-pink-600 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
                 >
                   <h3 className="text-lg font-bold">Manage Employees</h3>
-                  <p className="text-purple-100 text-sm mt-1">Manage staff details and gross salaries</p>
+                  <p className="text-purple-100 text-xs mt-1 leading-relaxed">Manage staff details and gross salaries</p>
                 </Link>
                 <Link
                   to="/new-Salary"
                   className="bg-gradient-to-br from-amber-500 to-orange-600 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
                 >
                   <h3 className="text-lg font-bold">Payroll & Slips</h3>
-                  <p className="text-amber-100 text-sm mt-1">Calculate monthly payouts and generate slips</p>
+                  <p className="text-amber-100 text-xs mt-1 leading-relaxed">Calculate monthly payouts and generate slips</p>
+                </Link>
+                <Link
+                  to="/attendance-register"
+                  className="bg-gradient-to-br from-indigo-500 to-violet-600 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+                >
+                  <h3 className="text-lg font-bold">Attendance Register</h3>
+                  <p className="text-indigo-100 text-xs mt-1 leading-relaxed">View monthly employee attendance grids & OT</p>
                 </Link>
               </div>
 
               {/* Chart Section */}
-              <div className="bg-white rounded-3xl p-6 shadow-md">
+              <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] rounded-[2rem] p-6 shadow-xl transition-colors duration-300">
+                <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-4">Payout Analysis</h3>
                 <PaymentChart />
               </div>
             </div>
           ) : (
             /* EMPLOYEE DASHBOARD */
             profile && (
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in">
                 {/* Left Column: Profile Card and Attendance module */}
                 <div className="space-y-8 lg:col-span-1">
                   {/* Profile Card */}
-                  <div className="bg-white rounded-3xl p-6 shadow-md border border-indigo-100 bg-opacity-95">
-                    <h3 className="text-xl font-bold text-indigo-950 mb-4 border-b pb-2">Employee Profile</h3>
-                    <div className="space-y-3">
+                  <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] rounded-[2rem] p-6 shadow-xl transition-colors duration-300">
+                    <h3 className="text-xl font-bold text-indigo-950 dark:text-white mb-4 border-b border-slate-100 dark:border-[#262235] pb-2.5">Employee Profile</h3>
+                    <div className="space-y-3.5">
                       <div>
-                        <span className="text-xs text-gray-500 uppercase block font-semibold">Joined Date</span>
-                        <span className="text-sm font-medium text-gray-800">
+                        <span className="text-xs text-slate-500 dark:text-gray-400 uppercase block font-semibold tracking-wider">Joined Date</span>
+                        <span className="text-sm font-semibold text-slate-800 dark:text-gray-200">
                           {profile.dateOfJoining ? new Date(profile.dateOfJoining).toLocaleDateString() : '-'}
                         </span>
                       </div>
                       <div>
-                        <span className="text-xs text-gray-500 uppercase block font-semibold">Gross Salary</span>
-                        <span className="text-lg font-bold text-indigo-700">₹{profile.grossSalary?.toLocaleString()} / month</span>
+                        <span className="text-xs text-slate-500 dark:text-gray-400 uppercase block font-semibold tracking-wider">Designation</span>
+                        <span className="text-sm font-semibold text-slate-800 dark:text-gray-200">
+                          {profile.designation || 'Staff'}
+                        </span>
                       </div>
                       <div>
-                        <span className="text-xs text-gray-500 uppercase block font-semibold">Status</span>
-                        <span className={`inline-block text-xs font-bold px-2 py-0.5 rounded-full ${profile.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                        <span className="text-xs text-slate-500 dark:text-gray-400 uppercase block font-semibold tracking-wider">Location</span>
+                        <span className="text-sm font-semibold text-slate-800 dark:text-gray-200">
+                          {profile.location || 'New Delhi'}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-xs text-slate-500 dark:text-gray-400 uppercase block font-semibold tracking-wider">Gross Salary</span>
+                        <span className="text-lg font-bold text-indigo-600 dark:text-violet-400">₹{Math.floor(profile.grossSalary)?.toLocaleString()} / month</span>
+                      </div>
+                      <div>
+                        <span className="text-xs text-slate-500 dark:text-gray-400 uppercase block font-semibold tracking-wider">Status</span>
+                        <span className={`inline-block text-xs font-bold px-2.5 py-0.5 rounded-full ${
+                          profile.status === 'Active' ? 'bg-green-100 dark:bg-green-950/50 text-green-700 dark:text-green-400' :
+                          profile.status === 'On Hold' ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400' :
+                          profile.status === 'On Holiday' ? 'bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-400' :
+                          'bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-400'
+                        }`}>
                           {profile.status}
                         </span>
                       </div>
@@ -229,10 +254,10 @@ function WelcomePage() {
                   </div>
 
                   {/* Attendance Check-in */}
-                  <div className="bg-white rounded-3xl p-6 shadow-md border border-indigo-100 bg-opacity-95">
-                    <h3 className="text-xl font-bold text-indigo-950 mb-4 border-b pb-2">Daily Attendance</h3>
+                  <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] rounded-[2rem] p-6 shadow-xl transition-colors duration-300">
+                    <h3 className="text-xl font-bold text-indigo-950 dark:text-white mb-4 border-b border-slate-100 dark:border-[#262235] pb-2.5">Daily Attendance</h3>
                     <div className="text-center py-4">
-                      <p className="text-sm text-gray-600 mb-4">
+                      <p className="text-sm text-slate-600 dark:text-gray-300 mb-4 font-medium">
                         {!isCheckedInToday 
                           ? "You haven't checked in yet today." 
                           : isCheckedOutToday 
@@ -244,26 +269,26 @@ function WelcomePage() {
                         {!isCheckedInToday ? (
                           <button
                             onClick={handleCheckIn}
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl shadow transition transform hover:scale-[1.02] active:scale-[0.98]"
+                            className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2.5 px-6 rounded-xl shadow transition duration-200"
                           >
                             Check In
                           </button>
                         ) : !isCheckedOutToday ? (
                           <button
                             onClick={handleCheckOut}
-                            className="bg-red-500 hover:bg-red-600 text-white font-bold py-2.5 px-6 rounded-xl shadow transition transform hover:scale-[1.02] active:scale-[0.98]"
+                            className="bg-red-500 hover:bg-red-600 text-white font-bold py-2.5 px-6 rounded-xl shadow transition duration-200"
                           >
                             Check Out
                           </button>
                         ) : (
-                          <span className="bg-green-100 text-green-700 font-bold py-2 px-6 rounded-xl border border-green-300">
+                          <span className="bg-green-100 dark:bg-green-950/40 text-green-700 dark:text-green-400 font-bold py-2 px-6 rounded-xl border border-green-300 dark:border-green-900/40">
                             Shift Completed ✓
                           </span>
                         )}
                       </div>
 
                       {todayRecord && (
-                        <div className="mt-4 text-xs text-gray-500 space-y-1 border-t pt-3 text-left">
+                        <div className="mt-4 text-xs text-slate-500 dark:text-gray-400 space-y-1.5 border-t border-slate-100 dark:border-[#262235] pt-3.5 text-left">
                           <p><strong>Check In Time:</strong> {formatTime(todayRecord.checkIn)}</p>
                           {todayRecord.checkOut && (
                             <p><strong>Check Out Time:</strong> {formatTime(todayRecord.checkOut)}</p>
@@ -277,13 +302,13 @@ function WelcomePage() {
                 {/* Right Column: Salary slips and Attendance logs */}
                 <div className="lg:col-span-2 space-y-8">
                   {/* Salary Slips History */}
-                  <div className="bg-white rounded-3xl p-6 shadow-md border border-indigo-100">
-                    <h3 className="text-xl font-bold text-indigo-950 mb-4 border-b pb-2">My Salary Slips</h3>
+                  <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] rounded-[2rem] p-6 shadow-xl transition-colors duration-300">
+                    <h3 className="text-xl font-bold text-indigo-950 dark:text-white mb-4 border-b border-slate-100 dark:border-[#262235] pb-2.5">My Salary Slips</h3>
                     <div className="overflow-x-auto">
                       {salarySlips.length > 0 ? (
                         <table className="w-full text-sm text-left">
                           <thead>
-                            <tr className="border-b text-gray-500 font-semibold uppercase text-xs">
+                            <tr className="border-b border-slate-100 dark:border-[#262235] text-slate-500 dark:text-gray-400 font-semibold uppercase text-xs">
                               <th className="py-2">Month</th>
                               <th className="py-2">Work Days</th>
                               <th className="py-2">Total Pay</th>
@@ -293,15 +318,15 @@ function WelcomePage() {
                           </thead>
                           <tbody>
                             {salarySlips.map((slip) => (
-                              <tr key={slip._id} className="border-b hover:bg-gray-50">
-                                <td className="py-3 font-semibold text-gray-900">{slip.monthOfSalary}</td>
-                                <td className="py-3 text-gray-600">{slip.workDays} days</td>
-                                <td className="py-3 text-gray-700">₹{slip.totalSalary?.toLocaleString()}</td>
-                                <td className="py-3 font-bold text-green-600">₹{slip.inHandSalary?.toLocaleString()}</td>
+                              <tr key={slip._id} className="border-b border-slate-50 dark:border-[#262235]/40 hover:bg-slate-50 dark:hover:bg-[#201d2c]/50 transition">
+                                <td className="py-3 font-semibold text-slate-950 dark:text-white">{slip.monthOfSalary}</td>
+                                <td className="py-3 text-slate-600 dark:text-gray-300">{slip.workDays} days</td>
+                                <td className="py-3 text-slate-700 dark:text-gray-200">₹{Math.floor(slip.totalSalary)?.toLocaleString()}</td>
+                                <td className="py-3 font-bold text-green-600 dark:text-green-400">₹{Math.floor(slip.inHandSalary)?.toLocaleString()}</td>
                                 <td className="py-3">
                                   <button
                                     onClick={() => setActiveSlip(slip)}
-                                    className="bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-bold px-3 py-1 rounded-lg text-xs transition"
+                                    className="bg-indigo-50 dark:bg-indigo-950 hover:bg-indigo-100 dark:hover:bg-indigo-900 text-indigo-700 dark:text-indigo-300 font-bold px-3 py-1.5 rounded-lg text-xs transition"
                                   >
                                     View Slip
                                   </button>
@@ -311,19 +336,19 @@ function WelcomePage() {
                           </tbody>
                         </table>
                       ) : (
-                        <p className="text-gray-500 py-4 text-center">No salary slips generated yet.</p>
+                        <p className="text-gray-500 dark:text-gray-400 py-4 text-center">No salary slips generated yet.</p>
                       )}
                     </div>
                   </div>
 
                   {/* Attendance Log */}
-                  <div className="bg-white rounded-3xl p-6 shadow-md border border-indigo-100">
-                    <h3 className="text-xl font-bold text-indigo-950 mb-4 border-b pb-2">Recent Attendance Logs</h3>
+                  <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] rounded-[2rem] p-6 shadow-xl transition-colors duration-300">
+                    <h3 className="text-xl font-bold text-indigo-950 dark:text-white mb-4 border-b border-slate-100 dark:border-[#262235] pb-2.5">Recent Attendance Logs</h3>
                     <div className="overflow-y-auto max-h-80">
                       {attendance.length > 0 ? (
                         <table className="w-full text-sm text-left">
                           <thead>
-                            <tr className="border-b text-gray-500 font-semibold uppercase text-xs">
+                            <tr className="border-b border-slate-100 dark:border-[#262235] text-slate-500 dark:text-gray-400 font-semibold uppercase text-xs">
                               <th className="py-2">Date</th>
                               <th className="py-2">Check In</th>
                               <th className="py-2">Check Out</th>
@@ -332,12 +357,16 @@ function WelcomePage() {
                           </thead>
                           <tbody>
                             {attendance.map((log) => (
-                              <tr key={log._id} className="border-b hover:bg-gray-50">
-                                <td className="py-3 font-medium text-gray-900">{log.date}</td>
-                                <td className="py-3 text-gray-600">{formatTime(log.checkIn)}</td>
-                                <td className="py-3 text-gray-600">{formatTime(log.checkOut)}</td>
+                              <tr key={log._id} className="border-b border-slate-50 dark:border-[#262235]/40 hover:bg-slate-50 dark:hover:bg-[#201d2c]/50 transition">
+                                <td className="py-3 font-medium text-slate-900 dark:text-white">{log.date}</td>
+                                <td className="py-3 text-slate-600 dark:text-gray-300">{formatTime(log.checkIn)}</td>
+                                <td className="py-3 text-slate-600 dark:text-gray-300">{formatTime(log.checkOut)}</td>
                                 <td className="py-3">
-                                  <span className={`inline-block text-xs font-bold px-2 py-0.5 rounded-full bg-green-100 text-green-700`}>
+                                  <span className={`inline-block text-xs font-bold px-2.5 py-0.5 rounded-full ${
+                                    log.status === 'Present' ? 'bg-green-100 dark:bg-green-950/50 text-green-700 dark:text-green-400' :
+                                    log.status === 'Leave' ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400' :
+                                    'bg-red-100 dark:bg-red-950/50 text-red-700 dark:text-red-400'
+                                  }`}>
                                     {log.status}
                                   </span>
                                 </td>
@@ -346,7 +375,7 @@ function WelcomePage() {
                           </tbody>
                         </table>
                       ) : (
-                        <p className="text-gray-500 py-4 text-center">No attendance logs available.</p>
+                        <p className="text-gray-500 dark:text-gray-400 py-4 text-center">No attendance logs available.</p>
                       )}
                     </div>
                   </div>
@@ -355,18 +384,18 @@ function WelcomePage() {
             )
           )}
         </div>
-      </div>
+      </main>
 
       {/* Salary Slip Modal */}
       {activeSlip && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 print:bg-white print:p-0 print:absolute print:inset-0">
-          <div className="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl relative overflow-y-auto max-h-[90vh] print:shadow-none print:max-h-full print:rounded-none">
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50 print:bg-white print:p-0 print:absolute print:inset-0 backdrop-blur-sm">
+          <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] text-slate-900 dark:text-gray-200 rounded-[2rem] p-8 max-w-lg w-full shadow-2xl relative overflow-y-auto max-h-[90vh] print:shadow-none print:max-h-full print:rounded-none transition-colors duration-300">
             {/* Modal Header */}
-            <div className="flex justify-between items-center border-b pb-4 mb-4 print:hidden">
-              <h3 className="text-xl font-bold text-indigo-950">Salary Slip Details</h3>
+            <div className="flex justify-between items-center border-b border-slate-100 dark:border-[#262235] pb-4 mb-4 print:hidden">
+              <h3 className="text-xl font-bold text-slate-950 dark:text-white">Salary Slip Details</h3>
               <button
                 onClick={() => setActiveSlip(null)}
-                className="text-gray-400 hover:text-gray-600 text-2xl font-bold font-sans"
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-white text-2xl font-bold focus:outline-none"
               >
                 &times;
               </button>
@@ -375,61 +404,81 @@ function WelcomePage() {
             {/* Slip Content */}
             <div className="font-mono">
               <div className="text-center mb-6">
-                <h2 className="text-2xl font-bold text-indigo-900 uppercase">Sakshi Enterprises</h2>
-                <p className="text-xs text-gray-500">Mahavir Enclave, West Delhi - 110059</p>
-                <p className="text-sm font-semibold mt-1">Salary Slip for {activeSlip.monthOfSalary}</p>
+                <h2 className="text-2xl font-bold text-indigo-900 dark:text-violet-400 uppercase">Sakshi Enterprises</h2>
+                <p className="text-xs text-slate-500 dark:text-gray-400">Mahavir Enclave, West Delhi - 110059</p>
+                <p className="text-sm font-semibold mt-1.5 text-slate-800 dark:text-white border-y border-dashed border-slate-200 dark:border-[#262235] py-1">
+                  Salary Slip for {activeSlip.monthOfSalary}
+                </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 text-sm border-t border-b py-4 mb-4">
+              <div className="grid grid-cols-2 gap-4 text-sm border-b border-slate-200 dark:border-[#262235] pb-4 mb-4">
                 <div>
-                  <span className="text-gray-500 block text-xs">Employee Name:</span>
-                  <span className="font-bold text-gray-800">{activeSlip.employeeId?.name || profile?.name}</span>
+                  <span className="text-slate-500 dark:text-gray-400 block text-xs font-bold uppercase">Employee Name:</span>
+                  <span className="font-bold text-slate-800 dark:text-white">{activeSlip.employeeId?.name || profile?.name}</span>
                 </div>
                 <div>
-                  <span className="text-gray-500 block text-xs">Joined Date:</span>
-                  <span className="font-medium text-gray-800">
-                    {profile?.dateOfJoining ? new Date(profile.dateOfJoining).toLocaleDateString() : '-'}
+                  <span className="text-slate-500 dark:text-gray-400 block text-xs font-bold uppercase">Joined Date:</span>
+                  <span className="font-semibold text-slate-800 dark:text-white">
+                    {activeSlip.employeeId?.dateOfJoining 
+                      ? new Date(activeSlip.employeeId.dateOfJoining).toLocaleDateString()
+                      : (profile?.dateOfJoining ? new Date(profile.dateOfJoining).toLocaleDateString() : '-')}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-slate-500 dark:text-gray-400 block text-xs font-bold uppercase">Gross Salary:</span>
+                  <span className="font-bold text-indigo-700 dark:text-violet-400">
+                    ₹{activeSlip.employeeId?.grossSalary 
+                      ? Math.floor(activeSlip.employeeId.grossSalary).toLocaleString()
+                      : (profile?.grossSalary ? Math.floor(profile.grossSalary).toLocaleString() : '-')}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-slate-500 dark:text-gray-400 block text-xs font-bold uppercase">Designation:</span>
+                  <span className="font-medium text-slate-800 dark:text-white">
+                    {activeSlip.employeeId?.designation || profile?.designation || 'Staff'}
                   </span>
                 </div>
               </div>
 
-              <div className="space-y-2 border-b pb-4 mb-4 text-sm">
+              <div className="space-y-2 border-b border-slate-200 dark:border-[#262235] pb-4 mb-4 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Work Days:</span>
-                  <span className="font-bold">{activeSlip.workDays} days</span>
+                  <span className="text-slate-600 dark:text-gray-400">No. of Workday:</span>
+                  <span className="font-bold text-slate-800 dark:text-white">{activeSlip.workDays} days</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Salary earned by days:</span>
-                  <span className="font-semibold">₹{activeSlip.salaryByWorkDays?.toFixed(2)}</span>
+                  <span className="text-slate-600 dark:text-gray-400">Salary earned:</span>
+                  <span className="font-semibold text-slate-800 dark:text-white">₹{Math.floor(activeSlip.salaryByWorkDays || 0).toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Overtime Hours:</span>
-                  <span className="font-semibold">{activeSlip.overtimeHours || 0} hrs</span>
+                  <span className="text-slate-600 dark:text-gray-400">O.T. ({activeSlip.overtimeHours || 0} hrs):</span>
+                  <span className="font-semibold text-slate-800 dark:text-white">₹{Math.floor(activeSlip.overtimeSalary || 0).toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Overtime Pay:</span>
-                  <span className="font-semibold">₹{(activeSlip.overtimeSalary || 0).toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between border-t pt-2 font-bold text-gray-800">
-                  <span>Total Pay (Gross):</span>
-                  <span>₹{activeSlip.totalSalary?.toFixed(2)}</span>
+                <div className="flex justify-between border-t border-slate-100 dark:border-[#262235] pt-2 font-bold text-slate-900 dark:text-white">
+                  <span>Total Salary (Gross):</span>
+                  <span>₹{Math.floor(activeSlip.totalSalary || 0).toLocaleString()}</span>
                 </div>
               </div>
 
-              <div className="space-y-2 border-b pb-4 mb-4 text-sm text-red-600">
+              <div className="space-y-2 border-b border-slate-200 dark:border-[#262235] pb-4 mb-4 text-sm text-red-600 dark:text-red-400">
                 <div className="flex justify-between">
                   <span>ESIC Deduction:</span>
-                  <span>- ₹{(activeSlip.esic || 0).toFixed(2)}</span>
+                  <span>- ₹{Math.floor(activeSlip.esic || 0).toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Advance Taken:</span>
-                  <span>- ₹{(activeSlip.advance || 0).toFixed(2)}</span>
+                  <span>Advance:</span>
+                  <span>- ₹{Math.floor(activeSlip.advance || 0).toLocaleString()}</span>
                 </div>
+                {activeSlip.lunchDeduction > 0 && (
+                  <div className="flex justify-between">
+                    <span>Lunch ({activeSlip.lunchDays || 0} days @ ₹{activeSlip.lunchRate || 0}):</span>
+                    <span>- ₹{Math.floor(activeSlip.lunchDeduction || 0).toLocaleString()}</span>
+                  </div>
+                )}
               </div>
 
-              <div className="flex justify-between items-center bg-indigo-50 p-4 rounded-xl mb-6">
-                <span className="font-extrabold text-indigo-950 text-base">Net In-Hand Salary:</span>
-                <span className="font-extrabold text-indigo-800 text-xl">₹{activeSlip.inHandSalary?.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+              <div className="flex justify-between items-center bg-indigo-50 dark:bg-[#201d2c] p-4 rounded-2xl mb-6 transition-colors duration-300">
+                <span className="font-extrabold text-slate-900 dark:text-white text-base">In Hand:</span>
+                <span className="font-extrabold text-indigo-700 dark:text-violet-400 text-xl">₹{Math.floor(activeSlip.inHandSalary || 0).toLocaleString()}</span>
               </div>
             </div>
 
@@ -437,13 +486,13 @@ function WelcomePage() {
             <div className="flex gap-4 print:hidden">
               <button
                 onClick={() => window.print()}
-                className="w-full bg-indigo-600 text-white font-bold py-2.5 px-4 rounded-xl shadow hover:bg-indigo-700 transition"
+                className="w-full bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-xl shadow transition duration-200"
               >
                 Print Slip
               </button>
               <button
                 onClick={() => setActiveSlip(null)}
-                className="w-full bg-gray-300 text-gray-700 font-bold py-2.5 px-4 rounded-xl shadow hover:bg-gray-400 transition"
+                className="w-full bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-3 px-4 rounded-xl shadow transition duration-200"
               >
                 Close
               </button>
@@ -453,7 +502,7 @@ function WelcomePage() {
       )}
 
       <Footer />
-    </>
+    </div>
   );
 }
 

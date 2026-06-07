@@ -86,54 +86,54 @@ function InvoiceComponent({ invoiceDetails }) {
     const convertNumberToWords = (number) => {
         if (number === 0) return 'Zero';
 
-        const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
-        const teens = ['', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
-        const tens = ['', 'Ten', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+        const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 
+                      'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+        const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
 
-        const convertToWords = (num) => {
+        const convertToWordsLessThanThousand = (num) => {
             let words = '';
-
             if (num >= 100) {
                 words += ones[Math.floor(num / 100)] + ' Hundred ';
                 num %= 100;
             }
-
             if (num >= 20) {
                 words += tens[Math.floor(num / 10)] + ' ';
                 num %= 10;
             }
-
-            if (num >= 1 && num <= 9) {
+            if (num > 0) {
                 words += ones[num] + ' ';
             }
-
             return words.trim();
         };
 
-        const scales = ['', 'Thousand', 'Lakh', 'Crore', 'Arab', 'Kharab', 'Neel', 'Padma', 'Shankh', 'Maha Shankh'];
-        let scaleIndex = 0; // Start with Thousand
-        let words = '';
-
-        // Separate integer and decimal parts
         let integerPart = Math.floor(number);
         let decimalPart = Math.round((number - integerPart) * 100);
+        let result = '';
 
-        // Convert integer part to words
-        while (integerPart > 0) {
-            const remainder = integerPart % 1000;
-
-            if (remainder !== 0) {
-                const scaleWord = scales[scaleIndex];
-                words = convertToWords(remainder) + ' ' + scaleWord + ' ' + words;
-            }
-
-            integerPart = Math.floor(integerPart / 1000);
-            scaleIndex++;
+        if (integerPart >= 10000000) { // Crore (1,00,00,000)
+            const crore = Math.floor(integerPart / 10000000);
+            result += convertToWordsLessThanThousand(crore) + ' Crore ';
+            integerPart %= 10000000;
+        }
+        if (integerPart >= 100000) { // Lakh (1,00,000)
+            const lakh = Math.floor(integerPart / 100000);
+            result += convertToWordsLessThanThousand(lakh) + ' Lakh ';
+            integerPart %= 100000;
+        }
+        if (integerPart >= 1000) { // Thousand (1,000)
+            const thousand = Math.floor(integerPart / 1000);
+            result += convertToWordsLessThanThousand(thousand) + ' Thousand ';
+            integerPart %= 1000;
+        }
+        if (integerPart > 0) {
+            result += convertToWordsLessThanThousand(integerPart);
         }
 
-        // Convert decimal part to words
+        let words = result.trim();
+
+        // Convert decimal part to words (Paisa)
         if (decimalPart > 0) {
-            words += ' and ' + convertToWords(decimalPart) + ' Paisa ';
+            words += ' and ' + convertToWordsLessThanThousand(decimalPart) + ' Paisa';
         }
 
         return words.trim();
@@ -227,74 +227,76 @@ function InvoiceComponent({ invoiceDetails }) {
 
     return (
         <>
-            <div className="container mx-auto px-4 lg:px-8 mb-12 pb-8 font-mono">
-                <div className="flex flex-col lg:flex-row gap-4">
-                    <div className="flex flex-col space-y-2 w-full lg:w-1/3 print-hidden">
-                        <div className="p-4 bg-white shadow-lg rounded-lg space-y-4 print-hidden">
+            <div className="container mx-auto px-4 lg:px-8 mb-12 pb-8 font-mono text-slate-800 dark:text-gray-200">
+                <div className="flex flex-col lg:flex-row gap-6">
+                    <div className="flex flex-col space-y-4 w-full lg:w-1/3 print-hidden">
+                        <div className="p-5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-[2rem] space-y-3 transition-colors duration-300">
+                            <h4 className="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">Add Invoice Item</h4>
                             <input
                                 type="text"
                                 placeholder="Description"
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
-                                className="border px-3 py-2 rounded w-full"
+                                className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                             />
                             <input
                                 type="text"
                                 placeholder="HSN/SAC Code"
                                 value={hsnAsc}
                                 onChange={(e) => setHsnAsc(e.target.value)}
-                                className="border px-3 py-2 rounded w-full"
+                                className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                             />
                             <input
                                 type="number"
                                 placeholder="Quantity"
                                 value={quantity}
                                 onChange={(e) => setQuantity(e.target.value)}
-                                className="border px-3 py-2 rounded w-full"
+                                className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                             />
                             <input
                                 type="number"
                                 placeholder="Rate"
                                 value={rate}
                                 onChange={(e) => setRate(e.target.value)}
-                                className="border px-3 py-2 rounded w-full"
+                                className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                             />
                             <button
                                 onClick={addItem}
-                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
+                                className="w-full bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2 rounded-xl transition duration-200 text-sm shadow"
                             >
-                                Add
+                                Add Item
                             </button>
                         </div>
 
-                        <div className="p-4 bg-white shadow-lg rounded-lg space-y-4 print-hidden">
+                        <div className="p-5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-[2rem] space-y-3 transition-colors duration-300">
+                            <h4 className="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">Taxes & Discounts</h4>
                             <input
                                 type="number"
                                 placeholder="Freight Charges"
                                 value={freight}
                                 onChange={(e) => setfreight(e.target.value)}
-                                className="border px-3 py-2 rounded w-full"
+                                className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                             />
                             <input
                                 type="number"
-                                placeholder="CGST Rate"
+                                placeholder="CGST Rate (%)"
                                 value={cgstRate}
                                 onChange={(e) => setcgstRate(e.target.value)}
-                                className="border px-3 py-2 rounded w-full"
+                                className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                             />
                             <input
                                 type="number"
-                                placeholder="SGST Rate"
+                                placeholder="SGST Rate (%)"
                                 value={sgstRate}
                                 onChange={(e) => setsgstRate(e.target.value)}
-                                className="border px-3 py-2 rounded w-full"
+                                className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                             />
                             <input
                                 type="number"
-                                placeholder="IGST Rate"
+                                placeholder="IGST Rate (%)"
                                 value={igstRate}
                                 onChange={(e) => setigstRate(e.target.value)}
-                                className="border px-3 py-2 rounded w-full"
+                                className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                             />
 
                             <input
@@ -303,17 +305,16 @@ function InvoiceComponent({ invoiceDetails }) {
                                 value={grandTotalInWords}
                                 onChange={handleInputChange}
                                 placeholder="Enter Grand Total In Words"
-                                className="border px-3 py-2 rounded w-full"
+                                className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                             />
 
                             <button
                                 onClick={calculateBill}
-                                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300"
+                                className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-xl transition duration-200 text-sm shadow"
                             >
-                                Generate Bill
+                                Calculate Bill
                             </button>
                         </div>
-
                     </div>
                     <div className='printdata w-full'>
                         <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-t-lg ">
