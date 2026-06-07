@@ -62,6 +62,21 @@ function SalarySlip() {
                 return empId === selectedEmployee._id && log.date.startsWith(monthPrefix);
             });
 
+            // Rule 1: If there are no Present or Holiday attendance records in the database for the selected employee and month, default to 0
+            const hasPresentOrHolidayLogs = employeeLogs.some(log => log.status === 'Present' || log.status === 'Holiday');
+            if (!hasPresentOrHolidayLogs) {
+                setSalarySlip(prev => ({
+                    ...prev,
+                    workDays: 0,
+                    otHours: 0,
+                    nightShiftHours: 0,
+                    nightShiftDays: 0,
+                    lunchDays: 0
+                }));
+                setCalculating(false);
+                return;
+            }
+
             // Local date formatter helper to prevent timezone shifts
             const getYYYYMMDD = (d) => {
                 const yyyy = d.getFullYear();
@@ -115,8 +130,12 @@ function SalarySlip() {
                         const prevDateStr = getYYYYMMDD(prevDate);
                         const nextDateStr = getYYYYMMDD(nextDate);
                         
-                        const prevStatus = getStatusForDate(prevDateStr);
-                        const nextStatus = getStatusForDate(nextDateStr);
+                        let prevStatus = getStatusForDate(prevDateStr);
+                        let nextStatus = getStatusForDate(nextDateStr);
+                        
+                        // Rule 2: Treat 'Unmarked' future/past days as 'Absent' for sandwich calculations
+                        if (prevStatus === 'Unmarked') prevStatus = 'Absent';
+                        if (nextStatus === 'Unmarked') nextStatus = 'Absent';
                         
                         const isSandwich = (prevStatus === 'Leave' || prevStatus === 'Absent') && 
                                            (nextStatus === 'Leave' || nextStatus === 'Absent');
