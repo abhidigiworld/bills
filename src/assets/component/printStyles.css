@@ -9,8 +9,8 @@
   /* Define A4 page size */
   @page {
     size: A4;
-    margin: 12cm;
-    /* Set standard 1cm margins */
+    margin: 1.2cm;
+    /* Set standard 1.2cm margins */
   }
 
   /* Adjust general font size */
