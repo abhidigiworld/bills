@@ -696,7 +696,7 @@ function ManagePayrolls() {
 
                                 {/* Summary Calculation (Totals) */}
                                 <div className="flex justify-between items-stretch border-t border-black bg-slate-50 dark:bg-slate-900/10 print:bg-transparent">
-                                    <div className="text-left text-xs font-bold p-3 pr-4 flex flex-col justify-end border-r border-black flex-grow">
+                                    <div className="text-left text-xs font-bold p-3 pr-4 flex flex-col justify-start border-r border-black flex-grow">
                                         <span className="text-slate-500 print:text-gray-500 block uppercase text-[9px] mb-1">Net Pay (In Words):</span>
                                         <span className="font-extrabold text-slate-900 dark:text-white print:text-black">
                                             Rupees {convertNumberToWords(Math.floor(activeSlip.inHandSalary))} Only
