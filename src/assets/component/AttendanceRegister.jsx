@@ -12,6 +12,10 @@ function AttendanceRegister() {
     const [shiftHours, setShiftHours] = useState(8);
     const [loading, setLoading] = useState(true);
 
+    // Modal Edit states
+    const [selectedCell, setSelectedCell] = useState(null); // { employee, dayNum }
+    const [modalForm, setModalForm] = useState({ status: 'Absent', checkIn: '', checkOut: '' });
+
     useEffect(() => {
         fetchData();
     }, [selectedYear, selectedMonth]);
@@ -86,6 +90,41 @@ function AttendanceRegister() {
             presentDays,
             totalOtHours: Math.floor(totalOtHours) // Floor the OT Hours
         };
+    };
+
+    const handleCellClick = (employee, dayNum) => {
+        const log = getLogForDay(employee._id, dayNum);
+        setSelectedCell({ employee, dayNum });
+        if (log) {
+            setModalForm({
+                status: log.status === 'Present' ? 'Present' : (log.status === 'Leave' ? 'Leave' : 'Absent'),
+                checkIn: log.checkIn ? new Date(log.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : '',
+                checkOut: log.checkOut ? new Date(log.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : ''
+            });
+        } else {
+            setModalForm({ status: 'Absent', checkIn: '09:00', checkOut: '17:00' });
+        }
+    };
+
+    const handleSaveAttendance = async () => {
+        if (!selectedCell) return;
+        const { employee, dayNum } = selectedCell;
+        const dateStr = `${selectedYear}-${String(selectedMonth).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+
+        try {
+            await axios.post(`${API_BASE_URL}/api/attendance/admin-mark`, {
+                employeeId: employee._id,
+                date: dateStr,
+                status: modalForm.status,
+                checkIn: modalForm.status === 'Present' ? modalForm.checkIn : null,
+                checkOut: modalForm.status === 'Present' ? modalForm.checkOut : null
+            });
+            setSelectedCell(null);
+            fetchData();
+        } catch (error) {
+            console.error("Error saving manual attendance:", error);
+            alert("Failed to save attendance.");
+        }
     };
 
     return (
@@ -192,11 +231,13 @@ function AttendanceRegister() {
                                                             return (
                                                                 <td 
                                                                     key={day} 
-                                                                    className={`px-1.5 py-3 text-center font-bold border-r border-slate-100 dark:border-[#262235] last:border-r-0 ${
+                                                                    className={`px-1.5 py-3 text-center font-bold border-r border-slate-100 dark:border-[#262235] last:border-r-0 cursor-pointer hover:bg-indigo-100/30 dark:hover:bg-[#201d2c] transition duration-150 ${
                                                                         status === 'P' ? 'text-green-600 dark:text-green-400' :
                                                                         status === 'L' ? 'text-amber-500 dark:text-amber-400' :
                                                                         'text-red-500 dark:text-red-400/80'
                                                                     }`}
+                                                                    onClick={() => handleCellClick(emp, day)}
+                                                                    title="Click to edit attendance"
                                                                 >
                                                                     {status}
                                                                 </td>
@@ -227,6 +268,74 @@ function AttendanceRegister() {
                 </div>
             </main>
             <Footer />
+
+            {/* Attendance Override Modal */}
+            {selectedCell && (
+                <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-65 backdrop-blur-sm flex items-center justify-center p-4">
+                    <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] w-full max-w-sm rounded-[2rem] p-6 shadow-2xl relative transition-all duration-300 animate-slide-down">
+                        <h3 className="text-lg font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-[#262235] pb-2 mb-4">
+                            Mark Attendance
+                        </h3>
+                        <p className="text-xs text-slate-500 dark:text-gray-400 mb-4">
+                            Employee: <span className="font-bold text-slate-800 dark:text-white">{selectedCell.employee.name}</span><br />
+                            Date: <span className="font-bold text-slate-800 dark:text-white">{selectedCell.dayNum} {monthName} {selectedYear}</span>
+                        </p>
+
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Status</label>
+                                <select
+                                    value={modalForm.status}
+                                    onChange={(e) => setModalForm({ ...modalForm, status: e.target.value })}
+                                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition font-medium"
+                                >
+                                    <option value="Present">Present</option>
+                                    <option value="Absent">Absent</option>
+                                    <option value="Leave">Leave</option>
+                                </select>
+                            </div>
+
+                            {modalForm.status === 'Present' && (
+                                <div className="grid grid-cols-2 gap-4 animate-fade-in">
+                                    <div>
+                                        <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Check In</label>
+                                        <input
+                                            type="time"
+                                            value={modalForm.checkIn}
+                                            onChange={(e) => setModalForm({ ...modalForm, checkIn: e.target.value })}
+                                            className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Check Out</label>
+                                        <input
+                                            type="time"
+                                            value={modalForm.checkOut}
+                                            onChange={(e) => setModalForm({ ...modalForm, checkOut: e.target.value })}
+                                            className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="flex gap-3 mt-6">
+                            <button
+                                onClick={handleSaveAttendance}
+                                className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-2.5 rounded-xl shadow transition duration-200 text-sm"
+                            >
+                                Save
+                            </button>
+                            <button
+                                onClick={() => setSelectedCell(null)}
+                                className="w-full bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-2.5 rounded-xl shadow transition duration-200 text-sm"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
