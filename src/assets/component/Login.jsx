@@ -69,7 +69,7 @@ function Login() {
       <div className="absolute top-[-20%] left-[-20%] w-[60%] h-[60%] rounded-full bg-indigo-300/30 dark:bg-indigo-900/15 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[-20%] w-[60%] h-[60%] rounded-full bg-cyan-200/40 dark:bg-cyan-950/10 blur-[120px] pointer-events-none" />
 
-      <div className="flex w-full max-w-5xl md:h-[640px] bg-white dark:bg-[#181622] rounded-[2rem] overflow-hidden shadow-2xl border border-slate-200 dark:border-[#262235] transition-colors duration-300 relative z-10">
+      <div className="flex w-full max-w-5xl md:h-[640px] bg-white dark:bg-[#181622] rounded-xl overflow-hidden shadow-2xl border border-slate-200 dark:border-[#262235] transition-colors duration-300 relative z-10">
 
         {/* Left Side: Dunes Graphic Panel */}
         <div
@@ -82,7 +82,7 @@ function Login() {
           {/* Top Row: Logo */}
           <div className="relative z-10 flex items-center w-full">
             <div className="flex items-center gap-2">
-              <img src={logo} alt="Sakshi Logo" className="h-9 w-auto rounded-lg shadow-md border border-[#3e3857]" />
+              <img src={logo} alt="Sakshi Logo" className="h-9 w-auto rounded-md shadow-md border border-[#3e3857]" />
               <div className="flex flex-col justify-center leading-[1.05]">
                 <span className="company-name-light text-[13px] tracking-wider block">
                   SAKSHI
@@ -117,7 +117,7 @@ function Login() {
           {/* Light/Dark Toggle Button */}
           <button
             onClick={toggleTheme}
-            className="absolute top-6 right-6 p-2.5 rounded-xl border border-slate-200 dark:border-[#3e3857] hover:bg-slate-100 dark:hover:bg-[#201d2c] transition duration-200 text-slate-600 dark:text-gray-300 focus:outline-none"
+            className="absolute top-6 right-6 p-2.5 rounded-lg border border-slate-200 dark:border-[#3e3857] hover:bg-slate-100 dark:hover:bg-[#201d2c] transition duration-200 text-slate-600 dark:text-gray-300 focus:outline-none"
             aria-label="Toggle Theme"
           >
             {theme === 'light' ? (
@@ -133,7 +133,7 @@ function Login() {
 
           {/* Logo overlay on Mobile screens */}
           <div className="flex md:hidden items-center gap-2 mb-6">
-            <img src={logo} alt="Sakshi Logo" className="h-9 w-auto rounded-lg" />
+            <img src={logo} alt="Sakshi Logo" className="h-9 w-auto rounded-md" />
             <div className="flex flex-col justify-center leading-[1.05]">
               <span className="company-name text-[13px] tracking-wider block">
                 Sakshi
@@ -155,12 +155,12 @@ function Login() {
           </div>
 
           {error && (
-            <p className="text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/25 border border-red-200 dark:border-red-900/40 p-3 rounded-xl text-xs sm:text-sm mb-5 text-center font-medium animate-shake">
+            <p className="text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/25 border border-red-200 dark:border-red-900/40 p-3 rounded-lg text-xs sm:text-sm mb-5 text-center font-medium animate-shake">
               {error}
             </p>
           )}
           {successMsg && (
-            <p className="text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/25 border border-emerald-200 dark:border-emerald-900/40 p-3 rounded-xl text-xs sm:text-sm mb-5 text-center font-medium">
+            <p className="text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/25 border border-emerald-200 dark:border-emerald-900/40 p-3 rounded-lg text-xs sm:text-sm mb-5 text-center font-medium">
               {successMsg}
             </p>
           )}
@@ -176,7 +176,7 @@ function Login() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
-                className="w-full bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition font-medium"
+                className="w-full bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg px-4 py-3 text-sm text-slate-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition font-medium"
               />
             </div>
 
@@ -198,7 +198,7 @@ function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl pl-4 pr-11 py-3 text-sm text-slate-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition font-medium"
+                  className="w-full bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg pl-4 pr-11 py-3 text-sm text-slate-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition font-medium"
                 />
 
                 {/* Eye Icon Button */}
@@ -224,7 +224,7 @@ function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition duration-200 transform hover:scale-[1.01] active:scale-[0.99] disabled:bg-violet-800 disabled:cursor-not-allowed flex items-center justify-center text-sm mt-6"
+              className="w-full bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition duration-200 transform hover:scale-[1.01] active:scale-[0.99] disabled:bg-violet-800 disabled:cursor-not-allowed flex items-center justify-center text-sm mt-6"
             >
               {loading ? 'Logging In...' : 'Log In'}
             </button>

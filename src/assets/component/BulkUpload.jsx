@@ -112,7 +112,7 @@ function BulkUpload() {
           {/* Back Button */}
           <Link 
             to="/Main" 
-            className="inline-flex items-center gap-2 mb-6 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-[#3e3857] hover:bg-slate-100 dark:hover:bg-[#201d2c] text-xs font-bold text-slate-600 dark:text-gray-300 transition duration-200 shadow-sm print:hidden"
+            className="inline-flex items-center gap-2 mb-6 px-4 py-2.5 rounded-lg border border-slate-200 dark:border-[#3e3857] hover:bg-slate-100 dark:hover:bg-[#201d2c] text-xs font-bold text-slate-600 dark:text-gray-300 transition duration-200 shadow-sm print:hidden"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -125,19 +125,19 @@ function BulkUpload() {
           </h2>
 
           {error && (
-            <div className="max-w-md mx-auto mb-6 bg-red-100 dark:bg-red-950/40 border border-red-400 dark:border-red-900/50 text-red-700 dark:text-red-400 px-4 py-3 rounded-2xl text-center text-sm font-medium">
+            <div className="max-w-md mx-auto mb-6 bg-red-100 dark:bg-red-950/40 border border-red-400 dark:border-red-900/50 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg text-center text-sm font-medium">
               {error}
             </div>
           )}
 
           {/* Upload Box */}
           {!loading && !results && (
-            <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-[2rem] p-6 sm:p-8 transition-colors duration-300">
+            <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-6 sm:p-8 transition-colors duration-300">
               <div 
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                className={`border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer transition duration-300 ${
+                className={`border-2 border-dashed rounded-lg p-8 flex flex-col items-center justify-center cursor-pointer transition duration-300 ${
                   isDragging 
                     ? 'border-indigo-600 bg-indigo-50/50 dark:border-violet-500 dark:bg-violet-950/10' 
                     : 'border-slate-300 dark:border-[#3e3857] hover:bg-slate-50 dark:hover:bg-[#201d2c]/50'
@@ -169,7 +169,7 @@ function BulkUpload() {
                   </h4>
                   <div className="max-h-48 overflow-y-auto space-y-2 pr-1">
                     {selectedFiles.map((file, idx) => (
-                      <div key={idx} className="flex justify-between items-center bg-slate-50 dark:bg-[#201d2c] p-2.5 rounded-xl border border-slate-200/50 dark:border-[#37314e]/60">
+                      <div key={idx} className="flex justify-between items-center bg-slate-50 dark:bg-[#201d2c] p-2.5 rounded-lg border border-slate-200/50 dark:border-[#37314e]/60">
                         <div className="flex items-center gap-2 text-xs truncate mr-4">
                           <svg className="w-4 h-4 text-rose-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" />
@@ -191,7 +191,7 @@ function BulkUpload() {
 
                   <button
                     onClick={handleUpload}
-                    className="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-3 rounded-xl shadow transition duration-200 text-sm"
+                    className="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-3 rounded-lg shadow transition duration-200 text-sm"
                   >
                     Upload & Process Invoices
                   </button>
@@ -202,7 +202,7 @@ function BulkUpload() {
 
           {/* Loading Screen */}
           {loading && (
-            <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-[2rem] p-8 text-center transition-colors duration-300">
+            <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-8 text-center transition-colors duration-300">
               <div className="text-lg font-bold text-indigo-600 dark:text-violet-400 mb-4 animate-pulse">
                 Parsing PDF Invoices...
               </div>
@@ -221,22 +221,22 @@ function BulkUpload() {
             <div className="space-y-6">
               {/* Summary Cards */}
               <div className="grid grid-cols-3 gap-4">
-                <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] p-5 rounded-2xl text-center shadow-md">
+                <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] p-5 rounded-xl text-center shadow-md">
                   <span className="block text-xs font-bold text-slate-400 uppercase tracking-wide">Total Files</span>
                   <span className="text-2xl font-black text-slate-800 dark:text-white mt-1 block">{results.totalUploaded}</span>
                 </div>
-                <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900/40 p-5 rounded-2xl text-center shadow-md">
+                <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900/40 p-5 rounded-xl text-center shadow-md">
                   <span className="block text-xs font-bold text-green-600/80 dark:text-green-400 uppercase tracking-wide">Imported</span>
                   <span className="text-2xl font-black text-green-600 dark:text-green-400 mt-1 block">{results.successCount}</span>
                 </div>
-                <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/40 p-5 rounded-2xl text-center shadow-md">
+                <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/40 p-5 rounded-xl text-center shadow-md">
                   <span className="block text-xs font-bold text-red-600/80 dark:text-red-400 uppercase tracking-wide">Failed</span>
                   <span className="text-2xl font-black text-red-600 dark:text-red-400 mt-1 block">{results.failedCount}</span>
                 </div>
               </div>
 
               {/* Tabs */}
-              <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-[2rem] p-6 transition-colors duration-300">
+              <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-6 transition-colors duration-300">
                 <div className="flex gap-4 border-b border-slate-100 dark:border-[#262235] pb-3 mb-4">
                   <button
                     onClick={() => setActiveTab('success')}
@@ -317,7 +317,7 @@ function BulkUpload() {
               <div className="text-center">
                 <button
                   onClick={() => setResults(null)}
-                  className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2.5 px-6 rounded-xl shadow transition duration-200 text-sm"
+                  className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2.5 px-6 rounded-lg shadow transition duration-200 text-sm"
                 >
                   Upload More Invoices
                 </button>

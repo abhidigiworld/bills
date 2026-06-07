@@ -143,7 +143,7 @@ function SignUp() {
       <div className="absolute top-[-20%] left-[-20%] w-[60%] h-[60%] rounded-full bg-indigo-300/30 dark:bg-indigo-900/15 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[-20%] w-[60%] h-[60%] rounded-full bg-cyan-200/40 dark:bg-cyan-950/10 blur-[120px] pointer-events-none" />
 
-      <div className="flex w-full max-w-5xl md:h-[640px] bg-white dark:bg-[#181622] rounded-[2rem] overflow-hidden shadow-2xl border border-slate-200 dark:border-[#262235] transition-colors duration-300 relative z-10">
+      <div className="flex w-full max-w-5xl md:h-[640px] bg-white dark:bg-[#181622] rounded-xl overflow-hidden shadow-2xl border border-slate-200 dark:border-[#262235] transition-colors duration-300 relative z-10">
 
         {/* Left Side: Dunes Graphic Panel */}
         <div
@@ -156,7 +156,7 @@ function SignUp() {
           {/* Top Row: Logo & Button */}
           <div className="relative z-10 flex items-center w-full">
             <div className="flex items-center gap-2">
-              <img src={logo} alt="Sakshi Logo" className="h-9 w-auto rounded-lg shadow-md border border-[#3e3857]" />
+              <img src={logo} alt="Sakshi Logo" className="h-9 w-auto rounded-md shadow-md border border-[#3e3857]" />
               <div className="flex flex-col justify-center leading-[1.05]">
                 <span className="company-name-light text-[13px] tracking-wider block">
                   SAKSHI
@@ -191,7 +191,7 @@ function SignUp() {
           {/* Light/Dark Toggle Button */}
           <button
             onClick={toggleTheme}
-            className="absolute top-6 right-6 p-2.5 rounded-xl border border-slate-200 dark:border-[#3e3857] hover:bg-slate-100 dark:hover:bg-[#201d2c] transition duration-200 text-slate-600 dark:text-gray-300 focus:outline-none"
+            className="absolute top-6 right-6 p-2.5 rounded-lg border border-slate-200 dark:border-[#3e3857] hover:bg-slate-100 dark:hover:bg-[#201d2c] transition duration-200 text-slate-600 dark:text-gray-300 focus:outline-none"
             aria-label="Toggle Theme"
           >
             {theme === 'light' ? (
@@ -207,7 +207,7 @@ function SignUp() {
 
           {/* Logo overlay on Mobile screens */}
           <div className="flex md:hidden items-center gap-2 mb-6">
-            <img src={logo} alt="Sakshi Logo" className="h-9 w-auto rounded-lg" />
+            <img src={logo} alt="Sakshi Logo" className="h-9 w-auto rounded-md" />
             <div className="flex flex-col justify-center leading-[1.05]">
               <span className="company-name text-[13px] tracking-wider block">
                 Sakshi
@@ -233,19 +233,19 @@ function SignUp() {
           </div>
 
           {error && (
-            <p className="text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/25 border border-red-200 dark:border-red-900/40 p-3 rounded-xl text-xs sm:text-sm mb-4 text-center font-medium animate-shake">
+            <p className="text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/25 border border-red-200 dark:border-red-900/40 p-3 rounded-lg text-xs sm:text-sm mb-4 text-center font-medium animate-shake">
               {error}
             </p>
           )}
 
           {infoMessage && (
-            <p className="text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/25 border border-emerald-200 dark:border-emerald-900/40 p-3 rounded-xl text-xs sm:text-sm mb-4 text-center font-medium">
+            <p className="text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/25 border border-emerald-200 dark:border-emerald-900/40 p-3 rounded-lg text-xs sm:text-sm mb-4 text-center font-medium">
               {infoMessage}
             </p>
           )}
 
           {isOtpSent && localOtp && (
-            <div className="mb-4 p-3 bg-amber-50 dark:bg-amber-950/25 border border-amber-200 dark:border-amber-900/40 rounded-xl text-amber-800 dark:text-amber-300 text-xs text-center font-semibold animate-pulse">
+            <div className="mb-4 p-3 bg-amber-50 dark:bg-amber-950/25 border border-amber-200 dark:border-amber-900/40 rounded-lg text-amber-800 dark:text-amber-300 text-xs text-center font-semibold animate-pulse">
               Local Dev Mode (SMTP disabled): <span className="text-sm text-indigo-600 dark:text-violet-300 select-all font-mono ml-1">{localOtp}</span>
             </div>
           )}
@@ -261,7 +261,7 @@ function SignUp() {
                   onChange={handleInputChange}
                   required
                   placeholder="Enter full name"
-                  className="w-full bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition font-medium"
+                  className="w-full bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg px-4 py-2.5 text-sm text-slate-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition font-medium"
                 />
               </div>
 
@@ -274,7 +274,7 @@ function SignUp() {
                   onChange={handleInputChange}
                   required
                   placeholder="name@company.com"
-                  className="w-full bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition font-medium"
+                  className="w-full bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg px-4 py-2.5 text-sm text-slate-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition font-medium"
                 />
               </div>
 
@@ -288,7 +288,7 @@ function SignUp() {
                     onChange={handleInputChange}
                     required
                     placeholder="••••••••"
-                    className="w-full bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl pl-4 pr-11 py-2.5 text-sm text-slate-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition font-medium"
+                    className="w-full bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg pl-4 pr-11 py-2.5 text-sm text-slate-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition font-medium"
                   />
                   <button
                     type="button"
@@ -319,7 +319,7 @@ function SignUp() {
                     onChange={handleInputChange}
                     required
                     placeholder="••••••••"
-                    className="w-full bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl pl-4 pr-11 py-2.5 text-sm text-slate-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition font-medium"
+                    className="w-full bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg pl-4 pr-11 py-2.5 text-sm text-slate-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition font-medium"
                   />
                   <button
                     type="button"
@@ -357,7 +357,7 @@ function SignUp() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2.5 px-4 rounded-xl shadow-lg transition duration-200 transform hover:scale-[1.01] active:scale-[0.99] disabled:bg-violet-800 disabled:cursor-not-allowed flex items-center justify-center text-sm mt-5"
+                className="w-full bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2.5 px-4 rounded-lg shadow-lg transition duration-200 transform hover:scale-[1.01] active:scale-[0.99] disabled:bg-violet-800 disabled:cursor-not-allowed flex items-center justify-center text-sm mt-5"
               >
                 {loading ? 'Creating account...' : 'Create account'}
               </button>
@@ -378,14 +378,14 @@ function SignUp() {
                   onChange={(e) => setOtp(e.target.value)}
                   required
                   placeholder="123456"
-                  className="w-full text-center tracking-widest text-lg font-mono bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition font-bold"
+                  className="w-full text-center tracking-widest text-lg font-mono bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg px-4 py-3 text-slate-900 dark:text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition font-bold"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2.5 px-4 rounded-xl shadow-lg transition duration-200 transform hover:scale-[1.01] active:scale-[0.99] disabled:bg-violet-800 disabled:cursor-not-allowed flex items-center justify-center text-sm"
+                className="w-full bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2.5 px-4 rounded-lg shadow-lg transition duration-200 transform hover:scale-[1.01] active:scale-[0.99] disabled:bg-violet-800 disabled:cursor-not-allowed flex items-center justify-center text-sm"
               >
                 {loading ? 'Verifying...' : 'Verify OTP'}
               </button>
@@ -416,7 +416,7 @@ function SignUp() {
       {/* Terms & Conditions Modal */}
       {showTermsModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-70 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[85vh] animate-scaleUp transition-colors duration-300">
+          <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] w-full max-w-lg rounded-xl overflow-hidden shadow-2xl flex flex-col max-h-[85vh] animate-scaleUp transition-colors duration-300">
             {/* Modal Header */}
             <div className="px-6 py-4 border-b border-slate-100 dark:border-[#262235] flex justify-between items-center bg-slate-50 dark:bg-[#1b1926] transition-colors duration-300">
               <h3 className="font-bold text-lg text-indigo-900 dark:text-white">Terms of Service & Privacy Policy</h3>
@@ -465,7 +465,7 @@ function SignUp() {
             <div className="px-6 py-4 border-t border-slate-100 dark:border-[#262235] flex justify-end bg-slate-50 dark:bg-[#1b1926] gap-3 transition-colors duration-300">
               <button
                 onClick={() => setShowTermsModal(false)}
-                className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold px-5 py-2 rounded-xl transition text-xs sm:text-sm shadow-md"
+                className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold px-5 py-2 rounded-lg transition text-xs sm:text-sm shadow-md"
               >
                 Accept & Close
               </button>

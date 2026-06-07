@@ -213,7 +213,7 @@ function WelcomePage() {
       <main className="flex-grow p-4 sm:p-6 md:p-8 print-hidden">
         <div className="max-w-6xl mx-auto">
           {error && (
-            <div className="bg-red-100 dark:bg-red-950/40 border border-red-400 dark:border-red-900/50 text-red-700 dark:text-red-400 px-6 py-4 rounded-[2rem] mb-8 shadow-sm text-center font-medium">
+            <div className="bg-red-100 dark:bg-red-950/40 border border-red-400 dark:border-red-900/50 text-red-700 dark:text-red-400 px-6 py-4 rounded-xl mb-8 shadow-sm text-center font-medium">
               {error}
             </div>
           )}
@@ -225,11 +225,11 @@ function WelcomePage() {
                 {/* Existing Invoices */}
                 <Link
                   to="/existing-bills"
-                  className="group relative p-6 bg-white dark:bg-[#181622] rounded-[2rem] border border-slate-200/80 dark:border-[#262235] shadow-md hover:shadow-xl hover:shadow-indigo-500/5 dark:hover:shadow-violet-500/5 transform hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[180px] overflow-hidden"
+                  className="group relative p-6 bg-white dark:bg-[#181622] rounded-xl border border-slate-200/80 dark:border-[#262235] shadow-md hover:shadow-xl hover:shadow-indigo-500/5 dark:hover:shadow-violet-500/5 transform hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[180px] overflow-hidden"
                 >
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 rounded-bl-[4rem] group-hover:scale-110 transition-transform duration-300" />
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 rounded-bl-[2rem] group-hover:scale-110 transition-transform duration-300" />
                   <div className="flex justify-between items-center w-full mb-4 relative z-10">
-                    <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-violet-400 rounded-2xl group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                    <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-violet-400 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
                       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
@@ -253,11 +253,11 @@ function WelcomePage() {
                 {/* Create Invoice */}
                 <Link
                   to="/new-bill"
-                  className="group relative p-6 bg-white dark:bg-[#181622] rounded-[2rem] border border-slate-200/80 dark:border-[#262235] shadow-md hover:shadow-xl hover:shadow-indigo-500/5 dark:hover:shadow-violet-500/5 transform hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[180px] overflow-hidden"
+                  className="group relative p-6 bg-white dark:bg-[#181622] rounded-xl border border-slate-200/80 dark:border-[#262235] shadow-md hover:shadow-xl hover:shadow-indigo-500/5 dark:hover:shadow-violet-500/5 transform hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[180px] overflow-hidden"
                 >
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 rounded-bl-[4rem] group-hover:scale-110 transition-transform duration-300" />
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 rounded-bl-[2rem] group-hover:scale-110 transition-transform duration-300" />
                   <div className="flex justify-between items-center w-full mb-4 relative z-10">
-                    <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-violet-400 rounded-2xl group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                    <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-violet-400 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
                       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
@@ -281,11 +281,11 @@ function WelcomePage() {
                 {/* Manage Employees */}
                 <Link
                   to="/new-employee"
-                  className="group relative p-6 bg-white dark:bg-[#181622] rounded-[2rem] border border-slate-200/80 dark:border-[#262235] shadow-md hover:shadow-xl hover:shadow-indigo-500/5 dark:hover:shadow-violet-500/5 transform hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[180px] overflow-hidden"
+                  className="group relative p-6 bg-white dark:bg-[#181622] rounded-xl border border-slate-200/80 dark:border-[#262235] shadow-md hover:shadow-xl hover:shadow-indigo-500/5 dark:hover:shadow-violet-500/5 transform hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[180px] overflow-hidden"
                 >
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 rounded-bl-[4rem] group-hover:scale-110 transition-transform duration-300" />
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 rounded-bl-[2rem] group-hover:scale-110 transition-transform duration-300" />
                   <div className="flex justify-between items-center w-full mb-4 relative z-10">
-                    <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-violet-400 rounded-2xl group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                    <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-violet-400 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
                       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                       </svg>
@@ -309,11 +309,11 @@ function WelcomePage() {
                 {/* Payroll & Slips */}
                 <Link
                   to="/new-Salary"
-                  className="group relative p-6 bg-white dark:bg-[#181622] rounded-[2rem] border border-slate-200/80 dark:border-[#262235] shadow-md hover:shadow-xl hover:shadow-indigo-500/5 dark:hover:shadow-violet-500/5 transform hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[180px] overflow-hidden"
+                  className="group relative p-6 bg-white dark:bg-[#181622] rounded-xl border border-slate-200/80 dark:border-[#262235] shadow-md hover:shadow-xl hover:shadow-indigo-500/5 dark:hover:shadow-violet-500/5 transform hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[180px] overflow-hidden"
                 >
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 rounded-bl-[4rem] group-hover:scale-110 transition-transform duration-300" />
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 rounded-bl-[2rem] group-hover:scale-110 transition-transform duration-300" />
                   <div className="flex justify-between items-center w-full mb-4 relative z-10">
-                    <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-violet-400 rounded-2xl group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                    <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-violet-400 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
                       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
@@ -337,11 +337,11 @@ function WelcomePage() {
                 {/* Attendance Register */}
                 <Link
                   to="/attendance-register"
-                  className="group relative p-6 bg-white dark:bg-[#181622] rounded-[2rem] border border-slate-200/80 dark:border-[#262235] shadow-md hover:shadow-xl hover:shadow-indigo-500/5 dark:hover:shadow-violet-500/5 transform hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[180px] overflow-hidden"
+                  className="group relative p-6 bg-white dark:bg-[#181622] rounded-xl border border-slate-200/80 dark:border-[#262235] shadow-md hover:shadow-xl hover:shadow-indigo-500/5 dark:hover:shadow-violet-500/5 transform hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[180px] overflow-hidden"
                 >
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 rounded-bl-[4rem] group-hover:scale-110 transition-transform duration-300" />
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 rounded-bl-[2rem] group-hover:scale-110 transition-transform duration-300" />
                   <div className="flex justify-between items-center w-full mb-4 relative z-10">
-                    <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-violet-400 rounded-2xl group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                    <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-violet-400 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
                       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
@@ -365,11 +365,11 @@ function WelcomePage() {
                 {/* Manage Payrolls */}
                 <Link
                   to="/manage-payrolls"
-                  className="group relative p-6 bg-white dark:bg-[#181622] rounded-[2rem] border border-slate-200/80 dark:border-[#262235] shadow-md hover:shadow-xl hover:shadow-indigo-500/5 dark:hover:shadow-violet-500/5 transform hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[180px] overflow-hidden"
+                  className="group relative p-6 bg-white dark:bg-[#181622] rounded-xl border border-slate-200/80 dark:border-[#262235] shadow-md hover:shadow-xl hover:shadow-indigo-500/5 dark:hover:shadow-violet-500/5 transform hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[180px] overflow-hidden"
                 >
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 rounded-bl-[4rem] group-hover:scale-110 transition-transform duration-300" />
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 rounded-bl-[2rem] group-hover:scale-110 transition-transform duration-300" />
                   <div className="flex justify-between items-center w-full mb-4 relative z-10">
-                    <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-violet-400 rounded-2xl group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                    <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-violet-400 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
                       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                       </svg>
@@ -393,11 +393,11 @@ function WelcomePage() {
                 {/* Manage Users */}
                 <Link
                   to="/manage-users"
-                  className="group relative p-6 bg-white dark:bg-[#181622] rounded-[2rem] border border-slate-200/80 dark:border-[#262235] shadow-md hover:shadow-xl hover:shadow-indigo-500/5 dark:hover:shadow-violet-500/5 transform hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[180px] overflow-hidden"
+                  className="group relative p-6 bg-white dark:bg-[#181622] rounded-xl border border-slate-200/80 dark:border-[#262235] shadow-md hover:shadow-xl hover:shadow-indigo-500/5 dark:hover:shadow-violet-500/5 transform hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[180px] overflow-hidden"
                 >
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 rounded-bl-[4rem] group-hover:scale-110 transition-transform duration-300" />
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 rounded-bl-[2rem] group-hover:scale-110 transition-transform duration-300" />
                   <div className="flex justify-between items-center w-full mb-4 relative z-10">
-                    <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-violet-400 rounded-2xl group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                    <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-violet-400 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
                       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                       </svg>
@@ -421,11 +421,11 @@ function WelcomePage() {
                 {/* Bulk Upload PDF */}
                 <Link
                   to="/bulk-upload"
-                  className="group relative p-6 bg-white dark:bg-[#181622] rounded-[2rem] border border-slate-200/80 dark:border-[#262235] shadow-md hover:shadow-xl hover:shadow-indigo-500/5 dark:hover:shadow-indigo-500/5 transform hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[180px] overflow-hidden"
+                  className="group relative p-6 bg-white dark:bg-[#181622] rounded-xl border border-slate-200/80 dark:border-[#262235] shadow-md hover:shadow-xl hover:shadow-indigo-500/5 dark:hover:shadow-violet-500/5 transform hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[180px] overflow-hidden"
                 >
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-indigo-500/10 rounded-bl-[4rem] group-hover:scale-110 transition-transform duration-300" />
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-indigo-500/10 rounded-bl-[2rem] group-hover:scale-110 transition-transform duration-300" />
                   <div className="flex justify-between items-center w-full mb-4 relative z-10">
-                    <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-violet-400 rounded-2xl group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                    <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-violet-400 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
                       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                       </svg>
@@ -448,7 +448,7 @@ function WelcomePage() {
               </div>
 
               {/* Chart Section */}
-              <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] rounded-[2rem] p-6 shadow-xl transition-colors duration-300">
+              <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] rounded-xl p-6 shadow-xl transition-colors duration-300">
                 <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-4">Payout Analysis</h3>
                 <PaymentChart />
               </div>
@@ -460,7 +460,7 @@ function WelcomePage() {
                 {/* Left Column: Profile Card and Attendance module */}
                 <div className="space-y-8 lg:col-span-1">
                   {/* Profile Card */}
-                  <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] rounded-[2rem] p-6 shadow-xl transition-colors duration-300">
+                  <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] rounded-xl p-6 shadow-xl transition-colors duration-300">
                     <h3 className="text-xl font-bold text-indigo-950 dark:text-white mb-4 border-b border-slate-100 dark:border-[#262235] pb-2.5">Employee Profile</h3>
                     <div className="space-y-3.5">
                       <div>
@@ -499,7 +499,7 @@ function WelcomePage() {
                   </div>
 
                   {/* Attendance Check-in */}
-                  <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] rounded-[2rem] p-6 shadow-xl transition-colors duration-300">
+                  <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] rounded-xl p-6 shadow-xl transition-colors duration-300">
                     <h3 className="text-xl font-bold text-indigo-950 dark:text-white mb-4 border-b border-slate-100 dark:border-[#262235] pb-2.5">Daily Attendance</h3>
                     <div className="text-center py-4">
                       <p className="text-sm text-slate-600 dark:text-gray-300 mb-4 font-medium">
@@ -514,19 +514,19 @@ function WelcomePage() {
                         {!isCheckedInToday ? (
                           <button
                             onClick={handleCheckIn}
-                            className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2.5 px-6 rounded-xl shadow transition duration-200"
+                            className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2.5 px-6 rounded-lg shadow transition duration-200"
                           >
                             Check In
                           </button>
                         ) : !isCheckedOutToday ? (
                           <button
                             onClick={handleCheckOut}
-                            className="bg-red-500 hover:bg-red-600 text-white font-bold py-2.5 px-6 rounded-xl shadow transition duration-200"
+                            className="bg-red-500 hover:bg-red-600 text-white font-bold py-2.5 px-6 rounded-lg shadow transition duration-200"
                           >
                             Check Out
                           </button>
                         ) : (
-                          <span className="bg-green-100 dark:bg-green-950/40 text-green-700 dark:text-green-400 font-bold py-2 px-6 rounded-xl border border-green-300 dark:border-green-900/40">
+                          <span className="bg-green-100 dark:bg-green-950/40 text-green-700 dark:text-green-400 font-bold py-2 px-6 rounded-lg border border-green-300 dark:border-green-900/40">
                             Shift Completed ✓
                           </span>
                         )}
@@ -547,7 +547,7 @@ function WelcomePage() {
                 {/* Right Column: Salary slips and Attendance logs */}
                 <div className="lg:col-span-2 space-y-8">
                   {/* Salary Slips History */}
-                  <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] rounded-[2rem] p-6 shadow-xl transition-colors duration-300">
+                  <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] rounded-xl p-6 shadow-xl transition-colors duration-300">
                     <h3 className="text-xl font-bold text-indigo-950 dark:text-white mb-4 border-b border-slate-100 dark:border-[#262235] pb-2.5">My Salary Slips</h3>
                     <div className="overflow-x-auto">
                       {salarySlips.length > 0 ? (
@@ -571,7 +571,7 @@ function WelcomePage() {
                                 <td className="py-3">
                                   <button
                                     onClick={() => setActiveSlip(slip)}
-                                    className="bg-indigo-50 dark:bg-indigo-950 hover:bg-indigo-100 dark:hover:bg-indigo-900 text-indigo-700 dark:text-indigo-300 font-bold px-3 py-1.5 rounded-lg text-xs transition"
+                                    className="bg-indigo-50 dark:bg-indigo-950 hover:bg-indigo-100 dark:hover:bg-indigo-900 text-indigo-700 dark:text-indigo-300 font-bold px-3 py-1.5 rounded-md text-xs transition"
                                   >
                                     View Slip
                                   </button>
@@ -587,7 +587,7 @@ function WelcomePage() {
                   </div>
 
                   {/* Attendance Log */}
-                  <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] rounded-[2rem] p-6 shadow-xl transition-colors duration-300">
+                  <div className="bg-white dark:bg-[#181622] border border-slate-200/50 dark:border-[#262235] rounded-xl p-6 shadow-xl transition-colors duration-300">
                     <h3 className="text-xl font-bold text-indigo-950 dark:text-white mb-4 border-b border-slate-100 dark:border-[#262235] pb-2.5">Recent Attendance Logs</h3>
                     <div className="overflow-y-auto max-h-80">
                       {attendance.length > 0 ? (
@@ -639,16 +639,16 @@ function WelcomePage() {
         const activeHourlyRate = Math.floor(activeDailyRate / (activeSlip.shiftHours || 8));
         return (
           <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4 print:static print:bg-transparent print:p-0 print:overflow-visible">
-            <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] w-full max-w-2xl rounded-[2rem] p-6 shadow-2xl relative transition-colors duration-300 animate-slide-down print:p-0 print:border-none print:shadow-none print:bg-white print:text-black">
+            <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] w-full max-w-2xl rounded-xl p-6 shadow-2xl relative transition-colors duration-300 animate-slide-down print:p-0 print:border-none print:shadow-none print:bg-white print:text-black">
 
               {/* Slip Printable Block */}
-              <div className="printdata font-mono text-slate-800 dark:text-gray-200 print:text-black w-full border border-black rounded-lg overflow-hidden bg-white dark:bg-[#181622] print:bg-white">
+              <div className="printdata font-mono text-slate-800 dark:text-gray-200 print:text-black w-full border border-black rounded-md overflow-hidden bg-white dark:bg-[#181622] print:bg-white">
                 {/* Header (styled like Tax Invoice) */}
                 <div className="bg-gradient-to-r from-indigo-500 to-violet-500 text-white p-4 invoice-print-header border-b border-black">
                   <p className="text-xl font-bold text-center uppercase tracking-wide">Salary Statement</p>
                   <div className="flex justify-between items-center relative mt-2">
                     <div className="absolute" style={{ top: '-10px', left: '-10px' }}>
-                      <img src={logo} alt="Your Company Logo" className="w-24 h-auto rounded-lg" />
+                      <img src={logo} alt="Your Company Logo" className="w-24 h-auto rounded-md" />
                     </div>
                     <div className="flex-1 text-center pt-2" style={{ marginLeft: '120px' }}>
                       <p className="text-2xl font-bold uppercase tracking-wider">Sakshi Enterprises</p>
@@ -807,20 +807,20 @@ function WelcomePage() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => handlePrint(true)}
-                    className="w-1/2 bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-xl shadow transition duration-200 text-xs uppercase tracking-wider"
+                    className="w-1/2 bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-lg shadow transition duration-200 text-xs uppercase tracking-wider"
                   >
                     Print with Sign
                   </button>
                   <button
                     onClick={() => handlePrint(false)}
-                    className="w-1/2 bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-xl shadow transition duration-200 text-xs uppercase tracking-wider"
+                    className="w-1/2 bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-lg shadow transition duration-200 text-xs uppercase tracking-wider"
                   >
                     Print without Sign
                   </button>
                 </div>
                 <button
                   onClick={() => setActiveSlip(null)}
-                  className="w-full bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-3 px-4 rounded-xl shadow transition duration-200 text-xs uppercase tracking-wider"
+                  className="w-full bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-3 px-4 rounded-lg shadow transition duration-200 text-xs uppercase tracking-wider"
                 >
                   Close
                 </button>

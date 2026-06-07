@@ -212,10 +212,10 @@ const UpdateInvoice = ({ invoice, onClose }) => {
         ]);
     };
 
-    const inputClass = "w-full px-3 py-1.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 font-sans text-sm transition";
+    const inputClass = "w-full px-3 py-1.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 font-sans text-sm transition";
 
     return (
-        <div className="mb-12 print-hidden bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-[2rem] p-6 transition-colors duration-300">
+        <div className="mb-12 print-hidden bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-6 transition-colors duration-300">
             <div className='printdata font-mono text-slate-800 dark:text-gray-200'>
                 <div className="relative bg-gradient-to-r from-indigo-500 to-violet-500 text-white p-4 rounded-t-lg mb-4">
                     <p className="text-2xl font-bold text-center">Update Invoice Details</p>
@@ -227,7 +227,7 @@ const UpdateInvoice = ({ invoice, onClose }) => {
                 </div>
 
                 <div className="overflow-x-auto">
-                    <table className='w-full mb-4 border border-slate-200 dark:border-[#262235] rounded-xl overflow-hidden'>
+                    <table className='w-full mb-4 border border-slate-200 dark:border-[#262235] rounded-lg overflow-hidden'>
                         <thead>
                             <tr className="border-b border-slate-200 dark:border-[#262235]">
                                 <td colSpan="2" className="px-3 py-2 text-slate-500 dark:text-gray-400 font-bold uppercase text-xs">M/s:</td>
@@ -353,7 +353,7 @@ const UpdateInvoice = ({ invoice, onClose }) => {
                                     </td>
                                     <td className="px-3 py-2 text-center">
                                         <button
-                                            className="px-2.5 py-1 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl text-xs transition shadow-sm"
+                                            className="px-2.5 py-1 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg text-xs transition shadow-sm"
                                             onClick={() => handleDeleteItem(index)}
                                         >
                                             Delete
@@ -467,7 +467,7 @@ const UpdateInvoice = ({ invoice, onClose }) => {
                 <div className="flex justify-center my-4">
                     <button
                         onClick={addNewItemRow}
-                        className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2 px-6 rounded-xl text-sm transition duration-200 shadow"
+                        className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2 px-6 rounded-lg text-sm transition duration-200 shadow"
                     >
                         + Add Item Row
                     </button>
@@ -476,13 +476,13 @@ const UpdateInvoice = ({ invoice, onClose }) => {
                 <div className="flex justify-center gap-4 border-t border-slate-200 dark:border-[#262235] pt-4">
                     <button
                         onClick={handleUpdate}
-                        className="bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition duration-200 shadow"
+                        className="bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 px-6 rounded-lg text-sm transition duration-200 shadow"
                     >
                         Save Invoice Changes
                     </button>
                     <button
                         onClick={onClose}
-                        className="bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-2.5 px-6 rounded-xl text-sm transition duration-200 shadow"
+                        className="bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-2.5 px-6 rounded-lg text-sm transition duration-200 shadow"
                     >
                         Cancel
                     </button>

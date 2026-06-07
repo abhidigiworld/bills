@@ -205,19 +205,19 @@ function PaymentChart() {
 
   return (
     <div className="w-full mt-6 px-2 pb-6">
-      <div className="p-6 w-full bg-gradient-to-r from-blue-100 via-purple-50 to-pink-100 shadow-xl rounded-3xl border border-indigo-50">
+      <div className="p-6 w-full bg-gradient-to-r from-blue-100 via-purple-50 to-pink-100 shadow-xl rounded-xl border border-indigo-50">
         <h6 className="text-center text-3xl font-extrabold text-indigo-950 mb-6 tracking-wide">
           Billing Analytics
         </h6>
 
         {/* Filters Panel */}
-        <div className="bg-white bg-opacity-70 backdrop-blur-md rounded-2xl p-4 shadow-sm mb-6 flex flex-wrap gap-4 justify-center items-center border border-white">
+        <div className="bg-white bg-opacity-70 backdrop-blur-md rounded-lg p-4 shadow-sm mb-6 flex flex-wrap gap-4 justify-center items-center border border-white">
           <div className="flex flex-col min-w-[140px]">
             <label className="text-xs font-bold text-gray-500 mb-1">Select Year</label>
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(e.target.value)}
-              className="p-2 border rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="p-2 border rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               <option value="All Years">All Years</option>
               {yearsList.map(y => <option key={y} value={y}>{y}</option>)}
@@ -229,7 +229,7 @@ function PaymentChart() {
             <select
               value={selectedState}
               onChange={(e) => setSelectedState(e.target.value)}
-              className="p-2 border rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="p-2 border rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               <option value="All States">All States</option>
               {statesList.map(s => <option key={s} value={s}>{s}</option>)}
@@ -241,7 +241,7 @@ function PaymentChart() {
             <select
               value={selectedCompany}
               onChange={(e) => setSelectedCompany(e.target.value)}
-              className="p-2 border rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="p-2 border rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               <option value="All Companies">All Companies</option>
               {companiesList.map(c => <option key={c} value={c}>{c}</option>)}
@@ -264,7 +264,7 @@ function PaymentChart() {
         </div>
 
         {/* Bar Chart Block */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-indigo-50 mb-8">
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-indigo-50 mb-8">
           <h6 className="text-left text-lg font-bold text-gray-800 mb-4">
             Monthly Payout Distribution ({selectedYear})
           </h6>
@@ -276,7 +276,7 @@ function PaymentChart() {
         {/* Pie Charts Block */}
         <div className="flex flex-col lg:flex-row justify-center items-stretch gap-6">
           {/* State Pie Chart */}
-          <div className="flex flex-col bg-white rounded-2xl p-6 shadow-sm border border-indigo-50 w-full lg:w-1/2">
+          <div className="flex flex-col bg-white rounded-xl p-6 shadow-sm border border-indigo-50 w-full lg:w-1/2">
             <h6 className="text-center text-base font-bold text-gray-800 mb-4">State-wise Breakdown</h6>
             <div className="h-64 relative flex items-center justify-center">
               {Object.keys(filteredStateData).length > 0 ? (
@@ -288,7 +288,7 @@ function PaymentChart() {
           </div>
 
           {/* Company Pie Chart */}
-          <div className="flex flex-col bg-white rounded-2xl p-6 shadow-sm border border-indigo-50 w-full lg:w-1/2">
+          <div className="flex flex-col bg-white rounded-xl p-6 shadow-sm border border-indigo-50 w-full lg:w-1/2">
             <h6 className="text-center text-base font-bold text-gray-800 mb-4">Company-wise Breakdown</h6>
             <div className="h-64 relative flex items-center justify-center">
               {Object.keys(filteredCompanyData).length > 0 ? (

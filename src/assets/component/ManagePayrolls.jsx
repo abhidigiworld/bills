@@ -275,7 +275,7 @@ function ManagePayrolls() {
                 <div className="max-w-7xl mx-auto">
                     <Link
                         to="/Main"
-                        className="inline-flex items-center gap-2 mb-6 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-[#3e3857] hover:bg-slate-100 dark:hover:bg-[#201d2c] text-xs font-bold text-slate-600 dark:text-gray-300 transition duration-200 shadow-sm print:hidden"
+                        className="inline-flex items-center gap-2 mb-6 px-4 py-2.5 rounded-lg border border-slate-200 dark:border-[#3e3857] hover:bg-slate-100 dark:hover:bg-[#201d2c] text-xs font-bold text-slate-600 dark:text-gray-300 transition duration-200 shadow-sm print:hidden"
                     >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -287,25 +287,25 @@ function ManagePayrolls() {
                     </h2>
 
                     {error && (
-                        <div className="max-w-md mx-auto mb-6 bg-red-100 dark:bg-red-950/40 border border-red-400 dark:border-red-900/50 text-red-700 dark:text-red-400 px-4 py-3 rounded-xl text-center text-sm font-medium">
+                        <div className="max-w-md mx-auto mb-6 bg-red-100 dark:bg-red-950/40 border border-red-400 dark:border-red-900/50 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg text-center text-sm font-medium">
                             {error}
                         </div>
                     )}
 
                     {successMessage && (
-                        <div className="max-w-md mx-auto mb-6 bg-green-100 dark:bg-green-950/40 border border-green-400 dark:border-green-900/50 text-green-700 dark:text-green-400 px-4 py-3 rounded-xl text-center text-sm font-medium">
+                        <div className="max-w-md mx-auto mb-6 bg-green-100 dark:bg-green-950/40 border border-green-400 dark:border-green-900/50 text-green-700 dark:text-green-400 px-4 py-3 rounded-lg text-center text-sm font-medium">
                             {successMessage}
                         </div>
                     )}
 
                     {/* Filter Bar */}
-                    <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-[2rem] p-6 mb-8 flex flex-wrap gap-4 items-center transition-colors duration-300">
+                    <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl p-6 mb-8 flex flex-wrap gap-4 items-center transition-colors duration-300">
                         <div className="w-full sm:w-auto flex-grow">
                             <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Employee</label>
                             <select
                                 value={selectedEmployeeId}
                                 onChange={(e) => setSelectedEmployeeId(e.target.value)}
-                                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                             >
                                 <option value="">All Employees</option>
                                 {employees.map(emp => (
@@ -319,7 +319,7 @@ function ManagePayrolls() {
                             <select
                                 value={selectedMonth}
                                 onChange={(e) => setSelectedMonth(e.target.value)}
-                                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                             >
                                 <option value="">All Months</option>
                                 {[
@@ -336,7 +336,7 @@ function ManagePayrolls() {
                             <select
                                 value={selectedYear}
                                 onChange={(e) => setSelectedYear(e.target.value)}
-                                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                             >
                                 <option value="">All Years</option>
                                 {Array.from({ length: new Date().getFullYear() + 5 - 2024 + 1 }, (_, i) => 2024 + i).map(y => (
@@ -353,7 +353,7 @@ function ManagePayrolls() {
                                     setSelectedMonth('');
                                     setSelectedYear('');
                                 }}
-                                className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-[#3e3857] hover:bg-slate-100 dark:hover:bg-[#201d2c] text-xs font-bold transition duration-200"
+                                className="px-4 py-2.5 rounded-lg border border-slate-200 dark:border-[#3e3857] hover:bg-slate-100 dark:hover:bg-[#201d2c] text-xs font-bold transition duration-200"
                             >
                                 Reset Filters
                             </button>
@@ -365,7 +365,7 @@ function ManagePayrolls() {
                             <div className="text-indigo-600 dark:text-violet-400 text-xl font-bold animate-pulse">Loading payroll slips...</div>
                         </div>
                     ) : (
-                        <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-[2rem] p-6 transition-colors duration-300">
+                        <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-6 transition-colors duration-300">
                             <div className="overflow-x-auto">
                                 <table className="w-full text-xs text-left border-collapse">
                                     <thead>
@@ -404,19 +404,19 @@ function ManagePayrolls() {
                                                             <div className="flex gap-1.5 justify-center">
                                                                 <button
                                                                     onClick={() => handleOpenEdit(slip)}
-                                                                    className="text-violet-600 hover:text-violet-700 font-bold px-2 py-1.5 rounded-lg border border-violet-200 dark:border-violet-900/35 hover:bg-violet-50 dark:hover:bg-violet-950/20 transition"
+                                                                    className="text-violet-600 hover:text-violet-700 font-bold px-2 py-1.5 rounded-md border border-violet-200 dark:border-violet-900/35 hover:bg-violet-50 dark:hover:bg-violet-950/20 transition"
                                                                 >
                                                                     Edit
                                                                 </button>
                                                                 <button
                                                                     onClick={() => setActiveSlip(slip)}
-                                                                    className="text-indigo-600 hover:text-indigo-700 font-bold px-2 py-1.5 rounded-lg border border-indigo-200 dark:border-indigo-900/35 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 transition"
+                                                                    className="text-indigo-600 hover:text-indigo-700 font-bold px-2 py-1.5 rounded-md border border-indigo-200 dark:border-indigo-900/35 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 transition"
                                                                 >
                                                                     Print
                                                                 </button>
                                                                 <button
                                                                     onClick={() => handleDeleteSlip(slip._id, empName, slip.monthOfSalary)}
-                                                                    className="text-red-500 hover:text-red-600 font-bold px-2 py-1.5 rounded-lg border border-red-200 dark:border-red-900/35 hover:bg-red-50 dark:hover:bg-red-950/20 transition"
+                                                                    className="text-red-500 hover:text-red-600 font-bold px-2 py-1.5 rounded-md border border-red-200 dark:border-red-900/35 hover:bg-red-50 dark:hover:bg-red-950/20 transition"
                                                                 >
                                                                     Delete
                                                                 </button>
@@ -444,7 +444,7 @@ function ManagePayrolls() {
             {/* EDIT SLIP MODAL */}
             {editingSlip && liveCalculations && (
                 <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4">
-                    <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] w-full max-w-lg rounded-[2rem] p-6 shadow-2xl relative transition-all duration-300 animate-slide-down">
+                    <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] w-full max-w-lg rounded-xl p-6 shadow-2xl relative transition-all duration-300 animate-slide-down">
                         <h3 className="text-xl font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-[#262235] pb-2.5 mb-4">
                             Edit Payroll - {liveCalculations.empName} ({editingSlip.monthOfSalary})
                         </h3>
@@ -457,7 +457,7 @@ function ManagePayrolls() {
                                         type="number"
                                         value={editForm.workDays}
                                         onChange={(e) => setEditForm({ ...editForm, workDays: parseInt(e.target.value) || 0 })}
-                                        className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition"
+                                        className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition"
                                     />
                                 </div>
                                 <div>
@@ -466,7 +466,7 @@ function ManagePayrolls() {
                                         type="number"
                                         value={editForm.otHours}
                                         onChange={(e) => setEditForm({ ...editForm, otHours: parseFloat(e.target.value) || 0 })}
-                                        className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition"
+                                        className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition"
                                     />
                                 </div>
                             </div>
@@ -478,7 +478,7 @@ function ManagePayrolls() {
                                         type="number"
                                         value={editForm.advance}
                                         onChange={(e) => setEditForm({ ...editForm, advance: Math.floor(parseFloat(e.target.value)) || 0 })}
-                                        className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition"
+                                        className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition"
                                     />
                                 </div>
                                 <div>
@@ -487,7 +487,7 @@ function ManagePayrolls() {
                                         type="number"
                                         value={editForm.esic}
                                         onChange={(e) => setEditForm({ ...editForm, esic: Math.floor(parseFloat(e.target.value)) || 0 })}
-                                        className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition"
+                                        className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition"
                                     />
                                 </div>
                             </div>
@@ -499,7 +499,7 @@ function ManagePayrolls() {
                                         type="number"
                                         value={editForm.lunchDays}
                                         onChange={(e) => setEditForm({ ...editForm, lunchDays: parseInt(e.target.value) || 0 })}
-                                        className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
+                                        className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
                                     />
                                 </div>
                                 <div>
@@ -508,7 +508,7 @@ function ManagePayrolls() {
                                         type="number"
                                         value={editForm.lunchRate}
                                         onChange={(e) => setEditForm({ ...editForm, lunchRate: Math.floor(parseFloat(e.target.value)) || 0 })}
-                                        className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
+                                        className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
                                     />
                                 </div>
                                 <div>
@@ -517,13 +517,13 @@ function ManagePayrolls() {
                                         type="number"
                                         value={editForm.shiftHours}
                                         onChange={(e) => setEditForm({ ...editForm, shiftHours: parseInt(e.target.value) || 8 })}
-                                        className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
+                                        className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
                                     />
                                 </div>
                             </div>
 
                             {/* Recalculated Breakdown Live Preview */}
-                            <div className="bg-slate-50 dark:bg-[#201d2c]/40 p-4 rounded-2xl border border-slate-200/50 dark:border-[#262235] text-xs space-y-1.5 transition-colors">
+                            <div className="bg-slate-50 dark:bg-[#201d2c]/40 p-4 rounded-lg border border-slate-200/50 dark:border-[#262235] text-xs space-y-1.5 transition-colors">
                                 <h4 className="font-bold text-slate-700 dark:text-gray-300 border-b border-slate-200/50 dark:border-[#262235] pb-1.5 mb-2 uppercase tracking-wide">Live Payout Breakdown</h4>
                                 <div className="flex justify-between">
                                     <span className="text-slate-500 dark:text-gray-400">Calendar Days:</span>
@@ -559,13 +559,13 @@ function ManagePayrolls() {
                         <div className="flex gap-3 mt-6">
                             <button
                                 onClick={handleSaveEdit}
-                                className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-2.5 rounded-xl shadow transition duration-200 text-sm"
+                                className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-2.5 rounded-lg shadow transition duration-200 text-sm"
                             >
                                 Save Changes
                             </button>
                             <button
                                 onClick={() => setEditingSlip(null)}
-                                className="w-full bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-2.5 rounded-xl shadow transition duration-200 text-sm"
+                                className="w-full bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-2.5 rounded-lg shadow transition duration-200 text-sm"
                             >
                                 Cancel
                             </button>
@@ -582,7 +582,7 @@ function ManagePayrolls() {
                 const activeHourlyRate = Math.floor(activeDailyRate / (activeSlip.shiftHours || 8));
                 return (
                     <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4 print:static print:bg-transparent print:p-0 print:overflow-visible">
-                        <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] w-full max-w-2xl rounded-[2rem] p-6 shadow-2xl relative transition-colors duration-300 animate-slide-down print:p-0 print:border-none print:shadow-none print:bg-white print:text-black">
+                        <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] w-full max-w-2xl rounded-xl p-6 shadow-2xl relative transition-colors duration-300 animate-slide-down print:p-0 print:border-none print:shadow-none print:bg-white print:text-black">
 
                             {/* Slip Printable Block */}
                             <div className="printdata font-mono text-slate-800 dark:text-gray-200 print:text-black w-full border border-black rounded-lg overflow-hidden bg-white dark:bg-[#181622] print:bg-white">
@@ -591,7 +591,7 @@ function ManagePayrolls() {
                                     <p className="text-xl font-bold text-center uppercase tracking-wide">Salary Statement</p>
                                     <div className="flex justify-between items-center relative mt-2">
                                         <div className="absolute" style={{ top: '-10px', left: '-10px' }}>
-                                            <img src={logo} alt="Your Company Logo" className="w-24 h-auto rounded-lg" />
+                                            <img src={logo} alt="Your Company Logo" className="w-24 h-auto rounded-md" />
                                         </div>
                                         <div className="flex-1 text-center pt-2" style={{ marginLeft: '120px' }}>
                                             <p className="text-2xl font-bold uppercase tracking-wider">Sakshi Enterprises</p>
@@ -743,20 +743,20 @@ function ManagePayrolls() {
                                 <div className="flex gap-3">
                                     <button
                                         onClick={() => handlePrint(true)}
-                                        className="w-1/2 bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-xl shadow transition duration-200 text-xs uppercase tracking-wider"
+                                        className="w-1/2 bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-lg shadow transition duration-200 text-xs uppercase tracking-wider"
                                     >
                                         Print with Sign
                                     </button>
                                     <button
                                         onClick={() => handlePrint(false)}
-                                        className="w-1/2 bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-xl shadow transition duration-200 text-xs uppercase tracking-wider"
+                                        className="w-1/2 bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-lg shadow transition duration-200 text-xs uppercase tracking-wider"
                                     >
                                         Print without Sign
                                     </button>
                                 </div>
                                 <button
                                     onClick={() => setActiveSlip(null)}
-                                    className="w-full bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-3 px-4 rounded-xl shadow transition duration-200 text-xs uppercase tracking-wider"
+                                    className="w-full bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-3 px-4 rounded-lg shadow transition duration-200 text-xs uppercase tracking-wider"
                                 >
                                     Close
                                 </button>

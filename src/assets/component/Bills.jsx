@@ -155,7 +155,7 @@ function Bills() {
         <div className="max-w-6xl mx-auto">
           <Link 
             to="/Main" 
-            className="inline-flex items-center gap-2 mb-6 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-[#3e3857] hover:bg-slate-100 dark:hover:bg-[#201d2c] text-xs font-bold text-slate-600 dark:text-gray-300 transition duration-200 shadow-sm print:hidden"
+            className="inline-flex items-center gap-2 mb-6 px-4 py-2.5 rounded-lg border border-slate-200 dark:border-[#3e3857] hover:bg-slate-100 dark:hover:bg-[#201d2c] text-xs font-bold text-slate-600 dark:text-gray-300 transition duration-200 shadow-sm print:hidden"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -167,20 +167,20 @@ function Bills() {
           </h1>
 
           {alertMessage && (
-            <div className="max-w-md mx-auto mb-6 bg-green-100 dark:bg-green-950/40 border border-green-400 dark:border-green-900/50 text-green-700 dark:text-green-400 px-4 py-3 rounded-2xl text-center text-sm font-medium">
+            <div className="max-w-md mx-auto mb-6 bg-green-100 dark:bg-green-950/40 border border-green-400 dark:border-green-900/50 text-green-700 dark:text-green-400 px-4 py-3 rounded-lg text-center text-sm font-medium">
               {alertMessage}
             </div>
           )}
 
           {/* Search Box */}
-          <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-[2rem] p-6 mb-8 transition-colors duration-300">
+          <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl p-6 mb-8 transition-colors duration-300">
             <label htmlFor="search" className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">
               Search by Invoice No or Company Name
             </label>
             <input
               id="search"
               type="text"
-              className="w-full px-4 py-3 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+              className="w-full px-4 py-3 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
               placeholder="Enter Invoice No or Company Name..."
               value={searchTerm}
               onChange={handleSearchChange}
@@ -188,7 +188,7 @@ function Bills() {
           </div>
 
           {/* Invoices List Table */}
-          <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-[2rem] p-4 transition-colors duration-300">
+          <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-4 transition-colors duration-300">
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
                 <thead>
@@ -244,19 +244,19 @@ function Bills() {
                         <td className="px-4 py-3 text-center text-slate-600 dark:text-gray-300">{formatDate(bill.invoiceDate)}</td>
                         <td className="px-4 py-3 flex items-center justify-center gap-2">
                           <button
-                            className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-1.5 px-3 rounded-lg text-xs transition duration-200 shadow-sm"
+                            className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-1.5 px-3 rounded-md text-xs transition duration-200 shadow-sm"
                             onClick={() => handleViewDetails(bill._id)}
                           >
                             View
                           </button>
                           <button
-                            className="bg-amber-500 hover:bg-amber-600 text-white font-bold py-1.5 px-3 rounded-lg text-xs transition duration-200 shadow-sm"
+                            className="bg-amber-500 hover:bg-amber-600 text-white font-bold py-1.5 px-3 rounded-md text-xs transition duration-200 shadow-sm"
                             onClick={() => handleUpdate(bill)}
                           >
                             Update
                           </button>
                           <button
-                            className="bg-red-500 hover:bg-red-600 text-white font-bold py-1.5 px-3 rounded-lg text-xs transition duration-200 shadow-sm"
+                            className="bg-red-500 hover:bg-red-600 text-white font-bold py-1.5 px-3 rounded-md text-xs transition duration-200 shadow-sm"
                             onClick={() => handleDelete(bill._id)}
                           >
                             Delete

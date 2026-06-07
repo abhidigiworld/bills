@@ -177,7 +177,7 @@ function Header() {
       <div className="container mx-auto flex justify-between items-center">
         <h1 className="text-xl font-bold flex items-center">
           <Link to={'/Main'} className="flex items-center gap-2.5 group">
-            <img src={logo} alt="Sakshi Enterprises Logo" className="h-9 w-auto rounded-lg shadow-md border border-slate-200 dark:border-[#3e3857]" />
+            <img src={logo} alt="Sakshi Enterprises Logo" className="h-9 w-auto rounded-md shadow-md border border-slate-200 dark:border-[#3e3857]" />
             <div className="flex flex-col justify-center leading-[1.05]">
               <span className="company-name text-[13px] tracking-wider block transition-all group-hover:opacity-90">
                 SAKSHI
@@ -193,7 +193,7 @@ function Header() {
           {/* Light/Dark Toggle Button */}
           <button
             onClick={toggleTheme}
-            className="p-2.5 rounded-xl border border-slate-200 dark:border-[#3e3857] hover:bg-slate-100 dark:hover:bg-[#201d2c] transition duration-200 text-slate-600 dark:text-gray-300 focus:outline-none"
+            className="p-2.5 rounded-lg border border-slate-200 dark:border-[#3e3857] hover:bg-slate-100 dark:hover:bg-[#201d2c] transition duration-200 text-slate-600 dark:text-gray-300 focus:outline-none"
             aria-label="Toggle Theme"
           >
             {theme === 'light' ? (
@@ -211,7 +211,7 @@ function Header() {
           <div className="relative hamburger-container">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2.5 rounded-xl border border-slate-200 dark:border-[#3e3857] hover:bg-slate-100 dark:hover:bg-[#201d2c] transition duration-200 text-slate-600 dark:text-gray-300 focus:outline-none flex items-center justify-center"
+              className="p-2.5 rounded-lg border border-slate-200 dark:border-[#3e3857] hover:bg-slate-100 dark:hover:bg-[#201d2c] transition duration-200 text-slate-600 dark:text-gray-300 focus:outline-none flex items-center justify-center"
               aria-label="Menu"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -220,7 +220,7 @@ function Header() {
             </button>
 
             {isMenuOpen && (
-              <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] rounded-2xl shadow-xl z-50 py-2 transition-colors duration-300 animate-slide-down">
+              <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] rounded-xl shadow-xl z-50 py-2 transition-colors duration-300 animate-slide-down">
                 <div className="px-4 py-2.5 border-b border-slate-100 dark:border-[#262235]">
                   <p className="text-sm font-bold text-slate-900 dark:text-white truncate">
                     {currentUser ? currentUser.name : 'Guest User'}
@@ -262,20 +262,20 @@ function Header() {
       {/* Profile Modal */}
       {isProfileModalOpen && (
         <div className="fixed inset-0 z-[100] overflow-y-auto bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] w-full max-w-md rounded-[2rem] p-6 shadow-2xl relative transition-all duration-300 animate-slide-down">
+          <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] w-full max-w-md rounded-xl p-6 shadow-2xl relative transition-all duration-300 animate-slide-down">
             <h3 className="text-xl font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-[#262235] pb-3 mb-4">
               My Profile Details
             </h3>
 
             {isFallbackAdmin ? (
               <div className="space-y-4">
-                <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/40 text-amber-700 dark:text-amber-400 p-4 rounded-2xl text-xs sm:text-sm font-medium leading-relaxed">
+                <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/40 text-amber-700 dark:text-amber-400 p-4 rounded-lg text-xs sm:text-sm font-medium leading-relaxed">
                   You are currently logged in using the default fallback administrator credentials (<strong>Sakshi Admin</strong>). For security and architectural reasons, default/fallback credentials cannot be modified directly from the UI.
                 </div>
                 <div className="flex justify-end pt-2">
                   <button
                     onClick={() => setIsProfileModalOpen(false)}
-                    className="bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-2.5 px-6 rounded-xl transition text-sm shadow-sm"
+                    className="bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-2.5 px-6 rounded-lg transition text-sm shadow-sm"
                   >
                     Close
                   </button>
@@ -283,17 +283,17 @@ function Header() {
               </div>
             ) : showOtpVerification ? (
               <form onSubmit={handleProfileSubmit} className="space-y-4">
-                <div className="bg-indigo-50 dark:bg-indigo-950/20 border border-indigo-200 dark:border-indigo-900/40 text-indigo-700 dark:text-indigo-400 p-4 rounded-2xl text-xs sm:text-sm font-medium leading-relaxed">
+                <div className="bg-indigo-50 dark:bg-indigo-950/20 border border-indigo-200 dark:border-indigo-900/40 text-indigo-700 dark:text-indigo-400 p-4 rounded-lg text-xs sm:text-sm font-medium leading-relaxed">
                   To confirm your password change, please enter the 6-digit verification code sent to <strong>{currentUser?.email}</strong>.
                 </div>
 
                 {profileError && (
-                  <div className="bg-red-50 dark:bg-red-950/25 border border-red-200 dark:border-red-900/40 text-red-600 dark:text-red-400 px-4 py-2.5 rounded-xl text-center text-xs font-semibold">
+                  <div className="bg-red-50 dark:bg-red-950/25 border border-red-200 dark:border-red-900/40 text-red-600 dark:text-red-400 px-4 py-2.5 rounded-lg text-center text-xs font-semibold">
                     {profileError}
                   </div>
                 )}
                 {profileSuccess && (
-                  <div className="bg-green-50 dark:bg-green-950/25 border border-green-200 dark:border-green-900/40 text-green-600 dark:text-green-400 px-4 py-2.5 rounded-xl text-center text-xs font-semibold animate-pulse">
+                  <div className="bg-green-50 dark:bg-green-950/25 border border-green-200 dark:border-green-900/40 text-green-600 dark:text-green-400 px-4 py-2.5 rounded-lg text-center text-xs font-semibold animate-pulse">
                     {profileSuccess}
                   </div>
                 )}
@@ -306,7 +306,7 @@ function Header() {
                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
                     placeholder="Enter OTP code"
                     maxLength="6"
-                    className="w-full text-center tracking-widest text-lg font-bold px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                    className="w-full text-center tracking-widest text-lg font-bold px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                     required
                   />
                 </div>
@@ -337,7 +337,7 @@ function Header() {
                   <button
                     type="submit"
                     disabled={isSaving}
-                    className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-2.5 rounded-xl shadow transition duration-200 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-2.5 rounded-lg shadow transition duration-200 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSaving ? 'Verifying...' : 'Verify and Save Changes'}
                   </button>
@@ -348,7 +348,7 @@ function Header() {
                       setShowOtpVerification(false);
                       setOtp('');
                     }}
-                    className="w-full bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-2.5 rounded-xl shadow transition duration-200 text-sm"
+                    className="w-full bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-2.5 rounded-lg shadow transition duration-200 text-sm"
                   >
                     Cancel
                   </button>
@@ -357,12 +357,12 @@ function Header() {
             ) : (
               <form onSubmit={handleProfileSubmit} className="space-y-4">
                 {profileError && (
-                  <div className="bg-red-50 dark:bg-red-950/25 border border-red-200 dark:border-red-900/40 text-red-600 dark:text-red-400 px-4 py-2.5 rounded-xl text-center text-xs font-semibold">
+                  <div className="bg-red-50 dark:bg-red-950/25 border border-red-200 dark:border-red-900/40 text-red-600 dark:text-red-400 px-4 py-2.5 rounded-lg text-center text-xs font-semibold">
                     {profileError}
                   </div>
                 )}
                 {profileSuccess && (
-                  <div className="bg-green-50 dark:bg-green-950/25 border border-green-200 dark:border-green-900/40 text-green-600 dark:text-green-400 px-4 py-2.5 rounded-xl text-center text-xs font-semibold animate-pulse">
+                  <div className="bg-green-50 dark:bg-green-950/25 border border-green-200 dark:border-green-900/40 text-green-600 dark:text-green-400 px-4 py-2.5 rounded-lg text-center text-xs font-semibold animate-pulse">
                     {profileSuccess}
                   </div>
                 )}
@@ -374,7 +374,7 @@ function Header() {
                     name="name"
                     value={profileForm.name}
                     onChange={handleProfileInputChange}
-                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                     required
                   />
                 </div>
@@ -386,7 +386,7 @@ function Header() {
                     name="email"
                     value={profileForm.email}
                     onChange={handleProfileInputChange}
-                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                     required
                   />
                 </div>
@@ -403,7 +403,7 @@ function Header() {
                         value={profileForm.password}
                         onChange={handleProfileInputChange}
                         placeholder="••••••••"
-                        className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                        className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                       />
                     </div>
                     <div>
@@ -414,7 +414,7 @@ function Header() {
                         value={profileForm.confirmPassword}
                         onChange={handleProfileInputChange}
                         placeholder="••••••••"
-                        className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                        className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                       />
                     </div>
                   </div>
@@ -424,14 +424,14 @@ function Header() {
                   <button
                     type="submit"
                     disabled={isSaving}
-                    className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-2.5 rounded-xl shadow transition duration-200 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-2.5 rounded-lg shadow transition duration-200 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSaving ? 'Saving...' : 'Save Profile Changes'}
                   </button>
                   <button
                     type="button"
                     onClick={() => setIsProfileModalOpen(false)}
-                    className="w-full bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-2.5 rounded-xl shadow transition duration-200 text-sm"
+                    className="w-full bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-2.5 rounded-lg shadow transition duration-200 text-sm"
                   >
                     Cancel
                   </button>

@@ -267,7 +267,7 @@ function InvoiceDetails({ invoiceId }) {
                 </div>
             </div>
 
-            <div className="mb-8 p-6 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] rounded-[2rem] shadow-xl print-hidden transition-colors duration-300">
+            <div className="mb-8 p-6 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] rounded-xl shadow-xl print-hidden transition-colors duration-300">
                 {/* Section Title */}
                 <h2 className="text-lg font-bold text-center text-slate-950 dark:text-white mb-4">
                     Print Options and Row Settings
@@ -283,25 +283,25 @@ function InvoiceDetails({ invoiceId }) {
                         <div className="flex flex-wrap justify-start gap-2">
                             <button
                                 onClick={() => handlePrint(true, true)}
-                                className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow-sm transition duration-200"
+                                className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2.5 px-4 rounded-lg text-xs shadow-sm transition duration-200"
                             >
                                 Print with Sign & Stamp
                             </button>
                             <button
                                 onClick={() => handlePrint(true, false)}
-                                className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow-sm transition duration-200"
+                                className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2.5 px-4 rounded-lg text-xs shadow-sm transition duration-200"
                             >
                                 Print with Sign
                             </button>
                             <button
                                 onClick={() => handlePrint(false, true)}
-                                className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow-sm transition duration-200"
+                                className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2.5 px-4 rounded-lg text-xs shadow-sm transition duration-200"
                             >
                                 Print with Stamp
                             </button>
                             <button
                                 onClick={() => handlePrint(false, false)}
-                                className="bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-2.5 px-4 rounded-xl text-xs shadow-sm transition duration-200"
+                                className="bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-2.5 px-4 rounded-lg text-xs shadow-sm transition duration-200"
                             >
                                 Print Plain Invoice
                             </button>
@@ -318,7 +318,7 @@ function InvoiceDetails({ invoiceId }) {
                         <div>
                             <button
                                 onClick={toggleVisibility}
-                                className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2 px-4 rounded-xl text-xs shadow-sm transition duration-200"
+                                className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2 px-4 rounded-lg text-xs shadow-sm transition duration-200"
                             >
                                 {isVisible ? 'Hide' : 'Show'} Second Row
                             </button>
@@ -331,7 +331,7 @@ function InvoiceDetails({ invoiceId }) {
                                 type="number"
                                 value={userHeight}
                                 onChange={handleHeightChange}
-                                className="px-3 py-1.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition text-center w-28"
+                                className="px-3 py-1.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition text-center w-28"
                             />
                         </div>
 
@@ -344,7 +344,7 @@ function InvoiceDetails({ invoiceId }) {
                                 onChange={handleInputChange}
                                 min="1"
                                 placeholder="Number of rows"
-                                className="px-3 py-1.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition text-center w-28"
+                                className="px-3 py-1.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition text-center w-28"
                             />
                         </div>
                     </div>

@@ -101,7 +101,7 @@ function AICopilot() {
 
       {/* Chat Drawer Interface */}
       {isOpen && (
-        <div className="flex flex-col w-[350px] sm:w-[380px] h-[500px] sm:h-[550px] bg-white/95 dark:bg-[#181622]/95 backdrop-blur-md border border-slate-200 dark:border-[#2b263e] shadow-2xl rounded-3xl overflow-hidden transition-all duration-300 animate-fade-in-up">
+        <div className="flex flex-col w-[350px] sm:w-[380px] h-[500px] sm:h-[550px] bg-white/95 dark:bg-[#181622]/95 backdrop-blur-md border border-slate-200 dark:border-[#2b263e] shadow-2xl rounded-xl overflow-hidden transition-all duration-300 animate-fade-in-up">
           {/* Header */}
           <div className="flex items-center justify-between px-5 py-4 bg-indigo-600 dark:bg-[#201d2c] border-b border-indigo-700/20 dark:border-[#2b263e] text-white">
             <div className="flex items-center gap-2.5">
@@ -132,7 +132,7 @@ function AICopilot() {
                 className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed ${
+                  className={`max-w-[85%] rounded-lg px-3.5 py-2.5 text-xs leading-relaxed ${
                     msg.role === 'user'
                       ? 'bg-indigo-600 dark:bg-violet-600 text-white rounded-tr-none font-medium shadow-md'
                       : 'bg-white dark:bg-[#201d2c] text-slate-800 dark:text-gray-100 border border-slate-100 dark:border-[#2b263e] rounded-tl-none font-normal shadow-sm whitespace-pre-wrap'
@@ -144,7 +144,7 @@ function AICopilot() {
             ))}
             {loading && (
               <div className="flex justify-start">
-                <div className="bg-white dark:bg-[#201d2c] text-slate-400 dark:text-gray-400 rounded-2xl rounded-tl-none px-4 py-3 border border-slate-100 dark:border-[#2b263e] text-xs flex gap-1.5 items-center shadow-sm">
+                <div className="bg-white dark:bg-[#201d2c] text-slate-400 dark:text-gray-400 rounded-lg rounded-tl-none px-4 py-3 border border-slate-100 dark:border-[#2b263e] text-xs flex gap-1.5 items-center shadow-sm">
                   <span className="w-1.5 h-1.5 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce"></span>
                   <span className="w-1.5 h-1.5 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce [animation-delay:0.2s]"></span>
                   <span className="w-1.5 h-1.5 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce [animation-delay:0.4s]"></span>
@@ -188,12 +188,12 @@ function AICopilot() {
               onKeyDown={handleKeyPress}
               disabled={loading || cooldown > 0}
               placeholder={cooldown > 0 ? 'Waiting for cooldown...' : 'Ask about GST, payroll, or emails...'}
-              className="flex-grow text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-[#110f18] border border-slate-200 dark:border-[#2c273e] text-slate-800 dark:text-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:focus:ring-violet-500 disabled:opacity-50"
+              className="flex-grow text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-[#110f18] border border-slate-200 dark:border-[#2c273e] text-slate-800 dark:text-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:focus:ring-violet-500 disabled:opacity-50"
             />
             <button
               onClick={() => sendMessage()}
               disabled={!input.trim() || loading || cooldown > 0}
-              className="flex items-center justify-center w-9 h-9 rounded-xl bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white shadow disabled:opacity-40 transition duration-200 shrink-0"
+              className="flex items-center justify-center w-9 h-9 rounded-lg bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white shadow disabled:opacity-40 transition duration-200 shrink-0"
               title="Send message"
             >
               <svg className="w-4 h-4 transform rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">

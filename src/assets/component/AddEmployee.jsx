@@ -107,7 +107,7 @@ function AddEmployee() {
                 <div className="max-w-5xl mx-auto">
                     <Link 
                         to="/Main" 
-                        className="inline-flex items-center gap-2 mb-6 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-[#3e3857] hover:bg-slate-100 dark:hover:bg-[#201d2c] text-xs font-bold text-slate-600 dark:text-gray-300 transition duration-200 shadow-sm print:hidden"
+                        className="inline-flex items-center gap-2 mb-6 px-4 py-2.5 rounded-lg border border-slate-200 dark:border-[#3e3857] hover:bg-slate-100 dark:hover:bg-[#201d2c] text-xs font-bold text-slate-600 dark:text-gray-300 transition duration-200 shadow-sm print:hidden"
                     >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -119,12 +119,12 @@ function AddEmployee() {
                     </h2>
 
                     {error && (
-                        <div className="max-w-lg mx-auto mb-6 bg-red-100 dark:bg-red-950/40 border border-red-400 dark:border-red-900/50 text-red-700 dark:text-red-400 px-4 py-3 rounded-2xl text-center text-sm font-medium animate-shake">
+                        <div className="max-w-lg mx-auto mb-6 bg-red-100 dark:bg-red-950/40 border border-red-400 dark:border-red-900/50 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg text-center text-sm font-medium animate-shake">
                             {error}
                         </div>
                     )}
 
-                    <form onSubmit={handleSubmit} className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-[2rem] p-6 sm:p-8 mb-10 max-w-lg mx-auto transition-colors duration-300">
+                    <form onSubmit={handleSubmit} className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-6 sm:p-8 mb-10 max-w-lg mx-auto transition-colors duration-300">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                             <div>
                                 <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Name</label>
@@ -134,7 +134,7 @@ function AddEmployee() {
                                     placeholder="Employee Name"
                                     value={employee.name}
                                     onChange={handleInputChange}
-                                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                                     required
                                 />
                             </div>
@@ -147,7 +147,7 @@ function AddEmployee() {
                                     placeholder="name@company.com"
                                     value={employee.email}
                                     onChange={handleInputChange}
-                                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                                     required
                                 />
                             </div>
@@ -162,7 +162,7 @@ function AddEmployee() {
                                     placeholder="e.g. Developer, Staff"
                                     value={employee.designation}
                                     onChange={handleInputChange}
-                                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                                 />
                             </div>
 
@@ -174,7 +174,7 @@ function AddEmployee() {
                                     placeholder="e.g. New Delhi"
                                     value={employee.location}
                                     onChange={handleInputChange}
-                                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                                 />
                             </div>
                         </div>
@@ -187,7 +187,7 @@ function AddEmployee() {
                                     name="dateOfJoining"
                                     value={employee.dateOfJoining}
                                     onChange={handleInputChange}
-                                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                                     required
                                 />
                             </div>
@@ -200,7 +200,7 @@ function AddEmployee() {
                                     placeholder="Gross Salary in ₹"
                                     value={employee.grossSalary || ''}
                                     onChange={handleInputChange}
-                                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                                     required
                                 />
                             </div>
@@ -212,7 +212,7 @@ function AddEmployee() {
                                 name="status"
                                 value={employee.status}
                                 onChange={handleInputChange}
-                                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                             >
                                 <option value="Active">Active</option>
                                 <option value="On Hold">On Hold</option>
@@ -223,7 +223,7 @@ function AddEmployee() {
 
                         <button 
                             type="submit" 
-                            className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition duration-200 transform hover:scale-[1.01] active:scale-[0.99] w-full text-sm"
+                            className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition duration-200 transform hover:scale-[1.01] active:scale-[0.99] w-full text-sm"
                         >
                             {isEditing ? 'Update Employee Profile' : 'Register Employee'}
                         </button>
@@ -231,7 +231,7 @@ function AddEmployee() {
 
                     <h3 className="text-2xl font-extrabold mb-4 text-indigo-900 dark:text-white text-center">Registered Employees</h3>
 
-                    <div className="overflow-x-auto bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-[2rem] p-4 transition-colors duration-300">
+                    <div className="overflow-x-auto bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-4 transition-colors duration-300">
                         {employees.length > 0 ? (
                             <table className="w-full text-sm text-left">
                                 <thead>
@@ -270,13 +270,13 @@ function AddEmployee() {
                                             <td className="px-4 py-3 flex items-center justify-center gap-2">
                                                 <button
                                                     onClick={() => handleEdit(emp)}
-                                                    className="bg-indigo-50 dark:bg-indigo-950 hover:bg-indigo-100 dark:hover:bg-indigo-900 text-indigo-700 dark:text-indigo-300 px-3 py-1.5 rounded-lg text-xs font-bold transition duration-200"
+                                                    className="bg-indigo-50 dark:bg-indigo-950 hover:bg-indigo-100 dark:hover:bg-indigo-900 text-indigo-700 dark:text-indigo-300 px-3 py-1.5 rounded-md text-xs font-bold transition duration-200"
                                                 >
                                                     Edit
                                                 </button>
                                                 <button
                                                     onClick={() => handleDelete(emp._id)}
-                                                    className="bg-red-50 dark:bg-red-950 hover:bg-red-100 dark:hover:bg-red-900 text-red-600 dark:text-red-400 px-3 py-1.5 rounded-lg text-xs font-bold transition duration-200"
+                                                    className="bg-red-50 dark:bg-red-950 hover:bg-red-100 dark:hover:bg-red-900 text-red-600 dark:text-red-400 px-3 py-1.5 rounded-md text-xs font-bold transition duration-200"
                                                 >
                                                     Delete
                                                 </button>

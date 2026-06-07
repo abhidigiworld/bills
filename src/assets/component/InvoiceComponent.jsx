@@ -244,73 +244,73 @@ function InvoiceComponent({ invoiceDetails }) {
             <div className="container mx-auto px-4 lg:px-8 mb-12 pb-8 font-mono text-slate-800 dark:text-gray-200">
                 <div className="flex flex-col lg:flex-row gap-6">
                     <div className="flex flex-col space-y-4 w-full lg:w-1/3 print-hidden">
-                        <div className="p-5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-[2rem] space-y-3 transition-colors duration-300">
+                        <div className="p-5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl space-y-3 transition-colors duration-300">
                             <h4 className="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">Add Invoice Item</h4>
                             <input
                                 type="text"
                                 placeholder="Description"
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
-                                className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                             />
                             <input
                                 type="text"
                                 placeholder="HSN/SAC Code"
                                 value={hsnAsc}
                                 onChange={(e) => setHsnAsc(e.target.value)}
-                                className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                             />
                             <input
                                 type="number"
                                 placeholder="Quantity"
                                 value={quantity}
                                 onChange={(e) => setQuantity(e.target.value)}
-                                className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                             />
                             <input
                                 type="number"
                                 placeholder="Rate"
                                 value={rate}
                                 onChange={(e) => setRate(e.target.value)}
-                                className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                             />
                             <button
                                 onClick={addItem}
-                                className="w-full bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2 rounded-xl transition duration-200 text-sm shadow"
+                                className="w-full bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2 rounded-lg transition duration-200 text-sm shadow"
                             >
                                 Add Item
                             </button>
                         </div>
 
-                        <div className="p-5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-[2rem] space-y-3 transition-colors duration-300">
+                        <div className="p-5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl space-y-3 transition-colors duration-300">
                             <h4 className="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">Taxes & Discounts</h4>
                             <input
                                 type="number"
                                 placeholder="Freight Charges"
                                 value={freight}
                                 onChange={(e) => setfreight(e.target.value)}
-                                className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                             />
                             <input
                                 type="number"
                                 placeholder="CGST Rate (%)"
                                 value={cgstRate}
                                 onChange={(e) => setcgstRate(e.target.value)}
-                                className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                             />
                             <input
                                 type="number"
                                 placeholder="SGST Rate (%)"
                                 value={sgstRate}
                                 onChange={(e) => setsgstRate(e.target.value)}
-                                className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                             />
                             <input
                                 type="number"
                                 placeholder="IGST Rate (%)"
                                 value={igstRate}
                                 onChange={(e) => setigstRate(e.target.value)}
-                                className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                             />
 
                             <input
@@ -319,12 +319,12 @@ function InvoiceComponent({ invoiceDetails }) {
                                 value={grandTotalInWords}
                                 onChange={handleInputChange}
                                 placeholder="Enter Grand Total In Words"
-                                className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                className="w-full px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                             />
 
                             <button
                                 onClick={calculateBill}
-                                className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-xl transition duration-200 text-sm shadow"
+                                className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-lg transition duration-200 text-sm shadow"
                             >
                                 Calculate Bill
                             </button>
@@ -479,13 +479,13 @@ function InvoiceComponent({ invoiceDetails }) {
                     </div>
                 </div>
                 <div className="flex justify-end mt-4">
-                    <button onClick={handleSave} className="bg-green-500 text-white px-4 py-2 rounded mr-2 hover:bg-green-600 print-hidden">Save</button>
-                    <button onClick={handlePrint} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 print-hidden">Print</button>
+                    <button onClick={handleSave} className="bg-green-500 text-white px-4 py-2 rounded-md mr-2 hover:bg-green-600 print-hidden">Save</button>
+                    <button onClick={handlePrint} className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 print-hidden">Print</button>
                 </div>
             </div>
             {saveSuccess && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white p-4 rounded shadow-md">
+                    <div className="bg-white p-4 rounded-md shadow-md">
                         <p className="text-green-500 font-bold">Invoice saved successfully!</p>
                     </div>
                 </div>

@@ -187,7 +187,7 @@ function AttendanceRegister() {
                 <div className="max-w-7xl mx-auto">
                     <Link 
                         to="/Main" 
-                        className="inline-flex items-center gap-2 mb-6 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-[#3e3857] hover:bg-slate-100 dark:hover:bg-[#201d2c] text-xs font-bold text-slate-600 dark:text-gray-300 transition duration-200 shadow-sm print:hidden"
+                        className="inline-flex items-center gap-2 mb-6 px-4 py-2.5 rounded-lg border border-slate-200 dark:border-[#3e3857] hover:bg-slate-100 dark:hover:bg-[#201d2c] text-xs font-bold text-slate-600 dark:text-gray-300 transition duration-200 shadow-sm print:hidden"
                     >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -199,14 +199,14 @@ function AttendanceRegister() {
                     </h2>
 
                     {/* Filter Bar */}
-                    <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-[2rem] p-6 mb-8 flex flex-wrap gap-6 items-center justify-between transition-colors duration-300">
+                    <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl p-6 mb-8 flex flex-wrap gap-6 items-center justify-between transition-colors duration-300">
                         <div className="flex flex-wrap gap-4 items-center">
                             <div>
                                 <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Month</label>
                                 <select
                                     value={selectedMonth}
                                     onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
-                                    className="px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                    className="px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                                 >
                                     {[
                                         { v: 1, n: 'January' }, { v: 2, n: 'February' }, { v: 3, n: 'March' }, { v: 4, n: 'April' },
@@ -223,7 +223,7 @@ function AttendanceRegister() {
                                 <select
                                     value={selectedYear}
                                     onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-                                    className="px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                    className="px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                                 >
                                     {Array.from({ length: new Date().getFullYear() + 5 - 2024 + 1 }, (_, i) => 2024 + i).map(y => (
                                         <option key={y} value={y}>{y}</option>
@@ -239,7 +239,7 @@ function AttendanceRegister() {
                                     max="16"
                                     value={shiftHours}
                                     onChange={(e) => setShiftHours(parseInt(e.target.value) || 8)}
-                                    className="w-24 px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition text-center"
+                                    className="w-24 px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition text-center"
                                 />
                             </div>
                         </div>
@@ -247,7 +247,7 @@ function AttendanceRegister() {
                         <div className="flex gap-4 items-center">
                             <button
                                 onClick={() => setIsBlanketModalOpen(true)}
-                                className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-750 hover:to-violet-750 text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition duration-200 flex items-center gap-2"
+                                className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-750 hover:to-violet-750 text-white font-bold rounded-lg text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition duration-200 flex items-center gap-2"
                             >
                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
@@ -266,7 +266,7 @@ function AttendanceRegister() {
                             <div className="text-indigo-600 dark:text-violet-400 text-xl font-bold animate-pulse">Loading Attendance Records...</div>
                         </div>
                     ) : (
-                        <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-[2rem] p-6 transition-colors duration-300">
+                        <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-6 transition-colors duration-300">
                             <div className="overflow-x-auto">
                                 <table className="w-full text-xs text-left border-collapse">
                                     <thead>
@@ -347,7 +347,7 @@ function AttendanceRegister() {
             {/* Attendance Override Modal */}
             {selectedCell && (
                 <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-65 backdrop-blur-sm flex items-center justify-center p-4">
-                    <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] w-full max-w-sm rounded-[2rem] p-6 shadow-2xl relative transition-all duration-300 animate-slide-down">
+                    <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] w-full max-w-sm rounded-xl p-6 shadow-2xl relative transition-all duration-300 animate-slide-down">
                         <h3 className="text-lg font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-[#262235] pb-2 mb-4">
                             Mark Attendance
                         </h3>
@@ -362,7 +362,7 @@ function AttendanceRegister() {
                                 <select
                                     value={modalForm.status}
                                     onChange={(e) => setModalForm({ ...modalForm, status: e.target.value })}
-                                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition font-medium"
+                                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition font-medium"
                                 >
                                     <option value="Present">Present</option>
                                     <option value="Absent">Absent</option>
@@ -379,7 +379,7 @@ function AttendanceRegister() {
                                             type="time"
                                             value={modalForm.checkIn}
                                             onChange={(e) => setModalForm({ ...modalForm, checkIn: e.target.value })}
-                                            className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
+                                            className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
                                         />
                                     </div>
                                     <div>
@@ -388,7 +388,7 @@ function AttendanceRegister() {
                                             type="time"
                                             value={modalForm.checkOut}
                                             onChange={(e) => setModalForm({ ...modalForm, checkOut: e.target.value })}
-                                            className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
+                                            className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
                                         />
                                     </div>
                                 </div>
@@ -398,13 +398,13 @@ function AttendanceRegister() {
                         <div className="flex gap-3 mt-6">
                             <button
                                 onClick={handleSaveAttendance}
-                                className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-2.5 rounded-xl shadow transition duration-200 text-sm"
+                                className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-2.5 rounded-lg shadow transition duration-200 text-sm"
                             >
                                 Save
                             </button>
                             <button
                                 onClick={() => setSelectedCell(null)}
-                                className="w-full bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-2.5 rounded-xl shadow transition duration-200 text-sm"
+                                className="w-full bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-2.5 rounded-lg shadow transition duration-200 text-sm"
                             >
                                 Cancel
                             </button>
@@ -416,7 +416,7 @@ function AttendanceRegister() {
             {/* Blanket Mark Attendance Modal */}
             {isBlanketModalOpen && (
                 <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-65 backdrop-blur-sm flex items-center justify-center p-4">
-                    <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] w-full max-w-sm rounded-[2rem] p-6 shadow-2xl relative transition-all duration-300 animate-slide-down">
+                    <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] w-full max-w-sm rounded-xl p-6 shadow-2xl relative transition-all duration-300 animate-slide-down">
                         <h3 className="text-lg font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-[#262235] pb-2 mb-4">
                             Blanket Attendance Mark
                         </h3>
@@ -430,7 +430,7 @@ function AttendanceRegister() {
                                 <select
                                     value={blanketForm.dayNum}
                                     onChange={(e) => setBlanketForm({ ...blanketForm, dayNum: parseInt(e.target.value) })}
-                                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition font-medium"
+                                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition font-medium"
                                 >
                                     {daysArray.map(day => (
                                         <option key={day} value={day}>{day} ({new Date(selectedYear, selectedMonth - 1, day).toLocaleString('default', { weekday: 'short' })})</option>
@@ -443,7 +443,7 @@ function AttendanceRegister() {
                                 <select
                                     value={blanketForm.status}
                                     onChange={(e) => setBlanketForm({ ...blanketForm, status: e.target.value })}
-                                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition font-medium"
+                                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition font-medium"
                                 >
                                     <option value="Present">Present</option>
                                     <option value="Absent">Absent</option>
@@ -460,7 +460,7 @@ function AttendanceRegister() {
                                             type="time"
                                             value={blanketForm.checkIn}
                                             onChange={(e) => setBlanketForm({ ...blanketForm, checkIn: e.target.value })}
-                                            className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
+                                            className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
                                         />
                                     </div>
                                     <div>
@@ -469,7 +469,7 @@ function AttendanceRegister() {
                                             type="time"
                                             value={blanketForm.checkOut}
                                             onChange={(e) => setBlanketForm({ ...blanketForm, checkOut: e.target.value })}
-                                            className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
+                                            className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
                                         />
                                     </div>
                                 </div>
@@ -479,13 +479,13 @@ function AttendanceRegister() {
                         <div className="flex gap-3 mt-6">
                             <button
                                 onClick={handleSaveBlanketAttendance}
-                                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl shadow transition duration-200 text-sm"
+                                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-lg shadow transition duration-200 text-sm"
                             >
                                 Apply All
                             </button>
                             <button
                                 onClick={() => setIsBlanketModalOpen(false)}
-                                className="w-full bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-2.5 rounded-xl shadow transition duration-200 text-sm"
+                                className="w-full bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-2.5 rounded-lg shadow transition duration-200 text-sm"
                             >
                                 Cancel
                             </button>
