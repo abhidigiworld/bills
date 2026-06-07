@@ -17,6 +17,107 @@ const UpdateInvoice = ({ invoice, onClose }) => {
     const [grandTotal, setGrandTotal] = useState(invoice.grandTotal);
     const [grandTotalInWords, setGrandTotalInWords] = useState(invoice.grandTotalInWords);
 
+    const getInitialRate = (val, sub) => {
+        if (!val || !sub) return 0;
+        return parseFloat(((val / sub) * 100).toFixed(2));
+    };
+
+    const initialSubtotal = invoice.items.reduce((total, item) => total + (item.quantity * item.rate), 0);
+    const [cgstRate, setCgstRate] = useState(() => getInitialRate(invoice.cgst, initialSubtotal));
+    const [sgstRate, setSgstRate] = useState(() => getInitialRate(invoice.sgst, initialSubtotal));
+    const [igstRate, setIgstRate] = useState(() => getInitialRate(invoice.igst, initialSubtotal));
+
+    const convertNumberToWords = (number) => {
+        if (number === 0) return 'Zero';
+
+        const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 
+                      'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+        const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+        const convertToWordsLessThanThousand = (num) => {
+            let words = '';
+            if (num >= 100) {
+                words += ones[Math.floor(num / 100)] + ' Hundred ';
+                num %= 100;
+            }
+            if (num >= 20) {
+                words += tens[Math.floor(num / 10)] + ' ';
+                num %= 10;
+            }
+            if (num > 0) {
+                words += ones[num] + ' ';
+            }
+            return words.trim();
+        };
+
+        let integerPart = Math.floor(number);
+        let decimalPart = Math.round((number - integerPart) * 100);
+        let result = '';
+
+        if (integerPart >= 10000000) {
+            const crore = Math.floor(integerPart / 10000000);
+            result += convertToWordsLessThanThousand(crore) + ' Crore ';
+            integerPart %= 10000000;
+        }
+        if (integerPart >= 100000) {
+            const lakh = Math.floor(integerPart / 100000);
+            result += convertToWordsLessThanThousand(lakh) + ' Lakh ';
+            integerPart %= 100000;
+        }
+        if (integerPart >= 1000) {
+            const thousand = Math.floor(integerPart / 1000);
+            result += convertToWordsLessThanThousand(thousand) + ' Thousand ';
+            integerPart %= 1000;
+        }
+        if (integerPart > 0) {
+            result += convertToWordsLessThanThousand(integerPart);
+        }
+
+        let words = result.trim();
+
+        if (decimalPart > 0) {
+            words += ' and ' + convertToWordsLessThanThousand(decimalPart) + ' Paisa';
+        }
+
+        return words.trim();
+    };
+
+    const handleCgstRateChange = (newRate) => {
+        const rateVal = parseFloat(newRate) || 0;
+        setCgstRate(rateVal);
+        setCgst(((subtotal * rateVal) / 100).toFixed(2));
+    };
+
+    const handleSgstRateChange = (newRate) => {
+        const rateVal = parseFloat(newRate) || 0;
+        setSgstRate(rateVal);
+        setSgst(((subtotal * rateVal) / 100).toFixed(2));
+    };
+
+    const handleIgstRateChange = (newRate) => {
+        const rateVal = parseFloat(newRate) || 0;
+        setIgstRate(rateVal);
+        setIgst(((subtotal * rateVal) / 100).toFixed(2));
+    };
+
+    const handleCgstValueChange = (newValue) => {
+        const val = parseFloat(newValue) || 0;
+        setCgst(val);
+        setCgstRate(subtotal > 0 ? parseFloat(((val / subtotal) * 100).toFixed(2)) : 0);
+    };
+
+    const handleSgstValueChange = (newValue) => {
+        const val = parseFloat(newValue) || 0;
+        setSgst(val);
+        setSgstRate(subtotal > 0 ? parseFloat(((val / subtotal) * 100).toFixed(2)) : 0);
+    };
+
+    const handleIgstValueChange = (newValue) => {
+        const val = parseFloat(newValue) || 0;
+        setIgst(val);
+        setIgstRate(subtotal > 0 ? parseFloat(((val / subtotal) * 100).toFixed(2)) : 0);
+    };
+
     const handleUpdate = async () => {
         try {
             const updatedInvoice = {
@@ -46,7 +147,6 @@ const UpdateInvoice = ({ invoice, onClose }) => {
         const newItems = [...items];
         newItems[index][field] = value;
 
-        // Recalculate the total value when quantity or rate changes
         if (field === 'quantity' || field === 'rate') {
             newItems[index].totalValue = newItems[index].quantity * newItems[index].rate;
         }
@@ -59,33 +159,40 @@ const UpdateInvoice = ({ invoice, onClose }) => {
     };
 
     const subtotal = calculateSubtotal();
-    const cgstper = cgst ? ((cgst / subtotal) * 100).toFixed(2) : 0;
-    const sgstper = sgst ? ((sgst / subtotal) * 100).toFixed(2) : 0;
-    const igstper = igst ? ((igst / subtotal) * 100).toFixed(2) : 0;
 
     const calculateGrandTotal = () => {
-        // Calculate subtotal
         const subtotal = calculateSubtotal();
-
-        // Calculate total taxes (sum of CGST, SGST, IGST)
         const totalTaxes = parseFloat(cgst) + parseFloat(sgst) + parseFloat(igst);
-
-        // Calculate grand total (subtotal + freight charges + total taxes)
         const grandTotal = subtotal + parseFloat(freightCharges) + totalTaxes;
-
-        // Set the calculated grand total
         setGrandTotal(grandTotal.toFixed(2));
     };
 
     const handleDeleteItem = (index) => {
-        const newItems = items.filter((_, i) => i !== index); // Filter out the item at the given index
+        const newItems = items.filter((_, i) => i !== index);
         setItems(newItems);
     };
 
-    // Call calculateGrandTotal whenever any of the relevant values change
+    useEffect(() => {
+        if (cgstRate > 0) {
+            setCgst(((subtotal * cgstRate) / 100).toFixed(2));
+        }
+        if (sgstRate > 0) {
+            setSgst(((subtotal * sgstRate) / 100).toFixed(2));
+        }
+        if (igstRate > 0) {
+            setIgst(((subtotal * igstRate) / 100).toFixed(2));
+        }
+    }, [subtotal, cgstRate, sgstRate, igstRate]);
+
     useEffect(() => {
         calculateGrandTotal();
     }, [subtotal, freightCharges, cgst, sgst, igst]);
+
+    useEffect(() => {
+        if (grandTotal) {
+            setGrandTotalInWords(convertNumberToWords(parseFloat(grandTotal)));
+        }
+    }, [grandTotal]);
 
     const addNewItemRow = () => {
         setItems([
@@ -274,35 +381,65 @@ const UpdateInvoice = ({ invoice, onClose }) => {
                                 </td>
                             </tr>
                             <tr className="border-b border-slate-100 dark:border-[#262235]">
-                                <td colSpan="2" className="px-3 py-2 text-slate-500 dark:text-gray-400 font-bold uppercase text-xs text-right">CGST: {cgstper} %</td>
-                                <td colSpan="2" className="px-3 py-2">
+                                <td colSpan="2" className="px-3 py-2 text-slate-500 dark:text-gray-400 font-bold uppercase text-xs text-right">CGST Rate (%) & Value:</td>
+                                <td colSpan="1" className="px-3 py-2">
+                                    <input
+                                        type="number"
+                                        className={inputClass}
+                                        value={cgstRate}
+                                        onChange={(e) => handleCgstRateChange(e.target.value)}
+                                        placeholder="Rate %"
+                                    />
+                                </td>
+                                <td colSpan="1" className="px-3 py-2">
                                     <input
                                         type="number"
                                         className={inputClass}
                                         value={cgst}
-                                        onChange={(e) => setCgst(e.target.value)}
+                                        onChange={(e) => handleCgstValueChange(e.target.value)}
+                                        placeholder="Value ₹"
                                     />
                                 </td>
                             </tr>
                             <tr className="border-b border-slate-100 dark:border-[#262235]">
-                                <td colSpan="2" className="px-3 py-2 text-slate-500 dark:text-gray-400 font-bold uppercase text-xs text-right">SGST: {sgstper} %</td>
-                                <td colSpan="2" className="px-3 py-2">
+                                <td colSpan="2" className="px-3 py-2 text-slate-500 dark:text-gray-400 font-bold uppercase text-xs text-right">SGST Rate (%) & Value:</td>
+                                <td colSpan="1" className="px-3 py-2">
+                                    <input
+                                        type="number"
+                                        className={inputClass}
+                                        value={sgstRate}
+                                        onChange={(e) => handleSgstRateChange(e.target.value)}
+                                        placeholder="Rate %"
+                                    />
+                                </td>
+                                <td colSpan="1" className="px-3 py-2">
                                     <input
                                         type="number"
                                         className={inputClass}
                                         value={sgst}
-                                        onChange={(e) => setSgst(e.target.value)}
+                                        onChange={(e) => handleSgstValueChange(e.target.value)}
+                                        placeholder="Value ₹"
                                     />
                                 </td>
                             </tr>
                             <tr className="border-b border-slate-100 dark:border-[#262235]">
-                                <td colSpan="2" className="px-3 py-2 text-slate-500 dark:text-gray-400 font-bold uppercase text-xs text-right">IGST: {igstper} %</td>
-                                <td colSpan="2" className="px-3 py-2">
+                                <td colSpan="2" className="px-3 py-2 text-slate-500 dark:text-gray-400 font-bold uppercase text-xs text-right">IGST Rate (%) & Value:</td>
+                                <td colSpan="1" className="px-3 py-2">
+                                    <input
+                                        type="number"
+                                        className={inputClass}
+                                        value={igstRate}
+                                        onChange={(e) => handleIgstRateChange(e.target.value)}
+                                        placeholder="Rate %"
+                                    />
+                                </td>
+                                <td colSpan="1" className="px-3 py-2">
                                     <input
                                         type="number"
                                         className={inputClass}
                                         value={igst}
-                                        onChange={(e) => setIgst(e.target.value)}
+                                        onChange={(e) => handleIgstValueChange(e.target.value)}
+                                        placeholder="Value ₹"
                                     />
                                 </td>
                             </tr>

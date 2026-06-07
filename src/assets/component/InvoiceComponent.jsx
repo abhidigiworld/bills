@@ -76,8 +76,9 @@ function InvoiceComponent({ invoiceDetails }) {
         setCgst(parseFloat(totalCgst).toFixed(2));
         setSgst(parseFloat(totalSgst).toFixed(2));
         setIgst(parseFloat(totalIgst).toFixed(2));
-        setGrandTotal((parseFloat(totalTaxableAmount) + parseFloat(totalCgst) + parseFloat(totalSgst) + parseFloat(totalIgst)).toFixed(2));
-        const grandTotalWords = convertNumberToWords(grandTotal);
+        const calculatedGrandTotal = (parseFloat(totalTaxableAmount) + parseFloat(totalCgst) + parseFloat(totalSgst) + parseFloat(totalIgst)).toFixed(2);
+        setGrandTotal(calculatedGrandTotal);
+        const grandTotalWords = convertNumberToWords(parseFloat(calculatedGrandTotal));
         setGrandTotalInWords(grandTotalWords);
         setBillGenerated(true);
     };
