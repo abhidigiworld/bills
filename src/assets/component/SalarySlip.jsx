@@ -18,6 +18,7 @@ function SalarySlip() {
         esic: 0,
         lunchDays: 0,
         lunchRate: 0,
+        nightShiftHours: 0,
         nightShiftDays: 0,
         nightShiftRate: 0
     });
@@ -132,13 +133,15 @@ function SalarySlip() {
                 }
             }
 
-            // Calculate overtime hours & night shift days
+            // Calculate overtime hours & night shift hours
             let otHoursCount = 0;
+            let nightShiftHoursCount = 0;
             let nightShiftDaysCount = 0;
             employeeLogs.forEach(log => {
                 if (log.status === 'Present') {
                     otHoursCount += (log.overtimeHours || 0);
                     if (log.isNightShift) {
+                        nightShiftHoursCount += (log.nightShiftHours || 0);
                         nightShiftDaysCount++;
                     }
                 }
@@ -148,6 +151,7 @@ function SalarySlip() {
                 ...prev,
                 workDays: workDaysCount,
                 otHours: parseFloat(otHoursCount.toFixed(2)),
+                nightShiftHours: parseFloat(nightShiftHoursCount.toFixed(2)),
                 nightShiftDays: nightShiftDaysCount,
                 lunchDays: workDaysCount // Default lunch days to work days
             }));
@@ -192,7 +196,7 @@ function SalarySlip() {
     const salaryByWorkDays = Math.floor(salarySlip.workDays * dailyRate);
     const hourlyOtRate = Math.floor(dailyRate / shiftHours);
     const otSalary = Math.floor(salarySlip.otHours * hourlyOtRate);
-    const nightShiftAllowance = Math.floor((salarySlip.nightShiftDays || 0) * (salarySlip.nightShiftRate || 0));
+    const nightShiftAllowance = Math.floor((salarySlip.nightShiftHours || 0) * (salarySlip.nightShiftRate || 0));
     const totalSalary = Math.floor(salaryByWorkDays + otSalary + nightShiftAllowance);
     const lunchDeduction = Math.floor(salarySlip.lunchDays * salarySlip.lunchRate);
     const inHandSalary = Math.floor(totalSalary - salarySlip.esic - salarySlip.advance - lunchDeduction);
@@ -217,6 +221,7 @@ function SalarySlip() {
                 salaryByWorkDays,
                 overtimeHours: salarySlip.otHours,
                 overtimeSalary: otSalary,
+                nightShiftHours: salarySlip.nightShiftHours || 0,
                 nightShiftDays: salarySlip.nightShiftDays || 0,
                 nightShiftRate: salarySlip.nightShiftRate || 0,
                 nightShiftAllowance,
@@ -366,23 +371,23 @@ function SalarySlip() {
                                         </div>
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                             <div>
-                                                <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Night Shift Days</label>
+                                                <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Night Shift Hours</label>
                                                 <input
                                                     type="number"
-                                                    name="nightShiftDays"
-                                                    value={salarySlip.nightShiftDays || 0}
+                                                    name="nightShiftHours"
+                                                    value={salarySlip.nightShiftHours || 0}
                                                     onChange={handleInputChange}
                                                     className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                                                 />
                                             </div>
 
                                             <div>
-                                                <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Night Shift Rate (₹ / Shift)</label>
+                                                <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Night Shift Rate (₹ / hr)</label>
                                                 <input
                                                     type="number"
                                                     name="nightShiftRate"
                                                     value={salarySlip.nightShiftRate || ''}
-                                                    placeholder="Allowance per night shift"
+                                                    placeholder="Allowance per hour"
                                                     onChange={handleInputChange}
                                                     className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                                                 />
@@ -463,7 +468,7 @@ function SalarySlip() {
                                 </div>
                                 {nightShiftAllowance > 0 && (
                                     <div className="flex justify-between">
-                                        <span className="text-slate-500 dark:text-gray-400">Night Shift Allowance ({salarySlip.nightShiftDays} shifts @ ₹{salarySlip.nightShiftRate}):</span>
+                                        <span className="text-slate-500 dark:text-gray-400">Night Shift Allowance ({salarySlip.nightShiftHours || salarySlip.nightShiftDays} {salarySlip.nightShiftHours ? 'hrs' : 'shifts'} @ ₹{salarySlip.nightShiftRate}{salarySlip.nightShiftHours ? '/hr' : '/shift'}):</span>
                                         <span className="font-semibold text-green-600 dark:text-green-400">+ ₹{nightShiftAllowance.toLocaleString()}</span>
                                     </div>
                                 )}

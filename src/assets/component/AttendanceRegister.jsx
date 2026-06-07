@@ -15,11 +15,11 @@ function AttendanceRegister() {
 
     // Modal Edit states
     const [selectedCell, setSelectedCell] = useState(null); // { employee, dayNum }
-    const [modalForm, setModalForm] = useState({ status: 'Absent', checkIn: '', checkOut: '', overtimeHours: 0, isNightShift: false });
+    const [modalForm, setModalForm] = useState({ status: 'Absent', checkIn: '', checkOut: '', overtimeHours: 0, isNightShift: false, nightShiftHours: 0 });
 
     // Blanket Edit states
     const [isBlanketModalOpen, setIsBlanketModalOpen] = useState(false);
-    const [blanketForm, setBlanketForm] = useState({ dayNum: 1, status: 'Present', checkIn: '09:00', checkOut: '17:00', overtimeHours: 0, isNightShift: false });
+    const [blanketForm, setBlanketForm] = useState({ dayNum: 1, status: 'Present', checkIn: '09:00', checkOut: '17:00', overtimeHours: 0, isNightShift: false, nightShiftHours: 0 });
 
     // Hover tooltip state
     const [hoveredCell, setHoveredCell] = useState(null);
@@ -68,6 +68,25 @@ function AttendanceRegister() {
         });
     };
 
+    const calculateTotalHours = (checkInStr, checkOutStr, isNightShiftVal) => {
+        if (!checkInStr || !checkOutStr) return 0;
+        const [inH, inM] = checkInStr.split(':').map(Number);
+        const [outH, outM] = checkOutStr.split(':').map(Number);
+        if (isNaN(inH) || isNaN(inM) || isNaN(outH) || isNaN(outM)) return 0;
+
+        let inMinutes = inH * 60 + inM;
+        let outMinutes = outH * 60 + outM;
+
+        if (outMinutes < inMinutes || isNightShiftVal) {
+            if (outMinutes < inMinutes) {
+                outMinutes += 24 * 60;
+            }
+        }
+
+        const diffHours = (outMinutes - inMinutes) / 60;
+        return parseFloat(diffHours.toFixed(2));
+    };
+
     const calculateOvertime = (checkInStr, checkOutStr, isNightShiftVal) => {
         if (!checkInStr || !checkOutStr) return 0;
         const [inH, inM] = checkInStr.split(':').map(Number);
@@ -90,15 +109,35 @@ function AttendanceRegister() {
 
     const handleModalFormChange = (updatedFields) => {
         setModalForm(prev => {
-            const nextForm = { ...prev, ...updatedFields };
+            let nextForm = { ...prev, ...updatedFields };
+            
+            // If isNightShift is toggled, adjust default times if they are currently default day times or empty
+            if ('isNightShift' in updatedFields) {
+                if (updatedFields.isNightShift) {
+                    if (nextForm.checkIn === '09:00' || !nextForm.checkIn) nextForm.checkIn = '20:00';
+                    if (nextForm.checkOut === '17:00' || !nextForm.checkOut) nextForm.checkOut = '04:00';
+                } else {
+                    if (nextForm.checkIn === '20:00' || !nextForm.checkIn) nextForm.checkIn = '09:00';
+                    if (nextForm.checkOut === '04:00' || !nextForm.checkOut) nextForm.checkOut = '17:00';
+                }
+            }
+            
             if (nextForm.status === 'Present') {
                 const calculatedOt = calculateOvertime(nextForm.checkIn, nextForm.checkOut, nextForm.isNightShift);
+                const totalHours = calculateTotalHours(nextForm.checkIn, nextForm.checkOut, nextForm.isNightShift);
+                
                 if ('checkIn' in updatedFields || 'checkOut' in updatedFields || 'isNightShift' in updatedFields || 'status' in updatedFields) {
                     nextForm.overtimeHours = calculatedOt;
+                    if (nextForm.isNightShift) {
+                        nextForm.nightShiftHours = totalHours;
+                    } else {
+                        nextForm.nightShiftHours = 0;
+                    }
                 }
             } else {
                 nextForm.overtimeHours = 0;
                 nextForm.isNightShift = false;
+                nextForm.nightShiftHours = 0;
             }
             return nextForm;
         });
@@ -106,15 +145,35 @@ function AttendanceRegister() {
 
     const handleBlanketFormChange = (updatedFields) => {
         setBlanketForm(prev => {
-            const nextForm = { ...prev, ...updatedFields };
+            let nextForm = { ...prev, ...updatedFields };
+            
+            // If isNightShift is toggled, adjust default times if they are currently default day times or empty
+            if ('isNightShift' in updatedFields) {
+                if (updatedFields.isNightShift) {
+                    if (nextForm.checkIn === '09:00' || !nextForm.checkIn) nextForm.checkIn = '20:00';
+                    if (nextForm.checkOut === '17:00' || !nextForm.checkOut) nextForm.checkOut = '04:00';
+                } else {
+                    if (nextForm.checkIn === '20:00' || !nextForm.checkIn) nextForm.checkIn = '09:00';
+                    if (nextForm.checkOut === '04:00' || !nextForm.checkOut) nextForm.checkOut = '17:00';
+                }
+            }
+            
             if (nextForm.status === 'Present') {
                 const calculatedOt = calculateOvertime(nextForm.checkIn, nextForm.checkOut, nextForm.isNightShift);
+                const totalHours = calculateTotalHours(nextForm.checkIn, nextForm.checkOut, nextForm.isNightShift);
+                
                 if ('checkIn' in updatedFields || 'checkOut' in updatedFields || 'isNightShift' in updatedFields || 'status' in updatedFields) {
                     nextForm.overtimeHours = calculatedOt;
+                    if (nextForm.isNightShift) {
+                        nextForm.nightShiftHours = totalHours;
+                    } else {
+                        nextForm.nightShiftHours = 0;
+                    }
                 }
             } else {
                 nextForm.overtimeHours = 0;
                 nextForm.isNightShift = false;
+                nextForm.nightShiftHours = 0;
             }
             return nextForm;
         });
@@ -159,7 +218,7 @@ function AttendanceRegister() {
                 }
                 
                 tooltip = `Present | In: ${checkInStr || '-'} | Out: ${checkOutStr || '-'}`;
-                if (ns) tooltip += ` | Night Shift`;
+                if (ns) tooltip += ` | Night Shift: ${log.nightShiftHours || 0} hrs`;
                 if (ot > 0) tooltip += ` | OT: ${ot} hrs`;
             } else if (status === 'Absent') {
                 display = 'A';
@@ -208,6 +267,7 @@ function AttendanceRegister() {
     const getEmployeeSummary = (employeeId) => {
         let presentDays = 0;
         let totalOtHours = 0;
+        let totalNsHours = 0;
 
         for (let d = 1; d <= daysInMonth; d++) {
             const log = getLogForDay(employeeId, d);
@@ -216,12 +276,14 @@ function AttendanceRegister() {
                     presentDays++;
                 }
                 totalOtHours += getOtForDay(log);
+                totalNsHours += log.nightShiftHours || 0;
             }
         }
 
         return {
             presentDays,
-            totalOtHours: parseFloat(totalOtHours.toFixed(2)) // Keep decimal precision for OT!
+            totalOtHours: parseFloat(totalOtHours.toFixed(2)), // Keep decimal precision for OT!
+            totalNsHours: parseFloat(totalNsHours.toFixed(2)) // Keep decimal precision for NS hours!
         };
     };
 
@@ -234,7 +296,8 @@ function AttendanceRegister() {
                 checkIn: log.checkIn ? new Date(log.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : '',
                 checkOut: log.checkOut ? new Date(log.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : '',
                 overtimeHours: log.overtimeHours || 0,
-                isNightShift: log.isNightShift || false
+                isNightShift: log.isNightShift || false,
+                nightShiftHours: log.nightShiftHours || 0
             });
         } else {
             // Default depending on whether it is in the future
@@ -242,10 +305,15 @@ function AttendanceRegister() {
             today.setHours(0, 0, 0, 0);
             const cellDate = new Date(selectedYear, selectedMonth - 1, dayNum);
             
+            const isNight = employee.defaultShift === 'Night';
+            const defaultCheckIn = isNight ? '20:00' : '09:00';
+            const defaultCheckOut = isNight ? '04:00' : '17:00';
+            const defaultNsHours = isNight ? 8 : 0;
+            
             if (cellDate > today) {
-                setModalForm({ status: 'Present', checkIn: '09:00', checkOut: '17:00', overtimeHours: 0, isNightShift: false });
+                setModalForm({ status: 'Present', checkIn: defaultCheckIn, checkOut: defaultCheckOut, overtimeHours: 0, isNightShift: isNight, nightShiftHours: defaultNsHours });
             } else {
-                setModalForm({ status: 'Absent', checkIn: '', checkOut: '', overtimeHours: 0, isNightShift: false });
+                setModalForm({ status: 'Absent', checkIn: '', checkOut: '', overtimeHours: 0, isNightShift: isNight, nightShiftHours: 0 });
             }
         }
     };
@@ -263,7 +331,8 @@ function AttendanceRegister() {
                 checkIn: modalForm.status === 'Present' ? modalForm.checkIn : null,
                 checkOut: modalForm.status === 'Present' ? modalForm.checkOut : null,
                 overtimeHours: modalForm.status === 'Present' ? modalForm.overtimeHours : 0,
-                isNightShift: modalForm.status === 'Present' ? modalForm.isNightShift : false
+                isNightShift: modalForm.status === 'Present' ? modalForm.isNightShift : false,
+                nightShiftHours: modalForm.status === 'Present' ? modalForm.nightShiftHours : 0
             });
             setSelectedCell(null);
             fetchData();
@@ -282,7 +351,8 @@ function AttendanceRegister() {
                 checkIn: blanketForm.status === 'Present' ? blanketForm.checkIn : null,
                 checkOut: blanketForm.status === 'Present' ? blanketForm.checkOut : null,
                 overtimeHours: blanketForm.status === 'Present' ? blanketForm.overtimeHours : 0,
-                isNightShift: blanketForm.status === 'Present' ? blanketForm.isNightShift : false
+                isNightShift: blanketForm.status === 'Present' ? blanketForm.isNightShift : false,
+                nightShiftHours: blanketForm.status === 'Present' ? blanketForm.nightShiftHours : 0
             });
             setIsBlanketModalOpen(false);
             fetchData();
@@ -396,7 +466,8 @@ function AttendanceRegister() {
                                             ))}
                                             
                                             <th className="px-3 py-3 text-center min-w-[60px] border-l border-slate-100 dark:border-[#262235]">Work Days</th>
-                                            <th className="px-3 py-3 text-center min-w-[60px]">OT Hrs</th>
+                                            <th className="px-3 py-3 text-center min-w-[60px] border-r border-slate-100 dark:border-[#262235]">OT Hrs</th>
+                                            <th className="px-3 py-3 text-center min-w-[60px]">NS Hrs</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -412,41 +483,45 @@ function AttendanceRegister() {
                                                         
                                                         {/* Render status for each day */}
                                                         {daysArray.map(day => {
-                                                            const cellInfo = getCellDisplayInfo(emp._id, day);
-                                                            return (
-                                                                <td 
-                                                                    key={day} 
-                                                                    className={`px-1.5 py-3 text-center font-bold border-r border-slate-100 dark:border-[#262235] last:border-r-0 cursor-pointer hover:bg-indigo-100/30 dark:hover:bg-[#201d2c] transition duration-150 ${cellInfo.colorClass}`}
-                                                                    onClick={() => handleCellClick(emp, day)}
-                                                                    onMouseEnter={(e) => {
-                                                                        const log = getLogForDay(emp._id, day);
-                                                                        if (log) {
-                                                                            const rect = e.currentTarget.getBoundingClientRect();
-                                                                            setHoveredCell({
-                                                                                employeeName: emp.name,
-                                                                                date: `${day} ${monthName} ${selectedYear}`,
-                                                                                status: log.status,
-                                                                                checkIn: log.checkIn ? new Date(log.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : null,
-                                                                                checkOut: log.checkOut ? new Date(log.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : null,
-                                                                                isNightShift: log.isNightShift,
-                                                                                overtimeHours: log.overtimeHours,
-                                                                                x: rect.left,
-                                                                                y: rect.bottom + 5
-                                                                            });
-                                                                        }
-                                                                    }}
-                                                                    onMouseLeave={() => setHoveredCell(null)}
-                                                                >
-                                                                    {cellInfo.display}
-                                                                </td>
-                                                            );
+                                                                const cellInfo = getCellDisplayInfo(emp._id, day);
+                                                                return (
+                                                                    <td 
+                                                                        key={day} 
+                                                                        className={`px-1.5 py-3 text-center font-bold border-r border-slate-100 dark:border-[#262235] last:border-r-0 cursor-pointer hover:bg-indigo-100/30 dark:hover:bg-[#201d2c] transition duration-150 ${cellInfo.colorClass}`}
+                                                                        onClick={() => handleCellClick(emp, day)}
+                                                                        onMouseEnter={(e) => {
+                                                                            const log = getLogForDay(emp._id, day);
+                                                                            if (log) {
+                                                                                const rect = e.currentTarget.getBoundingClientRect();
+                                                                                setHoveredCell({
+                                                                                    employeeName: emp.name,
+                                                                                    date: `${day} ${monthName} ${selectedYear}`,
+                                                                                    status: log.status,
+                                                                                    checkIn: log.checkIn ? new Date(log.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : null,
+                                                                                    checkOut: log.checkOut ? new Date(log.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : null,
+                                                                                    isNightShift: log.isNightShift,
+                                                                                    nightShiftHours: log.nightShiftHours || 0,
+                                                                                    overtimeHours: log.overtimeHours,
+                                                                                    x: rect.left,
+                                                                                    y: rect.bottom + 5
+                                                                                });
+                                                                            }
+                                                                        }}
+                                                                        onMouseLeave={() => setHoveredCell(null)}
+                                                                    >
+                                                                        {cellInfo.display}
+                                                                    </td>
+                                                                );
                                                         })}
                                                         
                                                         <td className="px-3 py-3 text-center font-bold text-green-600 dark:text-green-400 border-l border-slate-100 dark:border-[#262235]">
                                                             {summary.presentDays}
                                                         </td>
-                                                        <td className="px-3 py-3 text-center font-bold text-indigo-600 dark:text-violet-400">
+                                                        <td className="px-3 py-3 text-center font-bold text-indigo-600 dark:text-violet-400 border-r border-slate-100 dark:border-[#262235]">
                                                             {summary.totalOtHours}
+                                                        </td>
+                                                        <td className="px-3 py-3 text-center font-bold text-amber-600 dark:text-amber-400">
+                                                            {summary.totalNsHours}
                                                         </td>
                                                     </tr>
                                                 );
@@ -593,27 +668,45 @@ function AttendanceRegister() {
                                             />
                                         </div>
                                     </div>
-                                    <div className="flex items-center justify-between bg-slate-50 dark:bg-[#201d2c] p-2.5 rounded-lg border border-slate-200 dark:border-[#37314e]">
-                                        <label className="text-xs font-bold text-slate-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer select-none flex items-center gap-2">
-                                            <input
-                                                type="checkbox"
-                                                checked={modalForm.isNightShift}
-                                                onChange={(e) => handleModalFormChange({ isNightShift: e.target.checked })}
-                                                className="rounded text-violet-600 focus:ring-violet-500 bg-slate-100 dark:bg-[#201d2c] border-slate-300 dark:border-[#37314e] h-4 w-4"
-                                            />
-                                            🌙 Night Shift
-                                        </label>
-                                        <div className="flex items-center gap-2">
-                                            <label className="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider">OT (Hrs):</label>
-                                            <input
-                                                type="number"
-                                                step="0.5"
-                                                min="0"
-                                                value={modalForm.overtimeHours}
-                                                onChange={(e) => handleModalFormChange({ overtimeHours: parseFloat(e.target.value) || 0 })}
-                                                className="w-16 px-2 py-1 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded text-sm text-center text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 font-semibold"
-                                            />
+                                    <div className="flex flex-col gap-2 bg-slate-50 dark:bg-[#201d2c] p-2.5 rounded-lg border border-slate-200 dark:border-[#37314e]">
+                                        <div className="flex items-center justify-between">
+                                            <label className="text-xs font-bold text-slate-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer select-none flex items-center gap-2">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={modalForm.isNightShift}
+                                                    onChange={(e) => handleModalFormChange({ isNightShift: e.target.checked })}
+                                                    className="rounded text-violet-600 focus:ring-violet-500 bg-slate-100 dark:bg-[#201d2c] border-slate-300 dark:border-[#37314e] h-4 w-4"
+                                                />
+                                                🌙 Night Shift
+                                            </label>
+                                            <div className="flex items-center gap-2">
+                                                <label className="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider">OT (Hrs):</label>
+                                                <input
+                                                    type="number"
+                                                    step="0.5"
+                                                    min="0"
+                                                    value={modalForm.overtimeHours}
+                                                    onChange={(e) => handleModalFormChange({ overtimeHours: parseFloat(e.target.value) || 0 })}
+                                                    className="w-16 px-2 py-1 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded text-sm text-center text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 font-semibold"
+                                                />
+                                            </div>
                                         </div>
+                                        {modalForm.isNightShift && (
+                                            <div className="flex items-center justify-between border-t border-slate-200 dark:border-[#37314e] pt-2 mt-1 animate-fade-in">
+                                                <span className="text-xs font-semibold text-slate-500 dark:text-gray-400">Night Shift Duration:</span>
+                                                <div className="flex items-center gap-2">
+                                                    <label className="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider">NS (Hrs):</label>
+                                                    <input
+                                                        type="number"
+                                                        step="0.5"
+                                                        min="0"
+                                                        value={modalForm.nightShiftHours}
+                                                        onChange={(e) => handleModalFormChange({ nightShiftHours: parseFloat(e.target.value) || 0 })}
+                                                        className="w-16 px-2 py-1 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded text-sm text-center text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 font-semibold"
+                                                    />
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             )}
@@ -698,27 +791,45 @@ function AttendanceRegister() {
                                             />
                                         </div>
                                     </div>
-                                    <div className="flex items-center justify-between bg-slate-50 dark:bg-[#201d2c] p-2.5 rounded-lg border border-slate-200 dark:border-[#37314e]">
-                                        <label className="text-xs font-bold text-slate-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer select-none flex items-center gap-2">
-                                            <input
-                                                type="checkbox"
-                                                checked={blanketForm.isNightShift}
-                                                onChange={(e) => handleBlanketFormChange({ isNightShift: e.target.checked })}
-                                                className="rounded text-indigo-600 focus:ring-indigo-500 bg-slate-100 dark:bg-[#201d2c] border-slate-300 dark:border-[#37314e] h-4 w-4"
-                                            />
-                                            🌙 Night Shift
-                                        </label>
-                                        <div className="flex items-center gap-2">
-                                            <label className="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider">OT (Hrs):</label>
-                                            <input
-                                                type="number"
-                                                step="0.5"
-                                                min="0"
-                                                value={blanketForm.overtimeHours}
-                                                onChange={(e) => handleBlanketFormChange({ overtimeHours: parseFloat(e.target.value) || 0 })}
-                                                className="w-16 px-2 py-1 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded text-sm text-center text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-500 font-semibold"
-                                            />
+                                    <div className="flex flex-col gap-2 bg-slate-50 dark:bg-[#201d2c] p-2.5 rounded-lg border border-slate-200 dark:border-[#37314e]">
+                                        <div className="flex items-center justify-between">
+                                            <label className="text-xs font-bold text-slate-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer select-none flex items-center gap-2">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={blanketForm.isNightShift}
+                                                    onChange={(e) => handleBlanketFormChange({ isNightShift: e.target.checked })}
+                                                    className="rounded text-indigo-600 focus:ring-indigo-500 bg-slate-100 dark:bg-[#201d2c] border-slate-300 dark:border-[#37314e] h-4 w-4"
+                                                />
+                                                🌙 Night Shift
+                                            </label>
+                                            <div className="flex items-center gap-2">
+                                                <label className="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider">OT (Hrs):</label>
+                                                <input
+                                                    type="number"
+                                                    step="0.5"
+                                                    min="0"
+                                                    value={blanketForm.overtimeHours}
+                                                    onChange={(e) => handleBlanketFormChange({ overtimeHours: parseFloat(e.target.value) || 0 })}
+                                                    className="w-16 px-2 py-1 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded text-sm text-center text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-500 font-semibold"
+                                                />
+                                            </div>
                                         </div>
+                                        {blanketForm.isNightShift && (
+                                            <div className="flex items-center justify-between border-t border-slate-200 dark:border-[#37314e] pt-2 mt-1 animate-fade-in">
+                                                <span className="text-xs font-semibold text-slate-500 dark:text-gray-400">Night Shift Duration:</span>
+                                                <div className="flex items-center gap-2">
+                                                    <label className="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider">NS (Hrs):</label>
+                                                    <input
+                                                        type="number"
+                                                        step="0.5"
+                                                        min="0"
+                                                        value={blanketForm.nightShiftHours}
+                                                        onChange={(e) => handleBlanketFormChange({ nightShiftHours: parseFloat(e.target.value) || 0 })}
+                                                        className="w-16 px-2 py-1 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded text-sm text-center text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-500 font-semibold"
+                                                    />
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             )}
@@ -775,7 +886,7 @@ function AttendanceRegister() {
                             <div className="flex justify-between">
                                 <span className="text-slate-400 dark:text-gray-500">Shift Type:</span>
                                 <span className="font-semibold text-slate-900 dark:text-white">
-                                    {hoveredCell.isNightShift ? '🌙 Night Shift' : '☀️ Regular Shift'}
+                                    {hoveredCell.isNightShift ? `🌙 Night (${hoveredCell.nightShiftHours || 0} hrs)` : '☀️ Regular Shift'}
                                 </span>
                             </div>
                             <div className="flex justify-between">

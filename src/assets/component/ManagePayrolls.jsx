@@ -79,6 +79,7 @@ function ManagePayrolls() {
         setEditForm({
             workDays: slip.workDays,
             otHours: slip.overtimeHours || 0,
+            nightShiftHours: slip.nightShiftHours || 0,
             nightShiftDays: slip.nightShiftDays || 0,
             nightShiftRate: slip.nightShiftRate || 0,
             advance: slip.advance || 0,
@@ -116,7 +117,7 @@ function ManagePayrolls() {
 
         const hourlyOtRate = Math.floor(dailyRate / editForm.shiftHours);
         const otSalary = Math.floor(editForm.otHours * hourlyOtRate);
-        const nightShiftAllowance = Math.floor((editForm.nightShiftDays || 0) * (editForm.nightShiftRate || 0));
+        const nightShiftAllowance = Math.floor((editForm.nightShiftHours || 0) * (editForm.nightShiftRate || 0));
         const totalSalary = Math.floor(salaryByWorkDays + otSalary + nightShiftAllowance);
 
         const lunchDeduction = Math.floor(editForm.lunchDays * editForm.lunchRate);
@@ -153,6 +154,7 @@ function ManagePayrolls() {
                 salaryByWorkDays: liveCalculations.salaryByWorkDays,
                 otHours: editForm.otHours,
                 otSalary: liveCalculations.otSalary,
+                nightShiftHours: editForm.nightShiftHours,
                 nightShiftDays: editForm.nightShiftDays,
                 nightShiftRate: editForm.nightShiftRate,
                 nightShiftAllowance: liveCalculations.nightShiftAllowance,
@@ -482,16 +484,16 @@ function ManagePayrolls() {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Night Shift Days</label>
+                                    <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Night Shift Hours</label>
                                     <input
                                         type="number"
-                                        value={editForm.nightShiftDays}
-                                        onChange={(e) => setEditForm({ ...editForm, nightShiftDays: parseInt(e.target.value) || 0 })}
+                                        value={editForm.nightShiftHours}
+                                        onChange={(e) => setEditForm({ ...editForm, nightShiftHours: parseFloat(e.target.value) || 0 })}
                                         className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Night Shift Rate (₹ / Shift)</label>
+                                    <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Night Shift Rate (₹ / hr)</label>
                                     <input
                                         type="number"
                                         value={editForm.nightShiftRate}
@@ -573,7 +575,7 @@ function ManagePayrolls() {
                                 </div>
                                 {liveCalculations.nightShiftAllowance > 0 && (
                                     <div className="flex justify-between">
-                                        <span className="text-slate-500 dark:text-gray-400">Night Shift Pay ({editForm.nightShiftDays} shifts @ ₹{editForm.nightShiftRate}):</span>
+                                        <span className="text-slate-500 dark:text-gray-400">Night Shift Pay ({editForm.nightShiftHours || editForm.nightShiftDays} {editForm.nightShiftHours ? 'hrs' : 'shifts'} @ ₹{editForm.nightShiftRate}{editForm.nightShiftHours ? '/hr' : '/shift'}):</span>
                                         <span className="font-semibold text-slate-800 dark:text-white">₹{liveCalculations.nightShiftAllowance.toLocaleString()}</span>
                                     </div>
                                 )}
@@ -696,12 +698,12 @@ function ManagePayrolls() {
                                                             <td className="px-3 py-1.5 text-right text-slate-400">-</td>
                                                         </tr>
                                                     )}
-                                                    {activeSlip.nightShiftDays > 0 && (
+                                                    {(activeSlip.nightShiftHours > 0 || activeSlip.nightShiftDays > 0) && (
                                                         <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
                                                             <td className="border-r border-black px-2 py-1.5 text-center">{sNo++}</td>
                                                             <td className="border-r border-black px-3 py-1.5 text-left font-semibold">Night Shift Allowance</td>
-                                                            <td className="border-r border-black px-3 py-1.5 text-center">₹{Math.floor(activeSlip.nightShiftRate || 0).toLocaleString()} / shift</td>
-                                                            <td className="border-r border-black px-3 py-1.5 text-center">{activeSlip.nightShiftDays} shifts</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-center">₹{Math.floor(activeSlip.nightShiftRate || 0).toLocaleString()} {activeSlip.nightShiftHours ? '/ hr' : '/ shift'}</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-center">{activeSlip.nightShiftHours ? `${activeSlip.nightShiftHours} hrs` : `${activeSlip.nightShiftDays} shifts`}</td>
                                                             <td className="border-r border-black px-3 py-1.5 text-right font-bold text-green-600 print:text-black">₹{Math.floor(activeSlip.nightShiftAllowance || 0).toLocaleString()}</td>
                                                             <td className="px-3 py-1.5 text-right text-slate-400">-</td>
                                                         </tr>

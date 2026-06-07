@@ -14,7 +14,8 @@ function AddEmployee() {
         grossSalary: 0, 
         designation: '',
         location: '',
-        status: 'Active' 
+        status: 'Active',
+        defaultShift: 'Day'
     });
     const [isEditing, setIsEditing] = useState(false);
     const [error, setError] = useState('');
@@ -68,7 +69,8 @@ function AddEmployee() {
                 grossSalary: 0, 
                 designation: '',
                 location: '',
-                status: 'Active' 
+                status: 'Active',
+                defaultShift: 'Day'
             });
             fetchEmployees();
         } catch (error) {
@@ -84,6 +86,7 @@ function AddEmployee() {
             dateOfJoining: formattedDate,
             designation: emp.designation || '',
             location: emp.location || '',
+            defaultShift: emp.defaultShift || 'Day'
         });
         setIsEditing(true);
     };
@@ -206,20 +209,34 @@ function AddEmployee() {
                             </div>
                         </div>
 
-                        <div className="mb-6">
-                            <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Status</label>
-                            <select
-                                name="status"
-                                value={employee.status}
-                                onChange={handleInputChange}
-                                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
-                            >
-                                <option value="Active">Active</option>
-                                <option value="On Hold">On Hold</option>
-                                <option value="On Holiday">On Holiday</option>
-                                <option value="Inactive">Inactive</option>
-                                <option value="Discontinued">Discontinued</option>
-                            </select>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Status</label>
+                                <select
+                                    name="status"
+                                    value={employee.status}
+                                    onChange={handleInputChange}
+                                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                >
+                                    <option value="Active">Active</option>
+                                    <option value="On Hold">On Hold</option>
+                                    <option value="On Holiday">On Holiday</option>
+                                    <option value="Inactive">Inactive</option>
+                                    <option value="Discontinued">Discontinued</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Default Shift</label>
+                                <select
+                                    name="defaultShift"
+                                    value={employee.defaultShift || 'Day'}
+                                    onChange={handleInputChange}
+                                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                >
+                                    <option value="Day">Day Shift (09:00 - 17:00)</option>
+                                    <option value="Night">Night Shift (20:00 - 04:00)</option>
+                                </select>
+                            </div>
                         </div>
 
                         <button 
@@ -243,6 +260,7 @@ function AddEmployee() {
                                         <th className="px-4 py-3">Location</th>
                                         <th className="px-4 py-3">Joined Date</th>
                                         <th className="px-4 py-3">Gross Salary</th>
+                                        <th className="px-4 py-3">Shift</th>
                                         <th className="px-4 py-3">Status</th>
                                         <th className="px-4 py-3 text-center">Actions</th>
                                     </tr>
@@ -258,6 +276,14 @@ function AddEmployee() {
                                                 {emp.dateOfJoining ? new Date(emp.dateOfJoining).toLocaleDateString() : '-'}
                                             </td>
                                             <td className="px-4 py-3 font-semibold text-slate-700 dark:text-gray-200">₹{Math.floor(emp.grossSalary)?.toLocaleString()}</td>
+                                            <td className="px-4 py-3 text-slate-600 dark:text-gray-300">
+                                                <span className={`inline-block text-xs font-bold px-2.5 py-0.5 rounded-full ${
+                                                    emp.defaultShift === 'Night' ? 'bg-indigo-100 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400' :
+                                                    'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400'
+                                                }`}>
+                                                    {emp.defaultShift || 'Day'}
+                                                </span>
+                                            </td>
                                             <td className="px-4 py-3">
                                                 <span className={`inline-block text-xs font-bold px-2.5 py-0.5 rounded-full ${
                                                     emp.status === 'Active' ? 'bg-green-100 dark:bg-green-950/50 text-green-700 dark:text-green-400' :
