@@ -23,6 +23,7 @@ function WelcomePage() {
 
   // Modal state for viewing selected salary slip
   const [activeSlip, setActiveSlip] = useState(null);
+  const [showSignature, setShowSignature] = useState(true);
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
@@ -123,6 +124,13 @@ function WelcomePage() {
     const monthNum = monthMap[monthName] || 1;
     const yearNum = parseInt(yearStr) || new Date().getFullYear();
     return new Date(yearNum, monthNum, 0).getDate();
+  };
+
+  const handlePrint = (showSign) => {
+    setShowSignature(showSign);
+    setTimeout(() => {
+      window.print();
+    }, 100);
   };
 
   if (loading) {
@@ -644,19 +652,29 @@ function WelcomePage() {
                   <div className="text-right relative w-44 min-h-[70px]">
                     <p className="text-xs font-bold">For Sakshi Enterprises</p>
                     <p className="text-[10px] absolute bottom-0 right-0 font-bold uppercase tracking-wider text-slate-500 print:text-black">Authorised Signatory</p>
-                    <img src={signature} alt="Signature" className="absolute top-1.5 left-0 right-0 mx-auto w-32 h-auto opacity-95 pointer-events-none" />
+                    {showSignature && (
+                      <img src={signature} alt="Signature" className="absolute top-1.5 left-0 right-0 mx-auto w-32 h-auto opacity-95 pointer-events-none" />
+                    )}
                   </div>
                 </div>
               </div>
 
               {/* Print Actions */}
-              <div className="flex gap-4 mt-6 print:hidden">
-                <button
-                  onClick={() => window.print()}
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-xl shadow transition duration-200 text-xs uppercase tracking-wider"
-                >
-                  Print Slip
-                </button>
+              <div className="flex flex-col gap-3 mt-6 print:hidden">
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => handlePrint(true)}
+                    className="w-1/2 bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-xl shadow transition duration-200 text-xs uppercase tracking-wider"
+                  >
+                    Print with Sign
+                  </button>
+                  <button
+                    onClick={() => handlePrint(false)}
+                    className="w-1/2 bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-xl shadow transition duration-200 text-xs uppercase tracking-wider"
+                  >
+                    Print without Sign
+                  </button>
+                </div>
                 <button
                   onClick={() => setActiveSlip(null)}
                   className="w-full bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-3 px-4 rounded-xl shadow transition duration-200 text-xs uppercase tracking-wider"
