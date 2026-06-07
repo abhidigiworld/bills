@@ -182,7 +182,6 @@ function Header() {
             </span>
           </Link>
         </h1>
-        <p className="text-sm text-slate-500 dark:text-gray-400 font-medium hidden md:block">Providing Quality Services Since 2024</p>
         
         <div className="flex items-center gap-3">
           {/* Light/Dark Toggle Button */}
