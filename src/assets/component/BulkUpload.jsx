@@ -31,8 +31,17 @@ function BulkUpload() {
       setError('Please drop PDF files only.');
       return;
     }
-    setSelectedFiles(prev => [...prev, ...files]);
-    setError('');
+    
+    setSelectedFiles(prev => {
+      const existing = new Set(prev.map(f => `${f.name}-${f.size}`));
+      const newFiles = files.filter(f => !existing.has(`${f.name}-${f.size}`));
+      if (newFiles.length < files.length) {
+        setError('Duplicate files in selection were skipped.');
+      } else {
+        setError('');
+      }
+      return [...prev, ...newFiles];
+    });
   };
 
   const handleFileSelect = (e) => {
@@ -41,8 +50,17 @@ function BulkUpload() {
       setError('Please select PDF files only.');
       return;
     }
-    setSelectedFiles(prev => [...prev, ...files]);
-    setError('');
+
+    setSelectedFiles(prev => {
+      const existing = new Set(prev.map(f => `${f.name}-${f.size}`));
+      const newFiles = files.filter(f => !existing.has(`${f.name}-${f.size}`));
+      if (newFiles.length < files.length) {
+        setError('Duplicate files in selection were skipped.');
+      } else {
+        setError('');
+      }
+      return [...prev, ...newFiles];
+    });
   };
 
   const removeFile = (indexToRemove) => {
