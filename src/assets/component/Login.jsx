@@ -69,7 +69,7 @@ function Login() {
       <div className="absolute top-[-20%] left-[-20%] w-[60%] h-[60%] rounded-full bg-indigo-300/30 dark:bg-indigo-900/15 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[-20%] w-[60%] h-[60%] rounded-full bg-cyan-200/40 dark:bg-cyan-950/10 blur-[120px] pointer-events-none" />
 
-      <div className="flex w-full max-w-5xl bg-white dark:bg-[#181622] rounded-[2rem] overflow-hidden shadow-2xl border border-slate-200 dark:border-[#262235] transition-colors duration-300 relative z-10">
+      <div className="flex w-full max-w-5xl md:h-[640px] bg-white dark:bg-[#181622] rounded-[2rem] overflow-hidden shadow-2xl border border-slate-200 dark:border-[#262235] transition-colors duration-300 relative z-10">
 
         {/* Left Side: Dunes Graphic Panel */}
         <div
