@@ -15,7 +15,7 @@ import ForgotPassword from './assets/component/ForgotPassword.jsx'
 import AttendanceRegister from './assets/component/AttendanceRegister.jsx'
 import ManagePayrolls from './assets/component/ManagePayrolls.jsx'
 import ManageUsers from './assets/component/ManageUsers.jsx'
-
+import BulkUpload from './assets/component/BulkUpload.jsx'
 // Protected Route Wrapper Component
 const ProtectedRoute = ({ children, requireAdmin }) => {
   const sessionUser = localStorage.getItem('user');
@@ -74,6 +74,10 @@ const router = createBrowserRouter([
   {
     path: '/manage-users',
     element: <ProtectedRoute requireAdmin><ManageUsers/></ProtectedRoute>
+  },
+  {
+    path: '/bulk-upload',
+    element: <ProtectedRoute requireAdmin><BulkUpload/></ProtectedRoute>
   },
   {
     path: '*',

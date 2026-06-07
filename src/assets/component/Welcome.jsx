@@ -185,6 +185,13 @@ function WelcomePage() {
                   <h3 className="text-lg font-bold">Manage Users</h3>
                   <p className="text-cyan-100 text-xs mt-1 leading-relaxed">Manage login credentials, roles, and verification</p>
                 </Link>
+                <Link
+                  to="/bulk-upload"
+                  className="bg-gradient-to-br from-fuchsia-500 to-pink-600 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+                >
+                  <h3 className="text-lg font-bold">Bulk Upload PDF</h3>
+                  <p className="text-fuchsia-100 text-xs mt-1 leading-relaxed">Import multiple PDF invoices in a single click</p>
+                </Link>
               </div>
 
               {/* Chart Section */}
