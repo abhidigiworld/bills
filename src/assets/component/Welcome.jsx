@@ -138,59 +138,155 @@ function WelcomePage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
                 <Link
                   to="/existing-bills"
-                  className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+                  className="relative p-6 pl-8 bg-white dark:bg-[#181622] rounded-2xl border border-slate-200/85 dark:border-[#262235] shadow-md hover:shadow-lg hover:border-indigo-500/50 dark:hover:border-violet-500/50 transform hover:-translate-y-1 transition-all duration-300 group overflow-hidden flex items-center justify-between"
                 >
-                  <h3 className="text-lg font-bold">Existing Invoices</h3>
-                  <p className="text-blue-100 text-xs mt-1 leading-relaxed">View, search, edit, or delete sales records</p>
+                  <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-indigo-500 via-violet-500 to-cyan-400" />
+                  <div className="flex-grow pr-4">
+                    <h3 className="text-lg font-extrabold text-indigo-950 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-violet-400 transition-colors duration-200 leading-snug">
+                      Existing Invoices
+                    </h3>
+                    <p className="text-slate-500 dark:text-gray-400 text-xs mt-1.5 leading-relaxed">
+                      View, search, edit, or delete sales records
+                    </p>
+                  </div>
+                  <div className="text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 dark:group-hover:text-violet-400 transition-colors duration-200">
+                    <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
                 </Link>
                 <Link
                   to="/new-bill"
-                  className="bg-gradient-to-br from-teal-500 to-emerald-600 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+                  className="relative p-6 pl-8 bg-white dark:bg-[#181622] rounded-2xl border border-slate-200/85 dark:border-[#262235] shadow-md hover:shadow-lg hover:border-indigo-500/50 dark:hover:border-violet-500/50 transform hover:-translate-y-1 transition-all duration-300 group overflow-hidden flex items-center justify-between"
                 >
-                  <h3 className="text-lg font-bold">Create Invoice</h3>
-                  <p className="text-emerald-100 text-xs mt-1 leading-relaxed">Generate tax bills and print reports</p>
+                  <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-indigo-500 via-violet-500 to-cyan-400" />
+                  <div className="flex-grow pr-4">
+                    <h3 className="text-lg font-extrabold text-indigo-950 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-violet-400 transition-colors duration-200 leading-snug">
+                      Create Invoice
+                    </h3>
+                    <p className="text-slate-500 dark:text-gray-400 text-xs mt-1.5 leading-relaxed">
+                      Generate tax bills and print reports
+                    </p>
+                  </div>
+                  <div className="text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 dark:group-hover:text-violet-400 transition-colors duration-200">
+                    <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
                 </Link>
                 <Link
                   to="/new-employee"
-                  className="bg-gradient-to-br from-purple-500 to-pink-600 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+                  className="relative p-6 pl-8 bg-white dark:bg-[#181622] rounded-2xl border border-slate-200/85 dark:border-[#262235] shadow-md hover:shadow-lg hover:border-indigo-500/50 dark:hover:border-violet-500/50 transform hover:-translate-y-1 transition-all duration-300 group overflow-hidden flex items-center justify-between"
                 >
-                  <h3 className="text-lg font-bold">Manage Employees</h3>
-                  <p className="text-purple-100 text-xs mt-1 leading-relaxed">Manage staff details and gross salaries</p>
+                  <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-indigo-500 via-violet-500 to-cyan-400" />
+                  <div className="flex-grow pr-4">
+                    <h3 className="text-lg font-extrabold text-indigo-950 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-violet-400 transition-colors duration-200 leading-snug">
+                      Manage Employees
+                    </h3>
+                    <p className="text-slate-500 dark:text-gray-400 text-xs mt-1.5 leading-relaxed">
+                      Manage staff details and gross salaries
+                    </p>
+                  </div>
+                  <div className="text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 dark:group-hover:text-violet-400 transition-colors duration-200">
+                    <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
                 </Link>
                 <Link
                   to="/new-Salary"
-                  className="bg-gradient-to-br from-amber-500 to-orange-600 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+                  className="relative p-6 pl-8 bg-white dark:bg-[#181622] rounded-2xl border border-slate-200/85 dark:border-[#262235] shadow-md hover:shadow-lg hover:border-indigo-500/50 dark:hover:border-violet-500/50 transform hover:-translate-y-1 transition-all duration-300 group overflow-hidden flex items-center justify-between"
                 >
-                  <h3 className="text-lg font-bold">Payroll & Slips</h3>
-                  <p className="text-amber-100 text-xs mt-1 leading-relaxed">Calculate monthly payouts and generate slips</p>
+                  <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-indigo-500 via-violet-500 to-cyan-400" />
+                  <div className="flex-grow pr-4">
+                    <h3 className="text-lg font-extrabold text-indigo-950 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-violet-400 transition-colors duration-200 leading-snug">
+                      Payroll & Slips
+                    </h3>
+                    <p className="text-slate-500 dark:text-gray-400 text-xs mt-1.5 leading-relaxed">
+                      Calculate monthly payouts and generate slips
+                    </p>
+                  </div>
+                  <div className="text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 dark:group-hover:text-violet-400 transition-colors duration-200">
+                    <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
                 </Link>
                 <Link
                   to="/attendance-register"
-                  className="bg-gradient-to-br from-indigo-500 to-violet-600 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+                  className="relative p-6 pl-8 bg-white dark:bg-[#181622] rounded-2xl border border-slate-200/85 dark:border-[#262235] shadow-md hover:shadow-lg hover:border-indigo-500/50 dark:hover:border-violet-500/50 transform hover:-translate-y-1 transition-all duration-300 group overflow-hidden flex items-center justify-between"
                 >
-                  <h3 className="text-lg font-bold">Attendance Register</h3>
-                  <p className="text-indigo-100 text-xs mt-1 leading-relaxed">View monthly employee attendance grids & OT</p>
+                  <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-indigo-500 via-violet-500 to-cyan-400" />
+                  <div className="flex-grow pr-4">
+                    <h3 className="text-lg font-extrabold text-indigo-950 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-violet-400 transition-colors duration-200 leading-snug">
+                      Attendance Register
+                    </h3>
+                    <p className="text-slate-500 dark:text-gray-400 text-xs mt-1.5 leading-relaxed">
+                      View monthly employee attendance grids & OT
+                    </p>
+                  </div>
+                  <div className="text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 dark:group-hover:text-violet-400 transition-colors duration-200">
+                    <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
                 </Link>
                 <Link
                   to="/manage-payrolls"
-                  className="bg-gradient-to-br from-rose-500 to-red-600 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+                  className="relative p-6 pl-8 bg-white dark:bg-[#181622] rounded-2xl border border-slate-200/85 dark:border-[#262235] shadow-md hover:shadow-lg hover:border-indigo-500/50 dark:hover:border-violet-500/50 transform hover:-translate-y-1 transition-all duration-300 group overflow-hidden flex items-center justify-between"
                 >
-                  <h3 className="text-lg font-bold">Manage Payrolls</h3>
-                  <p className="text-rose-100 text-xs mt-1 leading-relaxed">View, edit, or delete saved monthly payroll slips</p>
+                  <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-indigo-500 via-violet-500 to-cyan-400" />
+                  <div className="flex-grow pr-4">
+                    <h3 className="text-lg font-extrabold text-indigo-950 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-violet-400 transition-colors duration-200 leading-snug">
+                      Manage Payrolls
+                    </h3>
+                    <p className="text-slate-500 dark:text-gray-400 text-xs mt-1.5 leading-relaxed">
+                      View, edit, or delete saved monthly payroll slips
+                    </p>
+                  </div>
+                  <div className="text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 dark:group-hover:text-violet-400 transition-colors duration-200">
+                    <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
                 </Link>
                 <Link
                   to="/manage-users"
-                  className="bg-gradient-to-br from-cyan-500 to-blue-600 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+                  className="relative p-6 pl-8 bg-white dark:bg-[#181622] rounded-2xl border border-slate-200/85 dark:border-[#262235] shadow-md hover:shadow-lg hover:border-indigo-500/50 dark:hover:border-violet-500/50 transform hover:-translate-y-1 transition-all duration-300 group overflow-hidden flex items-center justify-between"
                 >
-                  <h3 className="text-lg font-bold">Manage Users</h3>
-                  <p className="text-cyan-100 text-xs mt-1 leading-relaxed">Manage login credentials, roles, and verification</p>
+                  <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-indigo-500 via-violet-500 to-cyan-400" />
+                  <div className="flex-grow pr-4">
+                    <h3 className="text-lg font-extrabold text-indigo-950 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-violet-400 transition-colors duration-200 leading-snug">
+                      Manage Users
+                    </h3>
+                    <p className="text-slate-500 dark:text-gray-400 text-xs mt-1.5 leading-relaxed">
+                      Manage login credentials, roles, and verification
+                    </p>
+                  </div>
+                  <div className="text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 dark:group-hover:text-violet-400 transition-colors duration-200">
+                    <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
                 </Link>
                 <Link
                   to="/bulk-upload"
-                  className="bg-gradient-to-br from-fuchsia-500 to-pink-600 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+                  className="relative p-6 pl-8 bg-white dark:bg-[#181622] rounded-2xl border border-slate-200/85 dark:border-[#262235] shadow-md hover:shadow-lg hover:border-indigo-500/50 dark:hover:border-violet-500/50 transform hover:-translate-y-1 transition-all duration-300 group overflow-hidden flex items-center justify-between"
                 >
-                  <h3 className="text-lg font-bold">Bulk Upload PDF</h3>
-                  <p className="text-fuchsia-100 text-xs mt-1 leading-relaxed">Import multiple PDF invoices in a single click</p>
+                  <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-indigo-500 via-violet-500 to-cyan-400" />
+                  <div className="flex-grow pr-4">
+                    <h3 className="text-lg font-extrabold text-indigo-950 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-violet-400 transition-colors duration-200 leading-snug">
+                      Bulk Upload PDF
+                    </h3>
+                    <p className="text-slate-500 dark:text-gray-400 text-xs mt-1.5 leading-relaxed">
+                      Import multiple PDF invoices in a single click
+                    </p>
+                  </div>
+                  <div className="text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 dark:group-hover:text-violet-400 transition-colors duration-200">
+                    <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
                 </Link>
               </div>
 

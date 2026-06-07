@@ -177,9 +177,14 @@ function Header() {
         <h1 className="text-xl font-bold flex items-center">
           <Link to={'/Main'} className="flex items-center gap-2.5 group">
             <img src={logo} alt="Sakshi Enterprises Logo" className="h-9 w-auto rounded-lg shadow-md border border-slate-200 dark:border-[#3e3857]" />
-            <span className="company-name tracking-wider font-black transition-all group-hover:opacity-90">
-              SAKSHI ENTERPRISES
-            </span>
+            <div className="flex flex-col justify-center leading-[1.05]">
+              <span className="company-name text-[13px] tracking-wider block transition-all group-hover:opacity-90">
+                SAKSHI
+              </span>
+              <span className="company-name text-[8px] tracking-[0.22em] block opacity-90 transition-all group-hover:opacity-85">
+                ENTERPRISES
+              </span>
+            </div>
           </Link>
         </h1>
 
