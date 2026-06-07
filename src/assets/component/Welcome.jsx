@@ -222,156 +222,227 @@ function WelcomePage() {
             /* ADMIN DASHBOARD */
             <div className="space-y-8 animate-fade-in">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+                {/* Existing Invoices */}
                 <Link
                   to="/existing-bills"
-                  className="relative p-6 pl-8 bg-white dark:bg-[#181622] rounded-2xl border border-slate-200/85 dark:border-[#262235] shadow-md hover:shadow-lg hover:border-indigo-500/50 dark:hover:border-violet-500/50 transform hover:-translate-y-1 transition-all duration-300 group overflow-hidden flex items-center justify-between"
+                  className="group relative p-6 bg-white dark:bg-[#181622] rounded-[2rem] border border-slate-200/80 dark:border-[#262235] shadow-md hover:shadow-xl hover:shadow-indigo-500/5 dark:hover:shadow-violet-500/5 transform hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[180px] overflow-hidden"
                 >
-                  <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-indigo-500 via-violet-500 to-cyan-400" />
-                  <div className="flex-grow pr-4">
-                    <h3 className="text-lg font-extrabold text-indigo-950 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-violet-400 transition-colors duration-200 leading-snug">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 rounded-bl-[4rem] group-hover:scale-110 transition-transform duration-300" />
+                  <div className="flex justify-between items-center w-full mb-4 relative z-10">
+                    <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-violet-400 rounded-2xl group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </div>
+                    <div className="text-slate-300 dark:text-slate-600 group-hover:text-indigo-600 dark:group-hover:text-violet-400 transform group-hover:translate-x-1 transition-all duration-300">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="relative z-10 mt-auto">
+                    <h3 className="text-base font-extrabold text-indigo-950 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-violet-400 transition-colors duration-200 leading-snug">
                       Existing Invoices
                     </h3>
                     <p className="text-slate-500 dark:text-gray-400 text-xs mt-1.5 leading-relaxed">
                       View, search, edit, or delete sales records
                     </p>
                   </div>
-                  <div className="text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 dark:group-hover:text-violet-400 transition-colors duration-200">
-                    <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
                 </Link>
+
+                {/* Create Invoice */}
                 <Link
                   to="/new-bill"
-                  className="relative p-6 pl-8 bg-white dark:bg-[#181622] rounded-2xl border border-slate-200/85 dark:border-[#262235] shadow-md hover:shadow-lg hover:border-indigo-500/50 dark:hover:border-violet-500/50 transform hover:-translate-y-1 transition-all duration-300 group overflow-hidden flex items-center justify-between"
+                  className="group relative p-6 bg-white dark:bg-[#181622] rounded-[2rem] border border-slate-200/80 dark:border-[#262235] shadow-md hover:shadow-xl hover:shadow-indigo-500/5 dark:hover:shadow-violet-500/5 transform hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[180px] overflow-hidden"
                 >
-                  <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-indigo-500 via-violet-500 to-cyan-400" />
-                  <div className="flex-grow pr-4">
-                    <h3 className="text-lg font-extrabold text-indigo-950 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-violet-400 transition-colors duration-200 leading-snug">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 rounded-bl-[4rem] group-hover:scale-110 transition-transform duration-300" />
+                  <div className="flex justify-between items-center w-full mb-4 relative z-10">
+                    <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-violet-400 rounded-2xl group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div className="text-slate-300 dark:text-slate-600 group-hover:text-indigo-600 dark:group-hover:text-violet-400 transform group-hover:translate-x-1 transition-all duration-300">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="relative z-10 mt-auto">
+                    <h3 className="text-base font-extrabold text-indigo-950 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-violet-400 transition-colors duration-200 leading-snug">
                       Create Invoice
                     </h3>
                     <p className="text-slate-500 dark:text-gray-400 text-xs mt-1.5 leading-relaxed">
                       Generate tax bills and print reports
                     </p>
                   </div>
-                  <div className="text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 dark:group-hover:text-violet-400 transition-colors duration-200">
-                    <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
                 </Link>
+
+                {/* Manage Employees */}
                 <Link
                   to="/new-employee"
-                  className="relative p-6 pl-8 bg-white dark:bg-[#181622] rounded-2xl border border-slate-200/85 dark:border-[#262235] shadow-md hover:shadow-lg hover:border-indigo-500/50 dark:hover:border-violet-500/50 transform hover:-translate-y-1 transition-all duration-300 group overflow-hidden flex items-center justify-between"
+                  className="group relative p-6 bg-white dark:bg-[#181622] rounded-[2rem] border border-slate-200/80 dark:border-[#262235] shadow-md hover:shadow-xl hover:shadow-indigo-500/5 dark:hover:shadow-violet-500/5 transform hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[180px] overflow-hidden"
                 >
-                  <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-indigo-500 via-violet-500 to-cyan-400" />
-                  <div className="flex-grow pr-4">
-                    <h3 className="text-lg font-extrabold text-indigo-950 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-violet-400 transition-colors duration-200 leading-snug">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 rounded-bl-[4rem] group-hover:scale-110 transition-transform duration-300" />
+                  <div className="flex justify-between items-center w-full mb-4 relative z-10">
+                    <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-violet-400 rounded-2xl group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                      </svg>
+                    </div>
+                    <div className="text-slate-300 dark:text-slate-600 group-hover:text-indigo-600 dark:group-hover:text-violet-400 transform group-hover:translate-x-1 transition-all duration-300">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="relative z-10 mt-auto">
+                    <h3 className="text-base font-extrabold text-indigo-950 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-violet-400 transition-colors duration-200 leading-snug">
                       Manage Employees
                     </h3>
                     <p className="text-slate-500 dark:text-gray-400 text-xs mt-1.5 leading-relaxed">
                       Manage staff details and gross salaries
                     </p>
                   </div>
-                  <div className="text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 dark:group-hover:text-violet-400 transition-colors duration-200">
-                    <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
                 </Link>
+
+                {/* Payroll & Slips */}
                 <Link
                   to="/new-Salary"
-                  className="relative p-6 pl-8 bg-white dark:bg-[#181622] rounded-2xl border border-slate-200/85 dark:border-[#262235] shadow-md hover:shadow-lg hover:border-indigo-500/50 dark:hover:border-violet-500/50 transform hover:-translate-y-1 transition-all duration-300 group overflow-hidden flex items-center justify-between"
+                  className="group relative p-6 bg-white dark:bg-[#181622] rounded-[2rem] border border-slate-200/80 dark:border-[#262235] shadow-md hover:shadow-xl hover:shadow-indigo-500/5 dark:hover:shadow-violet-500/5 transform hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[180px] overflow-hidden"
                 >
-                  <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-indigo-500 via-violet-500 to-cyan-400" />
-                  <div className="flex-grow pr-4">
-                    <h3 className="text-lg font-extrabold text-indigo-950 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-violet-400 transition-colors duration-200 leading-snug">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 rounded-bl-[4rem] group-hover:scale-110 transition-transform duration-300" />
+                  <div className="flex justify-between items-center w-full mb-4 relative z-10">
+                    <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-violet-400 rounded-2xl group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div className="text-slate-300 dark:text-slate-600 group-hover:text-indigo-600 dark:group-hover:text-violet-400 transform group-hover:translate-x-1 transition-all duration-300">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="relative z-10 mt-auto">
+                    <h3 className="text-base font-extrabold text-indigo-950 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-violet-400 transition-colors duration-200 leading-snug">
                       Payroll & Slips
                     </h3>
                     <p className="text-slate-500 dark:text-gray-400 text-xs mt-1.5 leading-relaxed">
                       Calculate monthly payouts and generate slips
                     </p>
                   </div>
-                  <div className="text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 dark:group-hover:text-violet-400 transition-colors duration-200">
-                    <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
                 </Link>
+
+                {/* Attendance Register */}
                 <Link
                   to="/attendance-register"
-                  className="relative p-6 pl-8 bg-white dark:bg-[#181622] rounded-2xl border border-slate-200/85 dark:border-[#262235] shadow-md hover:shadow-lg hover:border-indigo-500/50 dark:hover:border-violet-500/50 transform hover:-translate-y-1 transition-all duration-300 group overflow-hidden flex items-center justify-between"
+                  className="group relative p-6 bg-white dark:bg-[#181622] rounded-[2rem] border border-slate-200/80 dark:border-[#262235] shadow-md hover:shadow-xl hover:shadow-indigo-500/5 dark:hover:shadow-violet-500/5 transform hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[180px] overflow-hidden"
                 >
-                  <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-indigo-500 via-violet-500 to-cyan-400" />
-                  <div className="flex-grow pr-4">
-                    <h3 className="text-lg font-extrabold text-indigo-950 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-violet-400 transition-colors duration-200 leading-snug">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 rounded-bl-[4rem] group-hover:scale-110 transition-transform duration-300" />
+                  <div className="flex justify-between items-center w-full mb-4 relative z-10">
+                    <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-violet-400 rounded-2xl group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <div className="text-slate-300 dark:text-slate-600 group-hover:text-indigo-600 dark:group-hover:text-violet-400 transform group-hover:translate-x-1 transition-all duration-300">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="relative z-10 mt-auto">
+                    <h3 className="text-base font-extrabold text-indigo-950 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-violet-400 transition-colors duration-200 leading-snug">
                       Attendance Register
                     </h3>
                     <p className="text-slate-500 dark:text-gray-400 text-xs mt-1.5 leading-relaxed">
                       View monthly employee attendance grids & OT
                     </p>
                   </div>
-                  <div className="text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 dark:group-hover:text-violet-400 transition-colors duration-200">
-                    <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
                 </Link>
+
+                {/* Manage Payrolls */}
                 <Link
                   to="/manage-payrolls"
-                  className="relative p-6 pl-8 bg-white dark:bg-[#181622] rounded-2xl border border-slate-200/85 dark:border-[#262235] shadow-md hover:shadow-lg hover:border-indigo-500/50 dark:hover:border-violet-500/50 transform hover:-translate-y-1 transition-all duration-300 group overflow-hidden flex items-center justify-between"
+                  className="group relative p-6 bg-white dark:bg-[#181622] rounded-[2rem] border border-slate-200/80 dark:border-[#262235] shadow-md hover:shadow-xl hover:shadow-indigo-500/5 dark:hover:shadow-violet-500/5 transform hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[180px] overflow-hidden"
                 >
-                  <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-indigo-500 via-violet-500 to-cyan-400" />
-                  <div className="flex-grow pr-4">
-                    <h3 className="text-lg font-extrabold text-indigo-950 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-violet-400 transition-colors duration-200 leading-snug">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 rounded-bl-[4rem] group-hover:scale-110 transition-transform duration-300" />
+                  <div className="flex justify-between items-center w-full mb-4 relative z-10">
+                    <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-violet-400 rounded-2xl group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                      </svg>
+                    </div>
+                    <div className="text-slate-300 dark:text-slate-600 group-hover:text-indigo-600 dark:group-hover:text-violet-400 transform group-hover:translate-x-1 transition-all duration-300">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="relative z-10 mt-auto">
+                    <h3 className="text-base font-extrabold text-indigo-950 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-violet-400 transition-colors duration-200 leading-snug">
                       Manage Payrolls
                     </h3>
                     <p className="text-slate-500 dark:text-gray-400 text-xs mt-1.5 leading-relaxed">
                       View, edit, or delete saved monthly payroll slips
                     </p>
                   </div>
-                  <div className="text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 dark:group-hover:text-violet-400 transition-colors duration-200">
-                    <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
                 </Link>
+
+                {/* Manage Users */}
                 <Link
                   to="/manage-users"
-                  className="relative p-6 pl-8 bg-white dark:bg-[#181622] rounded-2xl border border-slate-200/85 dark:border-[#262235] shadow-md hover:shadow-lg hover:border-indigo-500/50 dark:hover:border-violet-500/50 transform hover:-translate-y-1 transition-all duration-300 group overflow-hidden flex items-center justify-between"
+                  className="group relative p-6 bg-white dark:bg-[#181622] rounded-[2rem] border border-slate-200/80 dark:border-[#262235] shadow-md hover:shadow-xl hover:shadow-indigo-500/5 dark:hover:shadow-violet-500/5 transform hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[180px] overflow-hidden"
                 >
-                  <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-indigo-500 via-violet-500 to-cyan-400" />
-                  <div className="flex-grow pr-4">
-                    <h3 className="text-lg font-extrabold text-indigo-950 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-violet-400 transition-colors duration-200 leading-snug">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 rounded-bl-[4rem] group-hover:scale-110 transition-transform duration-300" />
+                  <div className="flex justify-between items-center w-full mb-4 relative z-10">
+                    <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-violet-400 rounded-2xl group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                      </svg>
+                    </div>
+                    <div className="text-slate-300 dark:text-slate-600 group-hover:text-indigo-600 dark:group-hover:text-violet-400 transform group-hover:translate-x-1 transition-all duration-300">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="relative z-10 mt-auto">
+                    <h3 className="text-base font-extrabold text-indigo-950 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-violet-400 transition-colors duration-200 leading-snug">
                       Manage Users
                     </h3>
                     <p className="text-slate-500 dark:text-gray-400 text-xs mt-1.5 leading-relaxed">
                       Manage login credentials, roles, and verification
                     </p>
                   </div>
-                  <div className="text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 dark:group-hover:text-violet-400 transition-colors duration-200">
-                    <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
                 </Link>
+
+                {/* Bulk Upload PDF */}
                 <Link
                   to="/bulk-upload"
-                  className="relative p-6 pl-8 bg-white dark:bg-[#181622] rounded-2xl border border-slate-200/85 dark:border-[#262235] shadow-md hover:shadow-lg hover:border-indigo-500/50 dark:hover:border-violet-500/50 transform hover:-translate-y-1 transition-all duration-300 group overflow-hidden flex items-center justify-between"
+                  className="group relative p-6 bg-white dark:bg-[#181622] rounded-[2rem] border border-slate-200/80 dark:border-[#262235] shadow-md hover:shadow-xl hover:shadow-indigo-500/5 dark:hover:shadow-indigo-500/5 transform hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[180px] overflow-hidden"
                 >
-                  <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-indigo-500 via-violet-500 to-cyan-400" />
-                  <div className="flex-grow pr-4">
-                    <h3 className="text-lg font-extrabold text-indigo-950 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-violet-400 transition-colors duration-200 leading-snug">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-indigo-500/10 rounded-bl-[4rem] group-hover:scale-110 transition-transform duration-300" />
+                  <div className="flex justify-between items-center w-full mb-4 relative z-10">
+                    <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-violet-400 rounded-2xl group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                      </svg>
+                    </div>
+                    <div className="text-slate-300 dark:text-slate-600 group-hover:text-indigo-600 dark:group-hover:text-indigo-600 transform group-hover:translate-x-1 transition-all duration-300">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="relative z-10 mt-auto">
+                    <h3 className="text-base font-extrabold text-indigo-950 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-600 transition-colors duration-200 leading-snug">
                       Bulk Upload PDF
                     </h3>
                     <p className="text-slate-500 dark:text-gray-400 text-xs mt-1.5 leading-relaxed">
                       Import multiple PDF invoices in a single click
                     </p>
-                  </div>
-                  <div className="text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 dark:group-hover:text-violet-400 transition-colors duration-200">
-                    <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
                   </div>
                 </Link>
               </div>
