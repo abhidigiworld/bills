@@ -204,6 +204,70 @@ function ManagePayrolls() {
         }, 100);
     };
 
+    const convertNumberToWords = (number) => {
+        if (isNaN(number) || number === null || number === undefined) return '';
+
+        let num = parseFloat(number);
+        if (num < 0) return 'Negative ' + convertNumberToWords(Math.abs(num));
+        if (num === 0) return 'Zero';
+
+        const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten',
+            'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+        const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+        const convertToWordsLessThanThousand = (val) => {
+            let words = '';
+            if (val >= 100) {
+                words += ones[Math.floor(val / 100)] + ' Hundred ';
+                val %= 100;
+            }
+            if (val >= 20) {
+                words += tens[Math.floor(val / 10)] + ' ';
+                val %= 10;
+            }
+            if (val > 0) {
+                words += ones[val] + ' ';
+            }
+            return words.trim();
+        };
+
+        let integerPart = Math.floor(num);
+        let decimalPart = Math.round((num - integerPart) * 100);
+        let result = '';
+
+        if (integerPart >= 10000000) { // Crore (1,00,00,000)
+            const crore = Math.floor(integerPart / 10000000);
+            result += convertToWordsLessThanThousand(crore) + ' Crore ';
+            integerPart %= 10000000;
+        }
+        if (integerPart >= 100000) { // Lakh (1,00,000)
+            const lakh = Math.floor(integerPart / 100000);
+            result += convertToWordsLessThanThousand(lakh) + ' Lakh ';
+            integerPart %= 100000;
+        }
+        if (integerPart >= 1000) { // Thousand (1,000)
+            const thousand = Math.floor(integerPart / 1000);
+            result += convertToWordsLessThanThousand(thousand) + ' Thousand ';
+            integerPart %= 1000;
+        }
+        if (integerPart > 0) {
+            result += convertToWordsLessThanThousand(integerPart);
+        }
+
+        let words = result.trim();
+
+        // Convert decimal part to words (Paisa)
+        if (decimalPart > 0) {
+            if (words !== '') {
+                words += ' and ' + convertToWordsLessThanThousand(decimalPart) + ' Paisa';
+            } else {
+                words = convertToWordsLessThanThousand(decimalPart) + ' Paisa';
+            }
+        }
+
+        return words.trim();
+    };
+
     return (
         <div className="flex flex-col min-h-screen bg-indigo-50 dark:bg-[#110f18] text-slate-800 dark:text-gray-200 transition-colors duration-300">
             <Header />
@@ -631,8 +695,14 @@ function ManagePayrolls() {
                                 </table>
 
                                 {/* Summary Calculation (Totals) */}
-                                <div className="flex justify-end p-2 border-t border-black bg-slate-50 dark:bg-slate-900/10 print:bg-transparent">
-                                    <table className="w-80 text-xs">
+                                <div className="flex justify-between items-end p-3 border-t border-black bg-slate-50 dark:bg-slate-900/10 print:bg-transparent">
+                                    <div className="text-left text-xs font-bold pr-4 max-w-md">
+                                        <span className="text-slate-500 print:text-gray-500 block uppercase text-[9px] mb-1">Net Pay (In Words):</span>
+                                        <span className="font-extrabold text-slate-900 dark:text-white print:text-black">
+                                            Rupees {convertNumberToWords(Math.floor(activeSlip.inHandSalary))} Only
+                                        </span>
+                                    </div>
+                                    <table className="w-80 text-xs flex-shrink-0">
                                         <tbody>
                                             <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
                                                 <td className="py-1 font-semibold">Gross Earnings:</td>
