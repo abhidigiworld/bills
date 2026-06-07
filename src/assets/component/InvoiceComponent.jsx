@@ -3,7 +3,8 @@ import './printStyles.css';
 import axios from 'axios';
 import logo from '../images/LOGO.png';
 import signature from '../images/sign.png';
-import stamp from '../images/stamp.png'
+import stamp from '../images/stamp.png';
+import { API_BASE_URL } from '../../config';
 
 function InvoiceComponent({ invoiceDetails }) {
     const [items, setItems] = useState([]);
@@ -141,7 +142,7 @@ function InvoiceComponent({ invoiceDetails }) {
 
     const handleSave = async () => {
         try {
-            const response = await axios.post('https://billsbackend-git-main-abhidigiworlds-projects.vercel.app/api/invoices', {
+            const response = await axios.post(`${API_BASE_URL}/api/invoices`, {
                 companyName: invoiceDetails.msInput,
                 gstin: invoiceDetails.gstin,
                 state: invoiceDetails.state,

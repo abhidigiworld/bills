@@ -5,6 +5,7 @@ import Header from './Header';
 import Footer from './Footer';
 import InvoiceDetails from './InvoiceDetails';
 import UpdateInvoice from './UpdateInvoice';
+import { API_BASE_URL } from '../../config';
 
 function Bills() {
   const [bills, setBills] = useState([]);
@@ -17,7 +18,7 @@ function Bills() {
   useEffect(() => {
     const fetchBills = async () => {
       try {
-        const response = await axios.get('https://billsbackend-git-main-abhidigiworlds-projects.vercel.app/api/invoices');
+        const response = await axios.get(`${API_BASE_URL}/api/invoices`);
         setBills(response.data);
       } catch (error) {
         console.error('Error fetching bills:', error);
@@ -35,7 +36,7 @@ function Bills() {
     const userConfirmed = window.confirm("Are you sure you want to delete this invoice?");
     if (userConfirmed) {
       try {
-        await axios.delete(`https://billsbackend-git-main-abhidigiworlds-projects.vercel.app/api/invoices/${id}`);
+        await axios.delete(`${API_BASE_URL}/api/invoices/${id}`);
         setBills(bills.filter((bill) => bill._id !== id));
         setAlertMessage('Invoice deleted successfully');
       } catch (error) {

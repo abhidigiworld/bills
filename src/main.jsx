@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
-import { RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { RouterProvider, createBrowserRouter, Navigate } from 'react-router-dom'
 import WelcomePage from './assets/component/Welcome.jsx'
 import InvoiceForm from './assets/component/InvoiceForm.jsx'
 import Login from './assets/component/Login.jsx'
@@ -11,35 +11,54 @@ import AddEmployee from './assets/component/AddEmployee.jsx'
 import SalarySlip from './assets/component/SalarySlip.jsx'
 import ErrorPage from './assets/component/ErrorPage.jsx'
 import SignUp from './assets/component/SignUp.jsx'
+import ForgotPassword from './assets/component/ForgotPassword.jsx'
 
-const router= createBrowserRouter([
+// Protected Route Wrapper Component
+const ProtectedRoute = ({ children, requireAdmin }) => {
+  const sessionUser = localStorage.getItem('user');
+  if (!sessionUser) {
+    return <Navigate to="/" replace />;
+  }
+  const user = JSON.parse(sessionUser);
+  if (requireAdmin && user.role !== 'admin') {
+    // Regular users trying to access admin screens are redirected back to employee home
+    return <Navigate to="/Main" replace />;
+  }
+  return children;
+};
+
+const router = createBrowserRouter([
   {
     path: '/',
     element: <Login/>
   },
   {
+    path: '/signup',
+    element: <SignUp/>
+  },
+  {
+    path: '/forgot-password',
+    element: <ForgotPassword/>
+  },
+  {
     path: '/Main',
-    element : <WelcomePage/>
+    element : <ProtectedRoute><WelcomePage/></ProtectedRoute>
   },
   {
     path: '/existing-bills',
-    element: <Bills/>
+    element: <ProtectedRoute requireAdmin><Bills/></ProtectedRoute>
   },
   {
     path: '/new-bill',
-    element: <InvoiceForm/>
+    element: <ProtectedRoute requireAdmin><InvoiceForm/></ProtectedRoute>
   },
   {
     path: '/new-employee',
-    element: <AddEmployee/>
+    element: <ProtectedRoute requireAdmin><AddEmployee/></ProtectedRoute>
   },
   {
     path: '/new-Salary',
-    element: <SalarySlip/>
-  },
-  {
-    path: '/signup',
-    element: <SignUp/>
+    element: <ProtectedRoute requireAdmin><SalarySlip/></ProtectedRoute>
   },
   {
     path: '*',

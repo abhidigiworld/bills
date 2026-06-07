@@ -4,6 +4,7 @@ import axios from 'axios';
 import logo from '../images/LOGO.png';
 import signature from '../images/sign.png';
 import stamp from '../images/stamp.png';
+import { API_BASE_URL } from '../../config';
 
 function InvoiceDetails({ invoiceId }) {
     const [invoiceDetails, setInvoiceDetails] = useState({});
@@ -62,7 +63,7 @@ function InvoiceDetails({ invoiceId }) {
     useEffect(() => {
         const fetchInvoiceDetails = async () => {
             try {
-                const response = await axios.get(`https://billsbackend-git-main-abhidigiworlds-projects.vercel.app/api/invoices/${invoiceId}`);
+                const response = await axios.get(`${API_BASE_URL}/api/invoices/${invoiceId}`);
                 const data = response.data;
                 setInvoiceDetails(data);
                 setItems(data.items);

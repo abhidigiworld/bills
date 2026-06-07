@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../../config';
 
 const UpdateInvoice = ({ invoice, onClose }) => {
     const [companyName, setCompanyName] = useState(invoice.companyName);
@@ -34,7 +35,7 @@ const UpdateInvoice = ({ invoice, onClose }) => {
                 grandTotalInWords,
             };
 
-            await axios.put(`https://billsbackend-git-main-abhidigiworlds-projects.vercel.app/api/invoices/${invoice._id}`, updatedInvoice);
+            await axios.put(`${API_BASE_URL}/api/invoices/${invoice._id}`, updatedInvoice);
             onClose();
         } catch (error) {
             console.error('Error updating invoice:', error);

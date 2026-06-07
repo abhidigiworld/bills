@@ -3,6 +3,7 @@ import InvoiceComponent from './InvoiceComponent';
 import './printStyles.css';
 import Header from './Header';
 import Footer from './Footer';
+import { API_BASE_URL } from '../../config';
 
 function InvoiceForm() {
   const [msInput, setMsInput] = useState('');
@@ -22,7 +23,7 @@ function InvoiceForm() {
 // Function to fetch last invoice number from backend
 const fetchLastInvoiceNumber = async () => {
   try {
-    const response = await fetch('https://billsbackend-git-main-abhidigiworlds-projects.vercel.app/api/invoices');
+    const response = await fetch(`${API_BASE_URL}/api/invoices`);
     const data = await response.json();
     if (data && data.length > 0) {
       const lastInvoice = data[data.length - 1];

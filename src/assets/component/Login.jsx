@@ -1,33 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import logo from '../images/LOGO1.jpeg';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import { API_BASE_URL } from '../../config';
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.successMessage) {
+      setSuccessMsg(location.state.successMessage);
+      // Clean up state
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccessMsg('');
+    setLoading(true);
 
     try {
       const loginData = { username, password };
-      const response = await axios.post('https://billsbackend-git-main-abhidigiworlds-projects.vercel.app/login', loginData);
+      const response = await axios.post(`${API_BASE_URL}/login`, loginData);
 
       if (response.data.success) {
+        localStorage.setItem('user', JSON.stringify(response.data.user));
         navigate('/Main');
       } else {
         setError('Invalid username or password');
       }
     } catch (error) {
       console.error('Error logging in:', error);
-      setError('An error occurred while logging in');
+      setError(error.response?.data?.message || 'An error occurred while logging in');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -86,13 +103,24 @@ function Login() {
                   <img src={logo} alt="Sakshi Enterprises Logo" className="h-20 w-auto rounded-xl shadow-lg sm:h-24" />
                 </div>
 
-                {error && <p className="text-red-500 text-xs sm:text-sm mb-4 text-center">{error}</p>}
+                {error && (
+                  <p className="text-red-500 bg-red-100 bg-opacity-80 p-2 rounded-lg text-xs sm:text-sm mb-4 text-center border border-red-300">
+                    {error}
+                  </p>
+                )}
+                {successMsg && (
+                  <p className="text-green-800 bg-green-100 bg-opacity-80 p-2 rounded-lg text-xs sm:text-sm mb-4 text-center border border-green-300">
+                    {successMsg}
+                  </p>
+                )}
+
                 <form onSubmit={handleLogin} className="space-y-3 sm:space-y-5">
                   <div>
-                    <label className="block text-gray-700 text-xs sm:text-sm font-bold mb-1 sm:mb-2">Username:</label>
+                    <label className="block text-gray-700 text-xs sm:text-sm font-bold mb-1 sm:mb-2">Email or Username:</label>
                     <input
                       className="shadow appearance-none border border-gray-300 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-violet-400 transition-all duration-200"
                       type="text"
+                      placeholder="Enter email or username"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       required
@@ -103,6 +131,7 @@ function Login() {
                     <input
                       className="shadow appearance-none border border-gray-300 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-violet-400 transition-all duration-200"
                       type="password"
+                      placeholder="••••••••"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
@@ -110,26 +139,30 @@ function Login() {
                   </div>
                   <button
                     type="submit"
-                    className="bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded-lg w-full transform transition-transform duration-200 hover:scale-105 focus:outline-none focus:shadow-outline "
+                    disabled={loading}
+                    className="bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded-lg w-full transform transition-transform duration-200 hover:scale-105 focus:outline-none focus:shadow-outline disabled:bg-violet-400 flex items-center justify-center"
                   >
-
-                    Log In
-                    <span className='hover:animate-ping'>  .......✈</span>
+                    {loading ? 'Logging In...' : 'Log In'}
+                    <span className='ml-2 hover:animate-ping'>✈</span>
                   </button>
                 </form>
-                <p className="text-center mt-4 text-sm">
-                  Don't have an account?{' '}
-                  <Link to="/signup" className="text-violet-700 font-bold hover:underline">
-                    Sign Up
+
+                <div className="flex flex-col sm:flex-row justify-between items-center mt-6 text-xs sm:text-sm gap-2">
+                  <Link to="/forgot-password" className="text-violet-700 font-bold hover:underline">
+                    Forgot Password?
                   </Link>
-                </p>
+                  <p className="text-gray-700">
+                    Need an account?{' '}
+                    <Link to="/signup" className="text-violet-700 font-bold hover:underline">
+                      Sign Up
+                    </Link>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-
     </>
   );
 }

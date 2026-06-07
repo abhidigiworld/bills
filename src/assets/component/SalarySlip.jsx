@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Header from './Header';
 import Footer from './Footer';
+import { API_BASE_URL } from '../../config';
 
 function SalarySlip() {
     const [employees, setEmployees] = useState([]);
@@ -22,7 +23,7 @@ function SalarySlip() {
 
     const fetchActiveEmployees = async () => {
         try {
-            const response = await axios.get('https://billsbackend-git-main-abhidigiworlds-projects.vercel.app/api/employees/active');
+            const response = await axios.get(`${API_BASE_URL}/api/employees/active`);
             setEmployees(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
             console.error("Error fetching active employees:", error);
@@ -68,7 +69,7 @@ function SalarySlip() {
 
     const handleSubmit = async () => {
         const inHand = calculateInHand();
-        await axios.post('https://billsbackend-git-main-abhidigiworlds-projects.vercel.app/api/salary-slip', { ...salarySlip, employeeId: selectedEmployee._id, inHand });
+        await axios.post(`${API_BASE_URL}/api/salary-slips`, { ...salarySlip, employeeId: selectedEmployee._id, inHand });
         alert('Salary Slip Saved!');
     };
 
