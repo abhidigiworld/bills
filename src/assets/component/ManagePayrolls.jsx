@@ -4,7 +4,7 @@ import axios from 'axios';
 import Header from './Header';
 import Footer from './Footer';
 import { API_BASE_URL } from '../../config';
-import logo from '../images/LOGO1.jpeg';
+import logo from '../images/LOGO.png';
 import signature from '../images/sign.png';
 
 function ManagePayrolls() {
@@ -607,10 +607,10 @@ function ManagePayrolls() {
                                         {activeSlip.lunchDeduction > 0 && (
                                             <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
                                                 <td className="border-r border-black px-2 py-1.5 text-center">
-                                                    {activeSlip.overtimeHours > 0 
-                                                        ? (activeSlip.esic > 0 ? (activeSlip.advance > 0 ? 5 : 4) : (activeSlip.advance > 0 ? 4 : 3)) 
+                                                    {activeSlip.overtimeHours > 0
+                                                        ? (activeSlip.esic > 0 ? (activeSlip.advance > 0 ? 5 : 4) : (activeSlip.advance > 0 ? 4 : 3))
                                                         : (activeSlip.esic > 0 ? (activeSlip.advance > 0 ? 4 : 3) : (activeSlip.advance > 0 ? 3 : 2))
-                                                }
+                                                    }
                                                 </td>
                                                 <td className="border-r border-black px-3 py-1.5 text-left font-semibold text-red-600 print:text-black">Lunch Deduction</td>
                                                 <td className="border-r border-black px-3 py-1.5 text-center">₹{Math.floor(activeSlip.lunchRate).toLocaleString()} / day</td>
