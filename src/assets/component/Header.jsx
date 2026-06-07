@@ -172,7 +172,8 @@ function Header() {
   const isFallbackAdmin = currentUser && !currentUser.id;
 
   return (
-    <header className="sticky top-0 z-50 bg-white/85 dark:bg-[#181622]/85 backdrop-blur-md text-slate-800 dark:text-gray-200 border-b border-slate-200/60 dark:border-[#262235]/65 px-6 py-3.5 print-hidden transition-colors duration-300 shadow-sm">
+    <>
+      <header className="sticky top-0 z-50 bg-white/85 dark:bg-[#181622]/85 backdrop-blur-md text-slate-800 dark:text-gray-200 border-b border-slate-200/60 dark:border-[#262235]/65 px-6 py-3.5 print-hidden transition-colors duration-300 shadow-sm">
       <div className="container mx-auto flex justify-between items-center">
         <h1 className="text-xl font-bold flex items-center">
           <Link to={'/Main'} className="flex items-center gap-2.5 group">
@@ -256,6 +257,7 @@ function Header() {
           </div>
         </div>
       </div>
+    </header>
 
       {/* Profile Modal */}
       {isProfileModalOpen && (
@@ -439,7 +441,7 @@ function Header() {
           </div>
         </div>
       )}
-    </header>
+    </>
   );
 }
 
