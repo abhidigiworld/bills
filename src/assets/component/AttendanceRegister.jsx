@@ -21,6 +21,9 @@ function AttendanceRegister() {
     const [isBlanketModalOpen, setIsBlanketModalOpen] = useState(false);
     const [blanketForm, setBlanketForm] = useState({ dayNum: 1, status: 'Present', checkIn: '09:00', checkOut: '17:00', overtimeHours: 0, isNightShift: false });
 
+    // Hover tooltip state
+    const [hoveredCell, setHoveredCell] = useState(null);
+
     useEffect(() => {
         const today = new Date();
         if (today.getFullYear() === selectedYear && (today.getMonth() + 1) === selectedMonth) {
@@ -39,8 +42,8 @@ function AttendanceRegister() {
         try {
             const empRes = await axios.get(`${API_BASE_URL}/api/employees`);
             const attRes = await axios.get(`${API_BASE_URL}/api/attendance`);
-            // Filter out discontinued employees from the attendance list
-            setEmployees(Array.isArray(empRes.data) ? empRes.data.filter(emp => emp.status !== 'Discontinued') : []);
+            // Filter out discontinued and inactive employees from the attendance list
+            setEmployees(Array.isArray(empRes.data) ? empRes.data.filter(emp => emp.status !== 'Discontinued' && emp.status !== 'Inactive') : []);
             setAttendanceLogs(Array.isArray(attRes.data) ? attRes.data : []);
         } catch (error) {
             console.error("Error fetching attendance register data:", error);
@@ -415,7 +418,24 @@ function AttendanceRegister() {
                                                                     key={day} 
                                                                     className={`px-1.5 py-3 text-center font-bold border-r border-slate-100 dark:border-[#262235] last:border-r-0 cursor-pointer hover:bg-indigo-100/30 dark:hover:bg-[#201d2c] transition duration-150 ${cellInfo.colorClass}`}
                                                                     onClick={() => handleCellClick(emp, day)}
-                                                                    title={`${cellInfo.tooltip} | Click to edit`}
+                                                                    onMouseEnter={(e) => {
+                                                                        const log = getLogForDay(emp._id, day);
+                                                                        if (log) {
+                                                                            const rect = e.currentTarget.getBoundingClientRect();
+                                                                            setHoveredCell({
+                                                                                employeeName: emp.name,
+                                                                                date: `${day} ${monthName} ${selectedYear}`,
+                                                                                status: log.status,
+                                                                                checkIn: log.checkIn ? new Date(log.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : null,
+                                                                                checkOut: log.checkOut ? new Date(log.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : null,
+                                                                                isNightShift: log.isNightShift,
+                                                                                overtimeHours: log.overtimeHours,
+                                                                                x: rect.left,
+                                                                                y: rect.bottom + 5
+                                                                            });
+                                                                        }
+                                                                    }}
+                                                                    onMouseLeave={() => setHoveredCell(null)}
                                                                 >
                                                                     {cellInfo.display}
                                                                 </td>
@@ -443,6 +463,83 @@ function AttendanceRegister() {
                             </div>
                         </div>
                     )}
+
+                    {/* Legend Section */}
+                    <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl p-6 mt-8 transition-colors duration-300">
+                        <h4 className="text-sm font-bold text-slate-900 dark:text-white mb-4 uppercase tracking-wider">Attendance Status Legend & Guide</h4>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-4 text-xs">
+                            <div className="flex items-center gap-2">
+                                <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-green-50 dark:bg-green-950/20 text-green-600 dark:text-green-400 border border-green-200 dark:border-green-900/30">P</span>
+                                <div>
+                                    <p className="font-semibold text-slate-800 dark:text-white">Present</p>
+                                    <p className="text-[10px] text-slate-400">Regular Shift</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-green-50 dark:bg-green-950/20 text-emerald-600 dark:text-emerald-400 border border-green-200 dark:border-green-900/30">P⁺</span>
+                                <div>
+                                    <p className="font-semibold text-slate-800 dark:text-white">Present + OT</p>
+                                    <p className="text-[10px] text-slate-400">Overtime Hours</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-cyan-50 dark:bg-cyan-950/20 text-cyan-600 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-900/30">P🌙</span>
+                                <div>
+                                    <p className="font-semibold text-slate-800 dark:text-white">Night Shift</p>
+                                    <p className="text-[10px] text-slate-400">Night Hours</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-violet-400 border border-indigo-200 dark:border-indigo-900/30">P🌙⁺</span>
+                                <div>
+                                    <p className="font-semibold text-slate-800 dark:text-white">Night Shift + OT</p>
+                                    <p className="text-[10px] text-slate-400">Overnight + OT</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-red-50 dark:bg-red-950/20 text-red-500 dark:text-red-400/80 border border-red-200 dark:border-red-900/30">A</span>
+                                <div>
+                                    <p className="font-semibold text-slate-800 dark:text-white">Absent</p>
+                                    <p className="text-[10px] text-slate-400">No work log</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-amber-50 dark:bg-amber-950/20 text-amber-500 dark:text-amber-400 border border-amber-200 dark:border-amber-900/30">L</span>
+                                <div>
+                                    <p className="font-semibold text-slate-800 dark:text-white">Leave</p>
+                                    <p className="text-[10px] text-slate-400 font-normal">Approved leave</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-violet-50 dark:bg-violet-950/20 text-violet-500 dark:text-violet-400 border border-violet-200 dark:border-violet-900/30">H</span>
+                                <div>
+                                    <p className="font-semibold text-slate-800 dark:text-white">Holiday</p>
+                                    <p className="text-[10px] text-slate-400 font-normal">Public holiday</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="w-8 h-8 flex items-center justify-center font-normal rounded bg-slate-50 dark:bg-slate-900 text-slate-400 dark:text-gray-500 border border-slate-200 dark:border-[#262235]">-</span>
+                                <div>
+                                    <p className="font-semibold text-slate-800 dark:text-white">Unmarked</p>
+                                    <p className="text-[10px] text-slate-400 font-normal">Future date</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="mt-4 pt-4 border-t border-slate-100 dark:border-[#262235] text-[11px] text-slate-500 dark:text-gray-400 flex flex-wrap gap-4">
+                            <span className="flex items-center gap-1.5">
+                                <svg className="w-4 h-4 text-violet-600 dark:text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <strong>Interactive Tooltips:</strong> Hover over any daily cell to inspect detailed check-in, check-out, night shift status, and overtime hours instantly.
+                            </span>
+                            <span className="flex items-center gap-1.5">
+                                <svg className="w-4 h-4 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                </svg>
+                                <strong>Quick Edit:</strong> Click on any daily cell to manually override status, adjust time logs, or designate overtime hours.
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </main>
             <Footer />
@@ -642,6 +739,53 @@ function AttendanceRegister() {
                             </button>
                         </div>
                     </div>
+                </div>
+            )}
+            {/* Custom Hover Tooltip */}
+            {hoveredCell && (
+                <div 
+                    className="fixed z-50 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] text-slate-800 dark:text-gray-200 p-4 rounded-xl shadow-2xl text-xs space-y-2 pointer-events-none transition-all duration-150"
+                    style={{ 
+                        left: `${hoveredCell.x}px`, 
+                        top: `${hoveredCell.y}px`,
+                        minWidth: '220px',
+                        transform: 'translateX(-50%)',
+                        marginLeft: '13px'
+                    }}
+                >
+                    <div className="font-extrabold text-indigo-700 dark:text-violet-400 border-b border-slate-100 dark:border-[#262235] pb-1.5 mb-1.5 uppercase tracking-wide">
+                        {hoveredCell.employeeName}
+                    </div>
+                    <div className="flex justify-between">
+                        <span className="text-slate-400 dark:text-gray-500">Date:</span>
+                        <span className="font-semibold text-slate-900 dark:text-white">{hoveredCell.date}</span>
+                    </div>
+                    <div className="flex justify-between">
+                        <span className="text-slate-400 dark:text-gray-500">Status:</span>
+                        <span className="font-bold text-green-600 dark:text-green-400">{hoveredCell.status}</span>
+                    </div>
+                    {hoveredCell.status === 'Present' && (
+                        <>
+                            <div className="flex justify-between">
+                                <span className="text-slate-400 dark:text-gray-500">In / Out Time:</span>
+                                <span className="font-semibold text-slate-900 dark:text-white">
+                                    {hoveredCell.checkIn || '-'} to {hoveredCell.checkOut || '-'}
+                                </span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="text-slate-400 dark:text-gray-500">Shift Type:</span>
+                                <span className="font-semibold text-slate-900 dark:text-white">
+                                    {hoveredCell.isNightShift ? '🌙 Night Shift' : '☀️ Regular Shift'}
+                                </span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="text-slate-400 dark:text-gray-500">Overtime:</span>
+                                <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                                    {hoveredCell.overtimeHours > 0 ? `${hoveredCell.overtimeHours} hrs` : 'None'}
+                                </span>
+                            </div>
+                        </>
+                    )}
                 </div>
             )}
         </div>

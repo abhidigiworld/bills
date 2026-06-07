@@ -18,6 +18,8 @@ function SalarySlip() {
         esic: 0,
         lunchDays: 0,
         lunchRate: 0,
+        nightShiftDays: 0,
+        nightShiftRate: 0
     });
     const [calculating, setCalculating] = useState(false);
 
@@ -130,15 +132,14 @@ function SalarySlip() {
                 }
             }
 
-            // Calculate overtime hours
+            // Calculate overtime hours & night shift days
             let otHoursCount = 0;
+            let nightShiftDaysCount = 0;
             employeeLogs.forEach(log => {
-                if (log.status === 'Present' && log.checkIn && log.checkOut) {
-                    const checkInTime = new Date(log.checkIn);
-                    const checkOutTime = new Date(log.checkOut);
-                    const hoursWorked = (checkOutTime - checkInTime) / (1000 * 60 * 60);
-                    if (hoursWorked > shiftHours) {
-                        otHoursCount += (hoursWorked - shiftHours);
+                if (log.status === 'Present') {
+                    otHoursCount += (log.overtimeHours || 0);
+                    if (log.isNightShift) {
+                        nightShiftDaysCount++;
                     }
                 }
             });
@@ -146,7 +147,8 @@ function SalarySlip() {
             setSalarySlip(prev => ({
                 ...prev,
                 workDays: workDaysCount,
-                otHours: Math.floor(otHoursCount),
+                otHours: parseFloat(otHoursCount.toFixed(2)),
+                nightShiftDays: nightShiftDaysCount,
                 lunchDays: workDaysCount // Default lunch days to work days
             }));
         } catch (err) {
@@ -190,7 +192,8 @@ function SalarySlip() {
     const salaryByWorkDays = Math.floor(salarySlip.workDays * dailyRate);
     const hourlyOtRate = Math.floor(dailyRate / shiftHours);
     const otSalary = Math.floor(salarySlip.otHours * hourlyOtRate);
-    const totalSalary = Math.floor(salaryByWorkDays + otSalary);
+    const nightShiftAllowance = Math.floor((salarySlip.nightShiftDays || 0) * (salarySlip.nightShiftRate || 0));
+    const totalSalary = Math.floor(salaryByWorkDays + otSalary + nightShiftAllowance);
     const lunchDeduction = Math.floor(salarySlip.lunchDays * salarySlip.lunchRate);
     const inHandSalary = Math.floor(totalSalary - salarySlip.esic - salarySlip.advance - lunchDeduction);
 
@@ -214,6 +217,9 @@ function SalarySlip() {
                 salaryByWorkDays,
                 overtimeHours: salarySlip.otHours,
                 overtimeSalary: otSalary,
+                nightShiftDays: salarySlip.nightShiftDays || 0,
+                nightShiftRate: salarySlip.nightShiftRate || 0,
+                nightShiftAllowance,
                 advance: salarySlip.advance,
                 esic: salarySlip.esic,
                 lunchDays: salarySlip.lunchDays,
@@ -334,27 +340,53 @@ function SalarySlip() {
                                 {calculating ? (
                                     <p className="text-xs text-indigo-600 dark:text-violet-400 animate-pulse font-semibold">Calculating attendance logs...</p>
                                 ) : (
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <div>
-                                            <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">No. of Workdays</label>
-                                            <input
-                                                type="number"
-                                                name="workDays"
-                                                value={salarySlip.workDays}
-                                                onChange={handleInputChange}
-                                                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
-                                            />
-                                        </div>
+                                    <div className="space-y-4">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">No. of Workdays</label>
+                                                <input
+                                                    type="number"
+                                                    name="workDays"
+                                                    value={salarySlip.workDays}
+                                                    onChange={handleInputChange}
+                                                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                                />
+                                            </div>
 
-                                        <div>
-                                            <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">O.T. Hours</label>
-                                            <input
-                                                type="number"
-                                                name="otHours"
-                                                value={salarySlip.otHours}
-                                                onChange={handleInputChange}
-                                                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
-                                            />
+                                            <div>
+                                                <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">O.T. Hours</label>
+                                                <input
+                                                    type="number"
+                                                    name="otHours"
+                                                    value={salarySlip.otHours}
+                                                    onChange={handleInputChange}
+                                                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Night Shift Days</label>
+                                                <input
+                                                    type="number"
+                                                    name="nightShiftDays"
+                                                    value={salarySlip.nightShiftDays || 0}
+                                                    onChange={handleInputChange}
+                                                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Night Shift Rate (₹ / Shift)</label>
+                                                <input
+                                                    type="number"
+                                                    name="nightShiftRate"
+                                                    value={salarySlip.nightShiftRate || ''}
+                                                    placeholder="Allowance per night shift"
+                                                    onChange={handleInputChange}
+                                                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 )}
@@ -429,6 +461,12 @@ function SalarySlip() {
                                     <span className="text-slate-500 dark:text-gray-400">Overtime Salary (Floored):</span>
                                     <span className="font-semibold text-green-600 dark:text-green-400">+ ₹{otSalary.toLocaleString()}</span>
                                 </div>
+                                {nightShiftAllowance > 0 && (
+                                    <div className="flex justify-between">
+                                        <span className="text-slate-500 dark:text-gray-400">Night Shift Allowance ({salarySlip.nightShiftDays} shifts @ ₹{salarySlip.nightShiftRate}):</span>
+                                        <span className="font-semibold text-green-600 dark:text-green-400">+ ₹{nightShiftAllowance.toLocaleString()}</span>
+                                    </div>
+                                )}
                                 <div className="flex justify-between border-t border-slate-200 dark:border-[#262235] pt-2 font-bold text-slate-900 dark:text-white">
                                     <span>Total Salary (Gross):</span>
                                     <span>₹{totalSalary.toLocaleString()}</span>

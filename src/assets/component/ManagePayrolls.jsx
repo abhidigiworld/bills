@@ -24,6 +24,8 @@ function ManagePayrolls() {
     const [editForm, setEditForm] = useState({
         workDays: 0,
         otHours: 0,
+        nightShiftDays: 0,
+        nightShiftRate: 0,
         advance: 0,
         esic: 0,
         lunchDays: 0,
@@ -77,6 +79,8 @@ function ManagePayrolls() {
         setEditForm({
             workDays: slip.workDays,
             otHours: slip.overtimeHours || 0,
+            nightShiftDays: slip.nightShiftDays || 0,
+            nightShiftRate: slip.nightShiftRate || 0,
             advance: slip.advance || 0,
             esic: slip.esic || 0,
             lunchDays: slip.lunchDays || 0,
@@ -112,7 +116,8 @@ function ManagePayrolls() {
 
         const hourlyOtRate = Math.floor(dailyRate / editForm.shiftHours);
         const otSalary = Math.floor(editForm.otHours * hourlyOtRate);
-        const totalSalary = Math.floor(salaryByWorkDays + otSalary);
+        const nightShiftAllowance = Math.floor((editForm.nightShiftDays || 0) * (editForm.nightShiftRate || 0));
+        const totalSalary = Math.floor(salaryByWorkDays + otSalary + nightShiftAllowance);
 
         const lunchDeduction = Math.floor(editForm.lunchDays * editForm.lunchRate);
         const inHandSalary = Math.floor(totalSalary - editForm.esic - editForm.advance - lunchDeduction);
@@ -123,6 +128,7 @@ function ManagePayrolls() {
             salaryByWorkDays,
             hourlyOtRate,
             otSalary,
+            nightShiftAllowance,
             totalSalary,
             lunchDeduction,
             inHandSalary,
@@ -147,6 +153,9 @@ function ManagePayrolls() {
                 salaryByWorkDays: liveCalculations.salaryByWorkDays,
                 otHours: editForm.otHours,
                 otSalary: liveCalculations.otSalary,
+                nightShiftDays: editForm.nightShiftDays,
+                nightShiftRate: editForm.nightShiftRate,
+                nightShiftAllowance: liveCalculations.nightShiftAllowance,
                 advance: editForm.advance,
                 esic: editForm.esic,
                 lunchDays: editForm.lunchDays,
@@ -473,6 +482,27 @@ function ManagePayrolls() {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
+                                    <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Night Shift Days</label>
+                                    <input
+                                        type="number"
+                                        value={editForm.nightShiftDays}
+                                        onChange={(e) => setEditForm({ ...editForm, nightShiftDays: parseInt(e.target.value) || 0 })}
+                                        className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Night Shift Rate (₹ / Shift)</label>
+                                    <input
+                                        type="number"
+                                        value={editForm.nightShiftRate}
+                                        onChange={(e) => setEditForm({ ...editForm, nightShiftRate: parseFloat(e.target.value) || 0 })}
+                                        className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
                                     <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Advance Taken</label>
                                     <input
                                         type="number"
@@ -541,6 +571,12 @@ function ManagePayrolls() {
                                     <span className="text-slate-500 dark:text-gray-400">O.T. Pay (Hourly Rate ₹{liveCalculations.hourlyOtRate}):</span>
                                     <span className="font-semibold text-slate-800 dark:text-white">₹{liveCalculations.otSalary.toLocaleString()}</span>
                                 </div>
+                                {liveCalculations.nightShiftAllowance > 0 && (
+                                    <div className="flex justify-between">
+                                        <span className="text-slate-500 dark:text-gray-400">Night Shift Pay ({editForm.nightShiftDays} shifts @ ₹{editForm.nightShiftRate}):</span>
+                                        <span className="font-semibold text-slate-800 dark:text-white">₹{liveCalculations.nightShiftAllowance.toLocaleString()}</span>
+                                    </div>
+                                )}
                                 <div className="flex justify-between border-t border-slate-200/50 dark:border-[#262235] pt-1.5 font-bold text-slate-900 dark:text-white">
                                     <span>Total Salary (Gross):</span>
                                     <span>₹{liveCalculations.totalSalary.toLocaleString()}</span>
@@ -638,59 +674,71 @@ function ManagePayrolls() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
-                                            <td className="border-r border-black px-2 py-1.5 text-center">1</td>
-                                            <td className="border-r border-black px-3 py-1.5 text-left font-semibold">Basic Salary Earned</td>
-                                            <td className="border-r border-black px-3 py-1.5 text-center">₹{activeDailyRate.toLocaleString()} / day</td>
-                                            <td className="border-r border-black px-3 py-1.5 text-center">{activeSlip.workDays} days</td>
-                                            <td className="border-r border-black px-3 py-1.5 text-right font-bold text-green-600 print:text-black">₹{Math.floor(activeSlip.salaryByWorkDays).toLocaleString()}</td>
-                                            <td className="px-3 py-1.5 text-right text-slate-400">-</td>
-                                        </tr>
-                                        {activeSlip.overtimeHours > 0 && (
-                                            <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
-                                                <td className="border-r border-black px-2 py-1.5 text-center">2</td>
-                                                <td className="border-r border-black px-3 py-1.5 text-left font-semibold">Overtime Pay</td>
-                                                <td className="border-r border-black px-3 py-1.5 text-center">₹{activeHourlyRate.toLocaleString()} / hr</td>
-                                                <td className="border-r border-black px-3 py-1.5 text-center">{activeSlip.overtimeHours} hrs</td>
-                                                <td className="border-r border-black px-3 py-1.5 text-right font-bold text-green-600 print:text-black">₹{Math.floor(activeSlip.overtimeSalary).toLocaleString()}</td>
-                                                <td className="px-3 py-1.5 text-right text-slate-400">-</td>
-                                            </tr>
-                                        )}
-                                        {activeSlip.esic > 0 && (
-                                            <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
-                                                <td className="border-r border-black px-2 py-1.5 text-center">{activeSlip.overtimeHours > 0 ? 3 : 2}</td>
-                                                <td className="border-r border-black px-3 py-1.5 text-left font-semibold text-red-600 print:text-black">ESIC Contribution</td>
-                                                <td className="border-r border-black px-3 py-1.5 text-center">-</td>
-                                                <td className="border-r border-black px-3 py-1.5 text-center">-</td>
-                                                <td className="border-r border-black px-3 py-1.5 text-right text-slate-400">-</td>
-                                                <td className="px-3 py-1.5 text-right font-bold text-red-500 print:text-black">₹{Math.floor(activeSlip.esic).toLocaleString()}</td>
-                                            </tr>
-                                        )}
-                                        {activeSlip.advance > 0 && (
-                                            <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
-                                                <td className="border-r border-black px-2 py-1.5 text-center">{activeSlip.overtimeHours > 0 ? (activeSlip.esic > 0 ? 4 : 3) : (activeSlip.esic > 0 ? 3 : 2)}</td>
-                                                <td className="border-r border-black px-3 py-1.5 text-left font-semibold text-red-600 print:text-black">Salary Advance</td>
-                                                <td className="border-r border-black px-3 py-1.5 text-center">-</td>
-                                                <td className="border-r border-black px-3 py-1.5 text-center">-</td>
-                                                <td className="border-r border-black px-3 py-1.5 text-right text-slate-400">-</td>
-                                                <td className="px-3 py-1.5 text-right font-bold text-red-500 print:text-black">₹{Math.floor(activeSlip.advance).toLocaleString()}</td>
-                                            </tr>
-                                        )}
-                                        {activeSlip.lunchDeduction > 0 && (
-                                            <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
-                                                <td className="border-r border-black px-2 py-1.5 text-center">
-                                                    {activeSlip.overtimeHours > 0
-                                                        ? (activeSlip.esic > 0 ? (activeSlip.advance > 0 ? 5 : 4) : (activeSlip.advance > 0 ? 4 : 3))
-                                                        : (activeSlip.esic > 0 ? (activeSlip.advance > 0 ? 4 : 3) : (activeSlip.advance > 0 ? 3 : 2))
-                                                    }
-                                                </td>
-                                                <td className="border-r border-black px-3 py-1.5 text-left font-semibold text-red-600 print:text-black">Lunch Deduction</td>
-                                                <td className="border-r border-black px-3 py-1.5 text-center">₹{Math.floor(activeSlip.lunchRate).toLocaleString()} / day</td>
-                                                <td className="border-r border-black px-3 py-1.5 text-center">{activeSlip.lunchDays} days</td>
-                                                <td className="border-r border-black px-3 py-1.5 text-right text-slate-400">-</td>
-                                                <td className="px-3 py-1.5 text-right font-bold text-red-500 print:text-black">₹{Math.floor(activeSlip.lunchDeduction).toLocaleString()}</td>
-                                            </tr>
-                                        )}
+                                        {(() => {
+                                            let sNo = 1;
+                                            return (
+                                                <>
+                                                    <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
+                                                        <td className="border-r border-black px-2 py-1.5 text-center">{sNo++}</td>
+                                                        <td className="border-r border-black px-3 py-1.5 text-left font-semibold">Basic Salary Earned</td>
+                                                        <td className="border-r border-black px-3 py-1.5 text-center">₹{activeDailyRate.toLocaleString()} / day</td>
+                                                        <td className="border-r border-black px-3 py-1.5 text-center">{activeSlip.workDays} days</td>
+                                                        <td className="border-r border-black px-3 py-1.5 text-right font-bold text-green-600 print:text-black">₹{Math.floor(activeSlip.salaryByWorkDays).toLocaleString()}</td>
+                                                        <td className="px-3 py-1.5 text-right text-slate-400">-</td>
+                                                    </tr>
+                                                    {activeSlip.overtimeHours > 0 && (
+                                                        <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
+                                                            <td className="border-r border-black px-2 py-1.5 text-center">{sNo++}</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-left font-semibold">Overtime Pay</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-center">₹{activeHourlyRate.toLocaleString()} / hr</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-center">{activeSlip.overtimeHours} hrs</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-right font-bold text-green-600 print:text-black">₹{Math.floor(activeSlip.overtimeSalary).toLocaleString()}</td>
+                                                            <td className="px-3 py-1.5 text-right text-slate-400">-</td>
+                                                        </tr>
+                                                    )}
+                                                    {activeSlip.nightShiftDays > 0 && (
+                                                        <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
+                                                            <td className="border-r border-black px-2 py-1.5 text-center">{sNo++}</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-left font-semibold">Night Shift Allowance</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-center">₹{Math.floor(activeSlip.nightShiftRate || 0).toLocaleString()} / shift</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-center">{activeSlip.nightShiftDays} shifts</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-right font-bold text-green-600 print:text-black">₹{Math.floor(activeSlip.nightShiftAllowance || 0).toLocaleString()}</td>
+                                                            <td className="px-3 py-1.5 text-right text-slate-400">-</td>
+                                                        </tr>
+                                                    )}
+                                                    {activeSlip.esic > 0 && (
+                                                        <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
+                                                            <td className="border-r border-black px-2 py-1.5 text-center">{sNo++}</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-left font-semibold text-red-600 print:text-black">ESIC Contribution</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-center">-</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-center">-</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-right text-slate-400">-</td>
+                                                            <td className="px-3 py-1.5 text-right font-bold text-red-500 print:text-black">₹{Math.floor(activeSlip.esic).toLocaleString()}</td>
+                                                        </tr>
+                                                    )}
+                                                    {activeSlip.advance > 0 && (
+                                                        <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
+                                                            <td className="border-r border-black px-2 py-1.5 text-center">{sNo++}</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-left font-semibold text-red-600 print:text-black">Salary Advance</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-center">-</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-center">-</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-right text-slate-400">-</td>
+                                                            <td className="px-3 py-1.5 text-right font-bold text-red-500 print:text-black">₹{Math.floor(activeSlip.advance).toLocaleString()}</td>
+                                                        </tr>
+                                                    )}
+                                                    {activeSlip.lunchDeduction > 0 && (
+                                                        <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
+                                                            <td className="border-r border-black px-2 py-1.5 text-center">{sNo++}</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-left font-semibold text-red-600 print:text-black">Lunch Deduction</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-center">₹{Math.floor(activeSlip.lunchRate).toLocaleString()} / day</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-center">{activeSlip.lunchDays} days</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-right text-slate-400">-</td>
+                                                            <td className="px-3 py-1.5 text-right font-bold text-red-500 print:text-black">₹{Math.floor(activeSlip.lunchDeduction).toLocaleString()}</td>
+                                                        </tr>
+                                                    )}
+                                                </>
+                                            );
+                                        })()}
                                     </tbody>
                                 </table>
 
