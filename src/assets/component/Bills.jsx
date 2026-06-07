@@ -70,6 +70,84 @@ function Bills() {
     (bill.companyName || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+
+  const handleSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const getSortIcon = (key) => {
+    if (sortConfig.key !== key) {
+      return (
+        <svg className="w-3.5 h-3.5 ml-1.5 opacity-40 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+        </svg>
+      );
+    }
+    if (sortConfig.direction === 'asc') {
+      return (
+        <svg className="w-3.5 h-3.5 ml-1.5 text-indigo-600 dark:text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+        </svg>
+      );
+    }
+    return (
+      <svg className="w-3.5 h-3.5 ml-1.5 text-indigo-600 dark:text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+      </svg>
+    );
+  };
+
+  const sortedBills = React.useMemo(() => {
+    let sortableBills = [...filteredBills];
+    if (sortConfig.key !== null) {
+      sortableBills.sort((a, b) => {
+        let aValue = a[sortConfig.key];
+        let bValue = b[sortConfig.key];
+
+        if (aValue === undefined || aValue === null) aValue = '';
+        if (bValue === undefined || bValue === null) bValue = '';
+
+        if (sortConfig.key === 'stateCode') {
+          const aNum = parseFloat(aValue);
+          const bNum = parseFloat(bValue);
+          if (!isNaN(aNum) && !isNaN(bNum)) {
+            aValue = aNum;
+            bValue = bNum;
+          }
+        }
+
+        if (sortConfig.key === 'invoiceDate') {
+          const aDate = new Date(aValue);
+          const bDate = new Date(bValue);
+          if (!isNaN(aDate.getTime()) && !isNaN(bDate.getTime())) {
+            aValue = aDate.getTime();
+            bValue = bDate.getTime();
+          }
+        }
+
+        if (typeof aValue === 'string' && typeof bValue === 'string') {
+          return sortConfig.direction === 'asc'
+            ? aValue.localeCompare(bValue, undefined, { numeric: true, sensitivity: 'base' })
+            : bValue.localeCompare(aValue, undefined, { numeric: true, sensitivity: 'base' });
+        } else {
+          if (aValue < bValue) {
+            return sortConfig.direction === 'asc' ? -1 : 1;
+          }
+          if (aValue > bValue) {
+            return sortConfig.direction === 'asc' ? 1 : -1;
+          }
+          return 0;
+        }
+      });
+    }
+    return sortableBills;
+  }, [filteredBills, sortConfig]);
+
   return (
     <div className="flex flex-col min-h-screen bg-indigo-50 dark:bg-[#110f18] text-slate-800 dark:text-gray-200 transition-colors duration-300">
       <Header />
@@ -114,19 +192,49 @@ function Bills() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
                 <thead>
-                  <tr className="border-b border-slate-200 dark:border-[#262235] text-slate-500 dark:text-gray-400 font-bold uppercase text-xs">
-                    <th className="px-4 py-3">Company Name</th>
-                    <th className="px-4 py-3">GSTIN</th>
-                    <th className="px-4 py-3">State</th>
-                    <th className="px-4 py-3 text-center">State Code</th>
-                    <th className="px-4 py-3 text-center">Invoice No</th>
-                    <th className="px-4 py-3 text-center">Invoice Date</th>
+                  <tr className="border-b border-slate-200 dark:border-[#262235] text-slate-500 dark:text-gray-400 font-bold uppercase text-xs select-none">
+                    <th className="px-4 py-3 cursor-pointer group hover:text-indigo-600 dark:hover:text-violet-400 transition-colors" onClick={() => handleSort('companyName')}>
+                      <div className="flex items-center">
+                        Company Name
+                        {getSortIcon('companyName')}
+                      </div>
+                    </th>
+                    <th className="px-4 py-3 cursor-pointer group hover:text-indigo-600 dark:hover:text-violet-400 transition-colors" onClick={() => handleSort('gstin')}>
+                      <div className="flex items-center">
+                        GSTIN
+                        {getSortIcon('gstin')}
+                      </div>
+                    </th>
+                    <th className="px-4 py-3 cursor-pointer group hover:text-indigo-600 dark:hover:text-violet-400 transition-colors" onClick={() => handleSort('state')}>
+                      <div className="flex items-center">
+                        State
+                        {getSortIcon('state')}
+                      </div>
+                    </th>
+                    <th className="px-4 py-3 text-center cursor-pointer group hover:text-indigo-600 dark:hover:text-violet-400 transition-colors" onClick={() => handleSort('stateCode')}>
+                      <div className="flex items-center justify-center">
+                        State Code
+                        {getSortIcon('stateCode')}
+                      </div>
+                    </th>
+                    <th className="px-4 py-3 text-center cursor-pointer group hover:text-indigo-600 dark:hover:text-violet-400 transition-colors" onClick={() => handleSort('invoiceNo')}>
+                      <div className="flex items-center justify-center">
+                        Invoice No
+                        {getSortIcon('invoiceNo')}
+                      </div>
+                    </th>
+                    <th className="px-4 py-3 text-center cursor-pointer group hover:text-indigo-600 dark:hover:text-violet-400 transition-colors" onClick={() => handleSort('invoiceDate')}>
+                      <div className="flex items-center justify-center">
+                        Invoice Date
+                        {getSortIcon('invoiceDate')}
+                      </div>
+                    </th>
                     <th className="px-4 py-3 text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredBills.length > 0 ? (
-                    filteredBills.map((bill) => (
+                  {sortedBills.length > 0 ? (
+                    sortedBills.map((bill) => (
                       <tr key={bill._id} className="border-b border-slate-100 dark:border-[#262235] hover:bg-slate-50 dark:hover:bg-[#201d2c]/50 transition duration-150">
                         <td className="px-4 py-3 font-semibold text-slate-900 dark:text-white">{bill.companyName}</td>
                         <td className="px-4 py-3 text-slate-600 dark:text-gray-300">{bill.gstin || '-'}</td>
