@@ -7,7 +7,7 @@ function AICopilot() {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: 'Hello! I am Sakshi AI, your corporate billing and payroll assistant. How can I help you today?'
+      content: 'Hello! I am ABHI digi AI, your corporate billing and payroll assistant. How can I help you today?'
     }
   ]);
   const [input, setInput] = useState('');
@@ -109,7 +109,7 @@ function AICopilot() {
                 🤖
               </div>
               <div>
-                <h3 className="text-sm font-extrabold tracking-tight">Sakshi AI Copilot</h3>
+                <h3 className="text-sm font-extrabold tracking-tight">ABHI digi AI Copilot</h3>
                 <span className="text-[10px] text-indigo-200 dark:text-[#a59ebf] font-semibold">Secure Helper</span>
               </div>
             </div>
