@@ -16,6 +16,8 @@ import AttendanceRegister from './assets/component/AttendanceRegister.jsx'
 import ManagePayrolls from './assets/component/ManagePayrolls.jsx'
 import ManageUsers from './assets/component/ManageUsers.jsx'
 import BulkUpload from './assets/component/BulkUpload.jsx'
+import AICopilot from './assets/component/AICopilot.jsx'
+
 // Protected Route Wrapper Component
 const ProtectedRoute = ({ children, requireAdmin }) => {
   const sessionUser = localStorage.getItem('user');
@@ -27,7 +29,12 @@ const ProtectedRoute = ({ children, requireAdmin }) => {
     // Regular users trying to access admin screens are redirected back to employee home
     return <Navigate to="/Main" replace />;
   }
-  return children;
+  return (
+    <>
+      {children}
+      <AICopilot />
+    </>
+  );
 };
 
 const router = createBrowserRouter([
