@@ -218,6 +218,7 @@ function AddEmployee() {
                                 <option value="On Hold">On Hold</option>
                                 <option value="On Holiday">On Holiday</option>
                                 <option value="Inactive">Inactive</option>
+                                <option value="Discontinued">Discontinued</option>
                             </select>
                         </div>
 
@@ -262,6 +263,7 @@ function AddEmployee() {
                                                     emp.status === 'Active' ? 'bg-green-100 dark:bg-green-950/50 text-green-700 dark:text-green-400' :
                                                     emp.status === 'On Hold' ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400' :
                                                     emp.status === 'On Holiday' ? 'bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-400' :
+                                                    emp.status === 'Discontinued' ? 'bg-rose-100 dark:bg-rose-950/50 text-rose-700 dark:text-rose-400' :
                                                     'bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-400'
                                                 }`}>
                                                     {emp.status}

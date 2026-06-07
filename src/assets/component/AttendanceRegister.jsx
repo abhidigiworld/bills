@@ -15,11 +15,11 @@ function AttendanceRegister() {
 
     // Modal Edit states
     const [selectedCell, setSelectedCell] = useState(null); // { employee, dayNum }
-    const [modalForm, setModalForm] = useState({ status: 'Absent', checkIn: '', checkOut: '' });
+    const [modalForm, setModalForm] = useState({ status: 'Absent', checkIn: '', checkOut: '', overtimeHours: 0, isNightShift: false });
 
     // Blanket Edit states
     const [isBlanketModalOpen, setIsBlanketModalOpen] = useState(false);
-    const [blanketForm, setBlanketForm] = useState({ dayNum: 1, status: 'Present', checkIn: '09:00', checkOut: '17:00' });
+    const [blanketForm, setBlanketForm] = useState({ dayNum: 1, status: 'Present', checkIn: '09:00', checkOut: '17:00', overtimeHours: 0, isNightShift: false });
 
     useEffect(() => {
         const today = new Date();
@@ -39,7 +39,8 @@ function AttendanceRegister() {
         try {
             const empRes = await axios.get(`${API_BASE_URL}/api/employees`);
             const attRes = await axios.get(`${API_BASE_URL}/api/attendance`);
-            setEmployees(Array.isArray(empRes.data) ? empRes.data : []);
+            // Filter out discontinued employees from the attendance list
+            setEmployees(Array.isArray(empRes.data) ? empRes.data.filter(emp => emp.status !== 'Discontinued') : []);
             setAttendanceLogs(Array.isArray(attRes.data) ? attRes.data : []);
         } catch (error) {
             console.error("Error fetching attendance register data:", error);
@@ -64,31 +65,133 @@ function AttendanceRegister() {
         });
     };
 
-    const getStatusForDay = (employeeId, dayNum) => {
-        const log = getLogForDay(employeeId, dayNum);
-        if (log) {
-            if (log.status === 'Present') return 'P';
-            if (log.status === 'Absent') return 'A';
-            if (log.status === 'Leave') return 'L';
-            if (log.status === 'Holiday') return 'H';
-            return 'A';
+    const calculateOvertime = (checkInStr, checkOutStr, isNightShiftVal) => {
+        if (!checkInStr || !checkOutStr) return 0;
+        const [inH, inM] = checkInStr.split(':').map(Number);
+        const [outH, outM] = checkOutStr.split(':').map(Number);
+        if (isNaN(inH) || isNaN(inM) || isNaN(outH) || isNaN(outM)) return 0;
+
+        let inMinutes = inH * 60 + inM;
+        let outMinutes = outH * 60 + outM;
+
+        if (outMinutes < inMinutes || isNightShiftVal) {
+            if (outMinutes < inMinutes) {
+                outMinutes += 24 * 60;
+            }
         }
 
-        // No record exists in database. Determine based on date (past/today vs future).
+        const diffHours = (outMinutes - inMinutes) / 60;
+        const ot = diffHours - shiftHours;
+        return ot > 0 ? parseFloat(ot.toFixed(2)) : 0;
+    };
+
+    const handleModalFormChange = (updatedFields) => {
+        setModalForm(prev => {
+            const nextForm = { ...prev, ...updatedFields };
+            if (nextForm.status === 'Present') {
+                const calculatedOt = calculateOvertime(nextForm.checkIn, nextForm.checkOut, nextForm.isNightShift);
+                if ('checkIn' in updatedFields || 'checkOut' in updatedFields || 'isNightShift' in updatedFields || 'status' in updatedFields) {
+                    nextForm.overtimeHours = calculatedOt;
+                }
+            } else {
+                nextForm.overtimeHours = 0;
+                nextForm.isNightShift = false;
+            }
+            return nextForm;
+        });
+    };
+
+    const handleBlanketFormChange = (updatedFields) => {
+        setBlanketForm(prev => {
+            const nextForm = { ...prev, ...updatedFields };
+            if (nextForm.status === 'Present') {
+                const calculatedOt = calculateOvertime(nextForm.checkIn, nextForm.checkOut, nextForm.isNightShift);
+                if ('checkIn' in updatedFields || 'checkOut' in updatedFields || 'isNightShift' in updatedFields || 'status' in updatedFields) {
+                    nextForm.overtimeHours = calculatedOt;
+                }
+            } else {
+                nextForm.overtimeHours = 0;
+                nextForm.isNightShift = false;
+            }
+            return nextForm;
+        });
+    };
+
+    const getCellDisplayInfo = (employeeId, dayNum) => {
+        const log = getLogForDay(employeeId, dayNum);
+        if (log) {
+            const status = log.status;
+            let display = '';
+            let colorClass = '';
+            let tooltip = '';
+
+            const formatTime = (dateStr) => {
+                if (!dateStr) return '';
+                try {
+                    return new Date(dateStr).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+                } catch (e) {
+                    return '';
+                }
+            };
+
+            const checkInStr = formatTime(log.checkIn);
+            const checkOutStr = formatTime(log.checkOut);
+
+            if (status === 'Present') {
+                const ot = log.overtimeHours || 0;
+                const ns = log.isNightShift || false;
+                
+                if (ns && ot > 0) {
+                    display = 'P🌙⁺';
+                    colorClass = 'text-indigo-600 dark:text-violet-400 font-extrabold';
+                } else if (ns) {
+                    display = 'P🌙';
+                    colorClass = 'text-cyan-600 dark:text-cyan-400 font-bold';
+                } else if (ot > 0) {
+                    display = 'P⁺';
+                    colorClass = 'text-emerald-600 dark:text-emerald-400 font-bold';
+                } else {
+                    display = 'P';
+                    colorClass = 'text-green-600 dark:text-green-400';
+                }
+                
+                tooltip = `Present | In: ${checkInStr || '-'} | Out: ${checkOutStr || '-'}`;
+                if (ns) tooltip += ` | Night Shift`;
+                if (ot > 0) tooltip += ` | OT: ${ot} hrs`;
+            } else if (status === 'Absent') {
+                display = 'A';
+                colorClass = 'text-red-500 dark:text-red-400/80';
+                tooltip = 'Absent';
+            } else if (status === 'Leave') {
+                display = 'L';
+                colorClass = 'text-amber-500 dark:text-amber-400';
+                tooltip = 'Leave';
+            } else if (status === 'Holiday') {
+                display = 'H';
+                colorClass = 'text-violet-500 dark:text-violet-400';
+                tooltip = 'Holiday';
+            }
+            return { display, colorClass, tooltip };
+        }
+
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const cellDate = new Date(selectedYear, selectedMonth - 1, dayNum);
         
         if (cellDate > today) {
-            return '-'; // Future dates are unmarked
+            return { display: '-', colorClass: 'text-slate-400 dark:text-gray-500 font-normal', tooltip: 'Future Date' };
         } else {
-            return 'A'; // Past/present dates default to Absent
+            return { display: 'A', colorClass: 'text-red-500 dark:text-red-400/80', tooltip: 'Absent (No Record)' };
         }
     };
 
     // Calculate Overtime for a single day log
     const getOtForDay = (log) => {
-        if (!log || !log.checkIn || !log.checkOut) return 0;
+        if (!log) return 0;
+        if (typeof log.overtimeHours === 'number') {
+            return log.overtimeHours;
+        }
+        if (!log.checkIn || !log.checkOut) return 0;
         const checkInTime = new Date(log.checkIn);
         const checkOutTime = new Date(log.checkOut);
         const diffHrs = (checkOutTime - checkInTime) / (1000 * 60 * 60);
@@ -115,7 +218,7 @@ function AttendanceRegister() {
 
         return {
             presentDays,
-            totalOtHours: Math.floor(totalOtHours) // Floor the OT Hours
+            totalOtHours: parseFloat(totalOtHours.toFixed(2)) // Keep decimal precision for OT!
         };
     };
 
@@ -126,7 +229,9 @@ function AttendanceRegister() {
             setModalForm({
                 status: log.status === 'Present' ? 'Present' : (log.status === 'Leave' ? 'Leave' : (log.status === 'Holiday' ? 'Holiday' : 'Absent')),
                 checkIn: log.checkIn ? new Date(log.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : '',
-                checkOut: log.checkOut ? new Date(log.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : ''
+                checkOut: log.checkOut ? new Date(log.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : '',
+                overtimeHours: log.overtimeHours || 0,
+                isNightShift: log.isNightShift || false
             });
         } else {
             // Default depending on whether it is in the future
@@ -135,9 +240,9 @@ function AttendanceRegister() {
             const cellDate = new Date(selectedYear, selectedMonth - 1, dayNum);
             
             if (cellDate > today) {
-                setModalForm({ status: 'Present', checkIn: '09:00', checkOut: '17:00' });
+                setModalForm({ status: 'Present', checkIn: '09:00', checkOut: '17:00', overtimeHours: 0, isNightShift: false });
             } else {
-                setModalForm({ status: 'Absent', checkIn: '', checkOut: '' });
+                setModalForm({ status: 'Absent', checkIn: '', checkOut: '', overtimeHours: 0, isNightShift: false });
             }
         }
     };
@@ -153,7 +258,9 @@ function AttendanceRegister() {
                 date: dateStr,
                 status: modalForm.status,
                 checkIn: modalForm.status === 'Present' ? modalForm.checkIn : null,
-                checkOut: modalForm.status === 'Present' ? modalForm.checkOut : null
+                checkOut: modalForm.status === 'Present' ? modalForm.checkOut : null,
+                overtimeHours: modalForm.status === 'Present' ? modalForm.overtimeHours : 0,
+                isNightShift: modalForm.status === 'Present' ? modalForm.isNightShift : false
             });
             setSelectedCell(null);
             fetchData();
@@ -170,7 +277,9 @@ function AttendanceRegister() {
                 date: dateStr,
                 status: blanketForm.status,
                 checkIn: blanketForm.status === 'Present' ? blanketForm.checkIn : null,
-                checkOut: blanketForm.status === 'Present' ? blanketForm.checkOut : null
+                checkOut: blanketForm.status === 'Present' ? blanketForm.checkOut : null,
+                overtimeHours: blanketForm.status === 'Present' ? blanketForm.overtimeHours : 0,
+                isNightShift: blanketForm.status === 'Present' ? blanketForm.isNightShift : false
             });
             setIsBlanketModalOpen(false);
             fetchData();
@@ -300,21 +409,15 @@ function AttendanceRegister() {
                                                         
                                                         {/* Render status for each day */}
                                                         {daysArray.map(day => {
-                                                            const status = getStatusForDay(emp._id, day);
+                                                            const cellInfo = getCellDisplayInfo(emp._id, day);
                                                             return (
                                                                 <td 
                                                                     key={day} 
-                                                                    className={`px-1.5 py-3 text-center font-bold border-r border-slate-100 dark:border-[#262235] last:border-r-0 cursor-pointer hover:bg-indigo-100/30 dark:hover:bg-[#201d2c] transition duration-150 ${
-                                                                        status === 'P' ? 'text-green-600 dark:text-green-400' :
-                                                                        status === 'L' ? 'text-amber-500 dark:text-amber-400' :
-                                                                        status === 'H' ? 'text-violet-500 dark:text-violet-400' :
-                                                                        status === 'A' ? 'text-red-500 dark:text-red-400/80' :
-                                                                        'text-slate-400 dark:text-gray-500 font-normal'
-                                                                    }`}
+                                                                    className={`px-1.5 py-3 text-center font-bold border-r border-slate-100 dark:border-[#262235] last:border-r-0 cursor-pointer hover:bg-indigo-100/30 dark:hover:bg-[#201d2c] transition duration-150 ${cellInfo.colorClass}`}
                                                                     onClick={() => handleCellClick(emp, day)}
-                                                                    title="Click to edit attendance"
+                                                                    title={`${cellInfo.tooltip} | Click to edit`}
                                                                 >
-                                                                    {status}
+                                                                    {cellInfo.display}
                                                                 </td>
                                                             );
                                                         })}
@@ -361,7 +464,7 @@ function AttendanceRegister() {
                                 <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Status</label>
                                 <select
                                     value={modalForm.status}
-                                    onChange={(e) => setModalForm({ ...modalForm, status: e.target.value })}
+                                    onChange={(e) => handleModalFormChange({ status: e.target.value })}
                                     className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition font-medium"
                                 >
                                     <option value="Present">Present</option>
@@ -372,24 +475,48 @@ function AttendanceRegister() {
                             </div>
 
                             {modalForm.status === 'Present' && (
-                                <div className="grid grid-cols-2 gap-4 animate-fade-in">
-                                    <div>
-                                        <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Check In</label>
-                                        <input
-                                            type="time"
-                                            value={modalForm.checkIn}
-                                            onChange={(e) => setModalForm({ ...modalForm, checkIn: e.target.value })}
-                                            className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
-                                        />
+                                <div className="space-y-4 animate-fade-in">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Check In</label>
+                                            <input
+                                                type="time"
+                                                value={modalForm.checkIn}
+                                                onChange={(e) => handleModalFormChange({ checkIn: e.target.value })}
+                                                className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Check Out</label>
+                                            <input
+                                                type="time"
+                                                value={modalForm.checkOut}
+                                                onChange={(e) => handleModalFormChange({ checkOut: e.target.value })}
+                                                className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
+                                            />
+                                        </div>
                                     </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Check Out</label>
-                                        <input
-                                            type="time"
-                                            value={modalForm.checkOut}
-                                            onChange={(e) => setModalForm({ ...modalForm, checkOut: e.target.value })}
-                                            className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
-                                        />
+                                    <div className="flex items-center justify-between bg-slate-50 dark:bg-[#201d2c] p-2.5 rounded-lg border border-slate-200 dark:border-[#37314e]">
+                                        <label className="text-xs font-bold text-slate-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer select-none flex items-center gap-2">
+                                            <input
+                                                type="checkbox"
+                                                checked={modalForm.isNightShift}
+                                                onChange={(e) => handleModalFormChange({ isNightShift: e.target.checked })}
+                                                className="rounded text-violet-600 focus:ring-violet-500 bg-slate-100 dark:bg-[#201d2c] border-slate-300 dark:border-[#37314e] h-4 w-4"
+                                            />
+                                            🌙 Night Shift
+                                        </label>
+                                        <div className="flex items-center gap-2">
+                                            <label className="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider">OT (Hrs):</label>
+                                            <input
+                                                type="number"
+                                                step="0.5"
+                                                min="0"
+                                                value={modalForm.overtimeHours}
+                                                onChange={(e) => handleModalFormChange({ overtimeHours: parseFloat(e.target.value) || 0 })}
+                                                className="w-16 px-2 py-1 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded text-sm text-center text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 font-semibold"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -442,7 +569,7 @@ function AttendanceRegister() {
                                 <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Blanket Status</label>
                                 <select
                                     value={blanketForm.status}
-                                    onChange={(e) => setBlanketForm({ ...blanketForm, status: e.target.value })}
+                                    onChange={(e) => handleBlanketFormChange({ status: e.target.value })}
                                     className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition font-medium"
                                 >
                                     <option value="Present">Present</option>
@@ -453,24 +580,48 @@ function AttendanceRegister() {
                             </div>
 
                             {blanketForm.status === 'Present' && (
-                                <div className="grid grid-cols-2 gap-4 animate-fade-in">
-                                    <div>
-                                        <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Check In</label>
-                                        <input
-                                            type="time"
-                                            value={blanketForm.checkIn}
-                                            onChange={(e) => setBlanketForm({ ...blanketForm, checkIn: e.target.value })}
-                                            className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
-                                        />
+                                <div className="space-y-4 animate-fade-in">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Check In</label>
+                                            <input
+                                                type="time"
+                                                value={blanketForm.checkIn}
+                                                onChange={(e) => handleBlanketFormChange({ checkIn: e.target.value })}
+                                                className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Check Out</label>
+                                            <input
+                                                type="time"
+                                                value={blanketForm.checkOut}
+                                                onChange={(e) => handleBlanketFormChange({ checkOut: e.target.value })}
+                                                className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
+                                            />
+                                        </div>
                                     </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Check Out</label>
-                                        <input
-                                            type="time"
-                                            value={blanketForm.checkOut}
-                                            onChange={(e) => setBlanketForm({ ...blanketForm, checkOut: e.target.value })}
-                                            className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
-                                        />
+                                    <div className="flex items-center justify-between bg-slate-50 dark:bg-[#201d2c] p-2.5 rounded-lg border border-slate-200 dark:border-[#37314e]">
+                                        <label className="text-xs font-bold text-slate-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer select-none flex items-center gap-2">
+                                            <input
+                                                type="checkbox"
+                                                checked={blanketForm.isNightShift}
+                                                onChange={(e) => handleBlanketFormChange({ isNightShift: e.target.checked })}
+                                                className="rounded text-indigo-600 focus:ring-indigo-500 bg-slate-100 dark:bg-[#201d2c] border-slate-300 dark:border-[#37314e] h-4 w-4"
+                                            />
+                                            🌙 Night Shift
+                                        </label>
+                                        <div className="flex items-center gap-2">
+                                            <label className="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider">OT (Hrs):</label>
+                                            <input
+                                                type="number"
+                                                step="0.5"
+                                                min="0"
+                                                value={blanketForm.overtimeHours}
+                                                onChange={(e) => handleBlanketFormChange({ overtimeHours: parseFloat(e.target.value) || 0 })}
+                                                className="w-16 px-2 py-1 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded text-sm text-center text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-500 font-semibold"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             )}
