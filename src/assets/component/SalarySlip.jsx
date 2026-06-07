@@ -243,7 +243,7 @@ function SalarySlip() {
                                         onChange={(e) => setYear(parseInt(e.target.value))}
                                         className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                                     >
-                                        {[2024, 2025, 2026, 2027, 2028].map(y => (
+                                        {Array.from({ length: new Date().getFullYear() + 5 - 2024 + 1 }, (_, i) => 2024 + i).map(y => (
                                             <option key={y} value={y}>{y}</option>
                                         ))}
                                     </select>
