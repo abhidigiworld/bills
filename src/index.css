@@ -17,5 +17,12 @@
   .animate-slide-down {
     animation: slide-down 0.6s ease-out;
   }
+
+  body {
+    @apply bg-indigo-50 text-slate-800 transition-colors duration-300;
+  }
+  body.dark {
+    @apply bg-[#110f18] text-gray-200;
+  }
   
   

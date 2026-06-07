@@ -117,9 +117,9 @@ function SalarySlip() {
     const calendarDays = getCalendarDays();
 
     // Floor-based Payroll Formulas
-    const dailyRate = selectedEmployee ? selectedEmployee.grossSalary / calendarDays : 0;
+    const dailyRate = selectedEmployee ? Math.floor(selectedEmployee.grossSalary / calendarDays) : 0;
     const salaryByWorkDays = Math.floor(salarySlip.workDays * dailyRate);
-    const hourlyOtRate = dailyRate / shiftHours;
+    const hourlyOtRate = Math.floor(dailyRate / shiftHours);
     const otSalary = Math.floor(salarySlip.otHours * hourlyOtRate);
     const totalSalary = Math.floor(salaryByWorkDays + otSalary);
     const lunchDeduction = Math.floor(salarySlip.lunchDays * salarySlip.lunchRate);

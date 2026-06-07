@@ -13,6 +13,8 @@ import ErrorPage from './assets/component/ErrorPage.jsx'
 import SignUp from './assets/component/SignUp.jsx'
 import ForgotPassword from './assets/component/ForgotPassword.jsx'
 import AttendanceRegister from './assets/component/AttendanceRegister.jsx'
+import ManagePayrolls from './assets/component/ManagePayrolls.jsx'
+import ManageUsers from './assets/component/ManageUsers.jsx'
 
 // Protected Route Wrapper Component
 const ProtectedRoute = ({ children, requireAdmin }) => {
@@ -64,6 +66,14 @@ const router = createBrowserRouter([
   {
     path: '/attendance-register',
     element: <ProtectedRoute requireAdmin><AttendanceRegister/></ProtectedRoute>
+  },
+  {
+    path: '/manage-payrolls',
+    element: <ProtectedRoute requireAdmin><ManagePayrolls/></ProtectedRoute>
+  },
+  {
+    path: '/manage-users',
+    element: <ProtectedRoute requireAdmin><ManageUsers/></ProtectedRoute>
   },
   {
     path: '*',

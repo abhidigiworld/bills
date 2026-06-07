@@ -162,8 +162,8 @@ function WelcomePage() {
 
           {isAdmin ? (
             /* ADMIN DASHBOARD */
-            <div className="space-y-8 animate-fade-in">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
+             <div className="space-y-8 animate-fade-in">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
                 <Link
                   to="/existing-bills"
                   className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
@@ -198,6 +198,20 @@ function WelcomePage() {
                 >
                   <h3 className="text-lg font-bold">Attendance Register</h3>
                   <p className="text-indigo-100 text-xs mt-1 leading-relaxed">View monthly employee attendance grids & OT</p>
+                </Link>
+                <Link
+                  to="/manage-payrolls"
+                  className="bg-gradient-to-br from-rose-500 to-red-600 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+                >
+                  <h3 className="text-lg font-bold">Manage Payrolls</h3>
+                  <p className="text-rose-100 text-xs mt-1 leading-relaxed">View, edit, or delete saved monthly payroll slips</p>
+                </Link>
+                <Link
+                  to="/manage-users"
+                  className="bg-gradient-to-br from-cyan-500 to-blue-600 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+                >
+                  <h3 className="text-lg font-bold">Manage Users</h3>
+                  <p className="text-cyan-100 text-xs mt-1 leading-relaxed">Manage login credentials, roles, and verification</p>
                 </Link>
               </div>
 
