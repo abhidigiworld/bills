@@ -13,12 +13,12 @@ function WelcomePage() {
   const [profile, setProfile] = useState(null);
   const [attendance, setAttendance] = useState([]);
   const [salarySlips, setSalarySlips] = useState([]);
-  
+
   // Attendance state
   const [isCheckedInToday, setIsCheckedInToday] = useState(false);
   const [isCheckedOutToday, setIsCheckedOutToday] = useState(false);
   const [todayRecord, setTodayRecord] = useState(null);
-  
+
   // Modal state for viewing selected salary slip
   const [activeSlip, setActiveSlip] = useState(null);
 
@@ -134,7 +134,7 @@ function WelcomePage() {
 
           {isAdmin ? (
             /* ADMIN DASHBOARD */
-             <div className="space-y-8 animate-fade-in">
+            <div className="space-y-8 animate-fade-in">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
                 <Link
                   to="/existing-bills"
@@ -234,12 +234,11 @@ function WelcomePage() {
                       </div>
                       <div>
                         <span className="text-xs text-slate-500 dark:text-gray-400 uppercase block font-semibold tracking-wider">Status</span>
-                        <span className={`inline-block text-xs font-bold px-2.5 py-0.5 rounded-full ${
-                          profile.status === 'Active' ? 'bg-green-100 dark:bg-green-950/50 text-green-700 dark:text-green-400' :
-                          profile.status === 'On Hold' ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400' :
-                          profile.status === 'On Holiday' ? 'bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-400' :
-                          'bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-400'
-                        }`}>
+                        <span className={`inline-block text-xs font-bold px-2.5 py-0.5 rounded-full ${profile.status === 'Active' ? 'bg-green-100 dark:bg-green-950/50 text-green-700 dark:text-green-400' :
+                            profile.status === 'On Hold' ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400' :
+                              profile.status === 'On Holiday' ? 'bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-400' :
+                                'bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-400'
+                          }`}>
                           {profile.status}
                         </span>
                       </div>
@@ -251,10 +250,10 @@ function WelcomePage() {
                     <h3 className="text-xl font-bold text-indigo-950 dark:text-white mb-4 border-b border-slate-100 dark:border-[#262235] pb-2.5">Daily Attendance</h3>
                     <div className="text-center py-4">
                       <p className="text-sm text-slate-600 dark:text-gray-300 mb-4 font-medium">
-                        {!isCheckedInToday 
-                          ? "You haven't checked in yet today." 
-                          : isCheckedOutToday 
-                            ? "You have completed your shift today." 
+                        {!isCheckedInToday
+                          ? "You haven't checked in yet today."
+                          : isCheckedOutToday
+                            ? "You have completed your shift today."
                             : "You are currently checked in."}
                       </p>
 
@@ -355,11 +354,10 @@ function WelcomePage() {
                                 <td className="py-3 text-slate-600 dark:text-gray-300">{formatTime(log.checkIn)}</td>
                                 <td className="py-3 text-slate-600 dark:text-gray-300">{formatTime(log.checkOut)}</td>
                                 <td className="py-3">
-                                  <span className={`inline-block text-xs font-bold px-2.5 py-0.5 rounded-full ${
-                                    log.status === 'Present' ? 'bg-green-100 dark:bg-green-950/50 text-green-700 dark:text-green-400' :
-                                    log.status === 'Leave' ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400' :
-                                    'bg-red-100 dark:bg-red-950/50 text-red-700 dark:text-red-400'
-                                  }`}>
+                                  <span className={`inline-block text-xs font-bold px-2.5 py-0.5 rounded-full ${log.status === 'Present' ? 'bg-green-100 dark:bg-green-950/50 text-green-700 dark:text-green-400' :
+                                      log.status === 'Leave' ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400' :
+                                        'bg-red-100 dark:bg-red-950/50 text-red-700 dark:text-red-400'
+                                    }`}>
                                     {log.status}
                                   </span>
                                 </td>
@@ -412,7 +410,7 @@ function WelcomePage() {
                 <div>
                   <span className="text-slate-500 dark:text-gray-400 block text-xs font-bold uppercase">Joined Date:</span>
                   <span className="font-semibold text-slate-800 dark:text-white">
-                    {activeSlip.employeeId?.dateOfJoining 
+                    {activeSlip.employeeId?.dateOfJoining
                       ? new Date(activeSlip.employeeId.dateOfJoining).toLocaleDateString()
                       : (profile?.dateOfJoining ? new Date(profile.dateOfJoining).toLocaleDateString() : '-')}
                   </span>
@@ -420,7 +418,7 @@ function WelcomePage() {
                 <div>
                   <span className="text-slate-500 dark:text-gray-400 block text-xs font-bold uppercase">Gross Salary:</span>
                   <span className="font-bold text-indigo-700 dark:text-violet-400">
-                    ₹{activeSlip.employeeId?.grossSalary 
+                    ₹{activeSlip.employeeId?.grossSalary
                       ? Math.floor(activeSlip.employeeId.grossSalary).toLocaleString()
                       : (profile?.grossSalary ? Math.floor(profile.grossSalary).toLocaleString() : '-')}
                   </span>

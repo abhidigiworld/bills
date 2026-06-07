@@ -153,7 +153,7 @@ function Header() {
       localStorage.setItem('user', JSON.stringify(updatedUser));
       setCurrentUser(updatedUser);
       setProfileSuccess('Profile updated successfully!');
-      
+
       // Reload page to reflect changes everywhere
       setTimeout(() => {
         setIsProfileModalOpen(false);
@@ -177,15 +177,15 @@ function Header() {
         <h1 className="text-xl font-bold flex items-center">
           <Link to={'/Main'} className="flex items-center gap-2.5 group">
             <img src={logo} alt="Sakshi Enterprises Logo" className="h-9 w-auto rounded-lg shadow-md border border-slate-200 dark:border-[#3e3857]" />
-            <span className="bg-gradient-to-r from-indigo-600 to-violet-600 dark:from-violet-200 dark:to-indigo-100 bg-clip-text text-transparent tracking-wide font-extrabold transition-all group-hover:opacity-80">
+            <span className="company-name bg-gradient-to-r from-indigo-600 to-violet-600 dark:from-violet-200 dark:to-indigo-100 bg-clip-text text-transparent tracking-wide font-extrabold transition-all group-hover:opacity-80">
               SAKSHI ENTERPRISES
             </span>
           </Link>
         </h1>
-        
+
         <div className="flex items-center gap-3">
           {/* Light/Dark Toggle Button */}
-          <button 
+          <button
             onClick={toggleTheme}
             className="p-2.5 rounded-xl border border-slate-200 dark:border-[#3e3857] hover:bg-slate-100 dark:hover:bg-[#201d2c] transition duration-200 text-slate-600 dark:text-gray-300 focus:outline-none"
             aria-label="Toggle Theme"
@@ -386,7 +386,7 @@ function Header() {
 
                 <div className="border-t border-slate-100 dark:border-[#262235] pt-4 my-2">
                   <p className="text-xs text-slate-400 mb-3">Leave password fields blank if you do not wish to change it.</p>
-                  
+
                   <div className="space-y-3">
                     <div>
                       <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">New Password</label>

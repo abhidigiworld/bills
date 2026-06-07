@@ -49,9 +49,9 @@ function Login() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-[#110f18] p-4 sm:p-6 md:p-10 font-sans text-gray-200">
       <div className="flex w-full max-w-5xl bg-[#181622] rounded-[2rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-[#262235]">
-        
+
         {/* Left Side: Dunes Graphic Panel */}
-        <div 
+        <div
           className="hidden md:flex md:w-1/2 relative bg-cover bg-center flex-col justify-between p-10 select-none overflow-hidden"
           style={{ backgroundImage: `url(${dunesBg})` }}
         >
@@ -87,7 +87,7 @@ function Login() {
 
         {/* Right Side: Form Panel */}
         <div className="w-full md:w-1/2 p-8 sm:p-12 md:p-14 flex flex-col justify-center bg-[#181622] relative">
-          
+
           {/* Logo overlay on Mobile screens */}
           <div className="flex md:hidden items-center gap-2 mb-6">
             <img src={logo} alt="Sakshi Logo" className="h-9 w-auto rounded-lg" />
@@ -150,7 +150,7 @@ function Login() {
                   required
                   className="w-full bg-[#201d2c] border border-[#37314e] rounded-xl pl-4 pr-11 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition"
                 />
-                
+
                 {/* Eye Icon Button */}
                 <button
                   type="button"

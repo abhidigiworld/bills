@@ -85,13 +85,13 @@ function ManagePayrolls() {
     // Recalculate based on input form changes (using strict intermediate flooring)
     const calculateLiveEditValues = () => {
         if (!editingSlip || !editingSlip.employeeId) return null;
-        
+
         // Find matching employee details to retrieve grossSalary
         const emp = employees.find(e => e._id === (editingSlip.employeeId._id || editingSlip.employeeId));
         if (!emp) return null;
 
         const grossSalary = emp.grossSalary || 0;
-        
+
         // Determine calendar days for selected month
         const monthOfSalary = editingSlip.monthOfSalary || '';
         const [monthName, yearStr] = monthOfSalary.split(' ');
@@ -106,11 +106,11 @@ function ManagePayrolls() {
         // Floor division rates
         const dailyRate = Math.floor(grossSalary / calendarDays);
         const salaryByWorkDays = Math.floor(editForm.workDays * dailyRate);
-        
+
         const hourlyOtRate = Math.floor(dailyRate / editForm.shiftHours);
         const otSalary = Math.floor(editForm.otHours * hourlyOtRate);
         const totalSalary = Math.floor(salaryByWorkDays + otSalary);
-        
+
         const lunchDeduction = Math.floor(editForm.lunchDays * editForm.lunchRate);
         const inHandSalary = Math.floor(totalSalary - editForm.esic - editForm.advance - lunchDeduction);
 
@@ -187,8 +187,8 @@ function ManagePayrolls() {
             <Header />
             <main className="flex-grow p-4 sm:p-6 md:p-8">
                 <div className="max-w-7xl mx-auto">
-                    <Link 
-                        to="/Main" 
+                    <Link
+                        to="/Main"
                         className="inline-flex items-center gap-2 mb-6 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-[#3e3857] hover:bg-slate-100 dark:hover:bg-[#201d2c] text-xs font-bold text-slate-600 dark:text-gray-300 transition duration-200 shadow-sm print:hidden"
                     >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
@@ -492,7 +492,7 @@ function ManagePayrolls() {
             {activeSlip && (
                 <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4">
                     <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] w-full max-w-xl rounded-[2rem] p-6 shadow-2xl relative transition-colors duration-300 animate-slide-down print:p-0 print:border-none print:shadow-none print:bg-white print:text-black">
-                        
+
                         {/* Slip Printable Block */}
                         <div className="printdata font-sans text-slate-800 dark:text-gray-200 print:text-black">
                             <h2 className="text-xl font-extrabold text-center text-indigo-950 dark:text-white print:text-black uppercase tracking-wider mb-1">

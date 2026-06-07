@@ -123,9 +123,9 @@ function SignUp() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-[#110f18] p-4 sm:p-6 md:p-10 font-sans text-gray-200">
       <div className="flex w-full max-w-5xl bg-[#181622] rounded-[2rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-[#262235]">
-        
+
         {/* Left Side: Dunes Graphic Panel */}
-        <div 
+        <div
           className="hidden md:flex md:w-1/2 relative bg-cover bg-center flex-col justify-between p-10 select-none overflow-hidden"
           style={{ backgroundImage: `url(${dunesBg})` }}
         >
@@ -161,7 +161,7 @@ function SignUp() {
 
         {/* Right Side: Form Panel */}
         <div className="w-full md:w-1/2 p-8 sm:p-12 md:p-14 flex flex-col justify-center bg-[#181622] relative">
-          
+
           {/* Logo overlay on Mobile screens */}
           <div className="flex md:hidden items-center gap-2 mb-6">
             <img src={logo} alt="Sakshi Logo" className="h-9 w-auto rounded-lg" />
@@ -371,7 +371,7 @@ function SignUp() {
             {/* Modal Header */}
             <div className="px-6 py-4 border-b border-[#262235] flex justify-between items-center bg-[#1b1926]">
               <h3 className="font-bold text-lg text-white">Terms of Service & Privacy Policy</h3>
-              <button 
+              <button
                 onClick={() => setShowTermsModal(false)}
                 className="text-gray-400 hover:text-white transition focus:outline-none"
               >
