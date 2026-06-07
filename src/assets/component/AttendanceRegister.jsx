@@ -17,6 +17,19 @@ function AttendanceRegister() {
     const [selectedCell, setSelectedCell] = useState(null); // { employee, dayNum }
     const [modalForm, setModalForm] = useState({ status: 'Absent', checkIn: '', checkOut: '' });
 
+    // Blanket Edit states
+    const [isBlanketModalOpen, setIsBlanketModalOpen] = useState(false);
+    const [blanketForm, setBlanketForm] = useState({ dayNum: 1, status: 'Present', checkIn: '09:00', checkOut: '17:00' });
+
+    useEffect(() => {
+        const today = new Date();
+        if (today.getFullYear() === selectedYear && (today.getMonth() + 1) === selectedMonth) {
+            setBlanketForm(prev => ({ ...prev, dayNum: today.getDate() }));
+        } else {
+            setBlanketForm(prev => ({ ...prev, dayNum: 1 }));
+        }
+    }, [selectedYear, selectedMonth, isBlanketModalOpen]);
+
     useEffect(() => {
         fetchData();
     }, [selectedYear, selectedMonth]);
@@ -53,11 +66,24 @@ function AttendanceRegister() {
 
     const getStatusForDay = (employeeId, dayNum) => {
         const log = getLogForDay(employeeId, dayNum);
-        if (!log) return 'A'; // Default to Absent if no record
-        if (log.status === 'Present') return 'P';
-        if (log.status === 'Absent') return 'A';
-        if (log.status === 'Leave') return 'L';
-        return 'A';
+        if (log) {
+            if (log.status === 'Present') return 'P';
+            if (log.status === 'Absent') return 'A';
+            if (log.status === 'Leave') return 'L';
+            if (log.status === 'Holiday') return 'H';
+            return 'A';
+        }
+
+        // No record exists in database. Determine based on date (past/today vs future).
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const cellDate = new Date(selectedYear, selectedMonth - 1, dayNum);
+        
+        if (cellDate > today) {
+            return '-'; // Future dates are unmarked
+        } else {
+            return 'A'; // Past/present dates default to Absent
+        }
     };
 
     // Calculate Overtime for a single day log
@@ -80,7 +106,7 @@ function AttendanceRegister() {
         for (let d = 1; d <= daysInMonth; d++) {
             const log = getLogForDay(employeeId, d);
             if (log) {
-                if (log.status === 'Present') {
+                if (log.status === 'Present' || log.status === 'Holiday') {
                     presentDays++;
                 }
                 totalOtHours += getOtForDay(log);
@@ -98,12 +124,21 @@ function AttendanceRegister() {
         setSelectedCell({ employee, dayNum });
         if (log) {
             setModalForm({
-                status: log.status === 'Present' ? 'Present' : (log.status === 'Leave' ? 'Leave' : 'Absent'),
+                status: log.status === 'Present' ? 'Present' : (log.status === 'Leave' ? 'Leave' : (log.status === 'Holiday' ? 'Holiday' : 'Absent')),
                 checkIn: log.checkIn ? new Date(log.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : '',
                 checkOut: log.checkOut ? new Date(log.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : ''
             });
         } else {
-            setModalForm({ status: 'Absent', checkIn: '09:00', checkOut: '17:00' });
+            // Default depending on whether it is in the future
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const cellDate = new Date(selectedYear, selectedMonth - 1, dayNum);
+            
+            if (cellDate > today) {
+                setModalForm({ status: 'Present', checkIn: '09:00', checkOut: '17:00' });
+            } else {
+                setModalForm({ status: 'Absent', checkIn: '', checkOut: '' });
+            }
         }
     };
 
@@ -125,6 +160,23 @@ function AttendanceRegister() {
         } catch (error) {
             console.error("Error saving manual attendance:", error);
             alert("Failed to save attendance.");
+        }
+    };
+
+    const handleSaveBlanketAttendance = async () => {
+        const dateStr = `${selectedYear}-${String(selectedMonth).padStart(2, '0')}-${String(blanketForm.dayNum).padStart(2, '0')}`;
+        try {
+            await axios.post(`${API_BASE_URL}/api/attendance/blanket-mark`, {
+                date: dateStr,
+                status: blanketForm.status,
+                checkIn: blanketForm.status === 'Present' ? blanketForm.checkIn : null,
+                checkOut: blanketForm.status === 'Present' ? blanketForm.checkOut : null
+            });
+            setIsBlanketModalOpen(false);
+            fetchData();
+        } catch (error) {
+            console.error("Error saving blanket attendance:", error);
+            alert("Failed to save blanket attendance.");
         }
     };
 
@@ -192,9 +244,20 @@ function AttendanceRegister() {
                             </div>
                         </div>
 
-                        <div className="text-right">
-                            <span className="text-xs font-semibold text-slate-500 dark:text-gray-400 block uppercase">Currently Showing</span>
-                            <span className="text-lg font-bold text-indigo-700 dark:text-violet-400">{monthName} {selectedYear}</span>
+                        <div className="flex gap-4 items-center">
+                            <button
+                                onClick={() => setIsBlanketModalOpen(true)}
+                                className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-750 hover:to-violet-750 text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition duration-200 flex items-center gap-2"
+                            >
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                                </svg>
+                                Blanket Mark
+                            </button>
+                            <div className="text-right text-xs print:hidden">
+                                <span className="text-[10px] font-bold text-slate-400 dark:text-gray-500 block uppercase tracking-wider">Currently Showing</span>
+                                <span className="text-sm font-extrabold text-indigo-700 dark:text-violet-400">{monthName} {selectedYear}</span>
+                            </div>
                         </div>
                     </div>
 
@@ -244,7 +307,9 @@ function AttendanceRegister() {
                                                                     className={`px-1.5 py-3 text-center font-bold border-r border-slate-100 dark:border-[#262235] last:border-r-0 cursor-pointer hover:bg-indigo-100/30 dark:hover:bg-[#201d2c] transition duration-150 ${
                                                                         status === 'P' ? 'text-green-600 dark:text-green-400' :
                                                                         status === 'L' ? 'text-amber-500 dark:text-amber-400' :
-                                                                        'text-red-500 dark:text-red-400/80'
+                                                                        status === 'H' ? 'text-violet-500 dark:text-violet-400' :
+                                                                        status === 'A' ? 'text-red-500 dark:text-red-400/80' :
+                                                                        'text-slate-400 dark:text-gray-500 font-normal'
                                                                     }`}
                                                                     onClick={() => handleCellClick(emp, day)}
                                                                     title="Click to edit attendance"
@@ -302,6 +367,7 @@ function AttendanceRegister() {
                                     <option value="Present">Present</option>
                                     <option value="Absent">Absent</option>
                                     <option value="Leave">Leave</option>
+                                    <option value="Holiday">Holiday</option>
                                 </select>
                             </div>
 
@@ -338,6 +404,87 @@ function AttendanceRegister() {
                             </button>
                             <button
                                 onClick={() => setSelectedCell(null)}
+                                className="w-full bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-2.5 rounded-xl shadow transition duration-200 text-sm"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Blanket Mark Attendance Modal */}
+            {isBlanketModalOpen && (
+                <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-65 backdrop-blur-sm flex items-center justify-center p-4">
+                    <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] w-full max-w-sm rounded-[2rem] p-6 shadow-2xl relative transition-all duration-300 animate-slide-down">
+                        <h3 className="text-lg font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-[#262235] pb-2 mb-4">
+                            Blanket Attendance Mark
+                        </h3>
+                        <p className="text-xs text-slate-500 dark:text-gray-400 mb-4">
+                            Apply a blanket status to **all** employees for a single day of {monthName} {selectedYear}.
+                        </p>
+
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Select Day of Month</label>
+                                <select
+                                    value={blanketForm.dayNum}
+                                    onChange={(e) => setBlanketForm({ ...blanketForm, dayNum: parseInt(e.target.value) })}
+                                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition font-medium"
+                                >
+                                    {daysArray.map(day => (
+                                        <option key={day} value={day}>{day} ({new Date(selectedYear, selectedMonth - 1, day).toLocaleString('default', { weekday: 'short' })})</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Blanket Status</label>
+                                <select
+                                    value={blanketForm.status}
+                                    onChange={(e) => setBlanketForm({ ...blanketForm, status: e.target.value })}
+                                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition font-medium"
+                                >
+                                    <option value="Present">Present</option>
+                                    <option value="Absent">Absent</option>
+                                    <option value="Leave">Leave</option>
+                                    <option value="Holiday">Holiday</option>
+                                </select>
+                            </div>
+
+                            {blanketForm.status === 'Present' && (
+                                <div className="grid grid-cols-2 gap-4 animate-fade-in">
+                                    <div>
+                                        <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Check In</label>
+                                        <input
+                                            type="time"
+                                            value={blanketForm.checkIn}
+                                            onChange={(e) => setBlanketForm({ ...blanketForm, checkIn: e.target.value })}
+                                            className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Check Out</label>
+                                        <input
+                                            type="time"
+                                            value={blanketForm.checkOut}
+                                            onChange={(e) => setBlanketForm({ ...blanketForm, checkOut: e.target.value })}
+                                            className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="flex gap-3 mt-6">
+                            <button
+                                onClick={handleSaveBlanketAttendance}
+                                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl shadow transition duration-200 text-sm"
+                            >
+                                Apply All
+                            </button>
+                            <button
+                                onClick={() => setIsBlanketModalOpen(false)}
                                 className="w-full bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-2.5 rounded-xl shadow transition duration-200 text-sm"
                             >
                                 Cancel

@@ -59,8 +59,76 @@ function SalarySlip() {
                 return empId === selectedEmployee._id && log.date.startsWith(monthPrefix);
             });
 
-            // Count days marked 'Present'
-            const workDaysCount = employeeLogs.filter(log => log.status === 'Present').length;
+            // Local date formatter helper to prevent timezone shifts
+            const getYYYYMMDD = (d) => {
+                const yyyy = d.getFullYear();
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                const dd = String(d.getDate()).padStart(2, '0');
+                return `${yyyy}-${mm}-${dd}`;
+            };
+
+            // Helper to get status of any specific date (YYYY-MM-DD)
+            const getStatusForDate = (dateStr) => {
+                const log = logs.find(l => {
+                    const empId = l.employeeId?._id || l.employeeId;
+                    return empId === selectedEmployee._id && l.date === dateStr;
+                });
+                if (log) return log.status; // 'Present', 'Absent', 'Leave', 'Holiday'
+                
+                // If no log exists in database:
+                const todayStr = getYYYYMMDD(new Date());
+                if (dateStr > todayStr) {
+                    return 'Unmarked'; 
+                } else {
+                    // Sundays in the past default to Holiday (paid off), others default to Absent (unpaid)
+                    const parts = dateStr.split('-');
+                    const d = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                    if (d.getDay() === 0) {
+                        return 'Holiday';
+                    }
+                    return 'Absent';
+                }
+            };
+
+            // Calculate paid days for the month
+            let workDaysCount = 0;
+            const daysInMonth = new Date(year, parseInt(monthMap[month]), 0).getDate();
+            
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `${year}-${monthMap[month]}-${String(day).padStart(2, '0')}`;
+                const status = getStatusForDate(dateStr);
+                
+                const d = new Date(year, parseInt(monthMap[month]) - 1, day);
+                const isSunday = d.getDay() === 0;
+                
+                if (isSunday) {
+                    if (status === 'Leave' || status === 'Absent') {
+                        // Explicitly marked unpaid
+                    } else {
+                        // Check Sandwich Rule: if Saturday before and Monday after are Leave/Absent
+                        const prevDate = new Date(year, parseInt(monthMap[month]) - 1, day - 1);
+                        const nextDate = new Date(year, parseInt(monthMap[month]) - 1, day + 1);
+                        
+                        const prevDateStr = getYYYYMMDD(prevDate);
+                        const nextDateStr = getYYYYMMDD(nextDate);
+                        
+                        const prevStatus = getStatusForDate(prevDateStr);
+                        const nextStatus = getStatusForDate(nextDateStr);
+                        
+                        const isSandwich = (prevStatus === 'Leave' || prevStatus === 'Absent') && 
+                                           (nextStatus === 'Leave' || nextStatus === 'Absent');
+                        
+                        if (!isSandwich) {
+                            workDaysCount++;
+                        }
+                    }
+                } else {
+                    // Weekdays are paid if marked Present or Holiday
+                    if (status === 'Present' || status === 'Holiday') {
+                        workDaysCount++;
+                    }
+                }
+            }
 
             // Calculate overtime hours
             let otHoursCount = 0;
