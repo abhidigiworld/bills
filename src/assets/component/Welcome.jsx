@@ -124,7 +124,7 @@ function WelcomePage() {
   return (
     <div className="flex flex-col min-h-screen bg-indigo-50 dark:bg-[#110f18] text-slate-800 dark:text-gray-200 transition-colors duration-300">
       <Header />
-      <main className="flex-grow p-4 sm:p-6 md:p-8">
+      <main className="flex-grow p-4 sm:p-6 md:p-8 print-hidden">
         <div className="max-w-6xl mx-auto">
           {error && (
             <div className="bg-red-100 dark:bg-red-950/40 border border-red-400 dark:border-red-900/50 text-red-700 dark:text-red-400 px-6 py-4 rounded-[2rem] mb-8 shadow-sm text-center font-medium">
@@ -475,8 +475,8 @@ function WelcomePage() {
 
       {/* Salary Slip Modal */}
       {activeSlip && (
-        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50 print:bg-white print:p-0 print:absolute print:inset-0 backdrop-blur-sm">
-          <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] text-slate-900 dark:text-gray-200 rounded-[2rem] p-8 max-w-lg w-full shadow-2xl relative overflow-y-auto max-h-[90vh] print:shadow-none print:max-h-full print:rounded-none transition-colors duration-300">
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50 print:static print:bg-transparent print:p-0 print:overflow-visible backdrop-blur-sm">
+          <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] text-slate-900 dark:text-gray-200 rounded-[2rem] p-8 max-w-lg w-full shadow-2xl relative overflow-y-auto max-h-[90vh] print:shadow-none print:max-h-full print:rounded-none print:p-0 print:border-none transition-colors duration-300">
             {/* Modal Header */}
             <div className="flex justify-between items-center border-b border-slate-100 dark:border-[#262235] pb-4 mb-4 print:hidden">
               <h3 className="text-xl font-bold text-slate-950 dark:text-white">Salary Slip Details</h3>

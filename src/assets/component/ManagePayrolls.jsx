@@ -185,7 +185,7 @@ function ManagePayrolls() {
     return (
         <div className="flex flex-col min-h-screen bg-indigo-50 dark:bg-[#110f18] text-slate-800 dark:text-gray-200 transition-colors duration-300">
             <Header />
-            <main className="flex-grow p-4 sm:p-6 md:p-8">
+            <main className="flex-grow p-4 sm:p-6 md:p-8 print-hidden">
                 <div className="max-w-7xl mx-auto">
                     <Link
                         to="/Main"
@@ -490,7 +490,7 @@ function ManagePayrolls() {
 
             {/* PRINT PREVIEW MODAL */}
             {activeSlip && (
-                <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4 print:static print:bg-transparent print:p-0 print:overflow-visible">
                     <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] w-full max-w-xl rounded-[2rem] p-6 shadow-2xl relative transition-colors duration-300 animate-slide-down print:p-0 print:border-none print:shadow-none print:bg-white print:text-black">
 
                         {/* Slip Printable Block */}
