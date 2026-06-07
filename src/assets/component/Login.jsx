@@ -83,9 +83,14 @@ function Login() {
           <div className="relative z-10 flex items-center w-full">
             <div className="flex items-center gap-2">
               <img src={logo} alt="Sakshi Logo" className="h-9 w-auto rounded-lg shadow-md border border-[#3e3857]" />
-              <span className="company-name-light font-bold text-lg">
-                SAKSHI E.
-              </span>
+              <div className="flex flex-col justify-center leading-[1.05]">
+                <span className="company-name-light text-[13px] tracking-wider block">
+                  SAKSHI
+                </span>
+                <span className="company-name-light text-[8px] tracking-[0.22em] block opacity-90">
+                  ENTERPRISES
+                </span>
+              </div>
             </div>
           </div>
 
@@ -129,7 +134,14 @@ function Login() {
           {/* Logo overlay on Mobile screens */}
           <div className="flex md:hidden items-center gap-2 mb-6">
             <img src={logo} alt="Sakshi Logo" className="h-9 w-auto rounded-lg" />
-            <span className="company-name font-bold text-lg">Sakshi Enterprises</span>
+            <div className="flex flex-col justify-center leading-[1.05]">
+              <span className="company-name text-[13px] tracking-wider block">
+                Sakshi
+              </span>
+              <span className="company-name text-[8px] tracking-[0.22em] block opacity-90">
+                Enterprises
+              </span>
+            </div>
           </div>
 
           <div className="mb-8">
