@@ -28,43 +28,47 @@ const UpdateInvoice = ({ invoice, onClose }) => {
     const [igstRate, setIgstRate] = useState(() => getInitialRate(invoice.igst, initialSubtotal));
 
     const convertNumberToWords = (number) => {
-        if (number === 0) return 'Zero';
+        if (isNaN(number) || number === null || number === undefined) return '';
+
+        let num = parseFloat(number);
+        if (num < 0) return 'Negative ' + convertNumberToWords(Math.abs(num));
+        if (num === 0) return 'Zero';
 
         const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 
                       'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
         const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
 
-        const convertToWordsLessThanThousand = (num) => {
+        const convertToWordsLessThanThousand = (val) => {
             let words = '';
-            if (num >= 100) {
-                words += ones[Math.floor(num / 100)] + ' Hundred ';
-                num %= 100;
+            if (val >= 100) {
+                words += ones[Math.floor(val / 100)] + ' Hundred ';
+                val %= 100;
             }
-            if (num >= 20) {
-                words += tens[Math.floor(num / 10)] + ' ';
-                num %= 10;
+            if (val >= 20) {
+                words += tens[Math.floor(val / 10)] + ' ';
+                val %= 10;
             }
-            if (num > 0) {
-                words += ones[num] + ' ';
+            if (val > 0) {
+                words += ones[val] + ' ';
             }
             return words.trim();
         };
 
-        let integerPart = Math.floor(number);
-        let decimalPart = Math.round((number - integerPart) * 100);
+        let integerPart = Math.floor(num);
+        let decimalPart = Math.round((num - integerPart) * 100);
         let result = '';
 
-        if (integerPart >= 10000000) {
+        if (integerPart >= 10000000) { // Crore (1,00,00,000)
             const crore = Math.floor(integerPart / 10000000);
             result += convertToWordsLessThanThousand(crore) + ' Crore ';
             integerPart %= 10000000;
         }
-        if (integerPart >= 100000) {
+        if (integerPart >= 100000) { // Lakh (1,00,000)
             const lakh = Math.floor(integerPart / 100000);
             result += convertToWordsLessThanThousand(lakh) + ' Lakh ';
             integerPart %= 100000;
         }
-        if (integerPart >= 1000) {
+        if (integerPart >= 1000) { // Thousand (1,000)
             const thousand = Math.floor(integerPart / 1000);
             result += convertToWordsLessThanThousand(thousand) + ' Thousand ';
             integerPart %= 1000;
@@ -75,8 +79,13 @@ const UpdateInvoice = ({ invoice, onClose }) => {
 
         let words = result.trim();
 
+        // Convert decimal part to words (Paisa)
         if (decimalPart > 0) {
-            words += ' and ' + convertToWordsLessThanThousand(decimalPart) + ' Paisa';
+            if (words !== '') {
+                words += ' and ' + convertToWordsLessThanThousand(decimalPart) + ' Paisa';
+            } else {
+                words = convertToWordsLessThanThousand(decimalPart) + ' Paisa';
+            }
         }
 
         return words.trim();
@@ -103,19 +112,16 @@ const UpdateInvoice = ({ invoice, onClose }) => {
     const handleCgstValueChange = (newValue) => {
         const val = parseFloat(newValue) || 0;
         setCgst(val);
-        setCgstRate(subtotal > 0 ? parseFloat(((val / subtotal) * 100).toFixed(2)) : 0);
     };
 
     const handleSgstValueChange = (newValue) => {
         const val = parseFloat(newValue) || 0;
         setSgst(val);
-        setSgstRate(subtotal > 0 ? parseFloat(((val / subtotal) * 100).toFixed(2)) : 0);
     };
 
     const handleIgstValueChange = (newValue) => {
         const val = parseFloat(newValue) || 0;
         setIgst(val);
-        setIgstRate(subtotal > 0 ? parseFloat(((val / subtotal) * 100).toFixed(2)) : 0);
     };
 
     const handleUpdate = async () => {
@@ -162,8 +168,8 @@ const UpdateInvoice = ({ invoice, onClose }) => {
 
     const calculateGrandTotal = () => {
         const subtotal = calculateSubtotal();
-        const totalTaxes = parseFloat(cgst) + parseFloat(sgst) + parseFloat(igst);
-        const grandTotal = subtotal + parseFloat(freightCharges) + totalTaxes;
+        const totalTaxes = (parseFloat(cgst) || 0) + (parseFloat(sgst) || 0) + (parseFloat(igst) || 0);
+        const grandTotal = subtotal + (parseFloat(freightCharges) || 0) + totalTaxes;
         setGrandTotal(grandTotal.toFixed(2));
     };
 

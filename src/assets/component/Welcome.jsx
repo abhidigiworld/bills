@@ -126,34 +126,6 @@ function WelcomePage() {
       <Header />
       <main className="flex-grow p-4 sm:p-6 md:p-8">
         <div className="max-w-6xl mx-auto">
-          {/* Header Message */}
-          <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] rounded-[2rem] p-6 shadow-xl mb-8 flex flex-col md:flex-row justify-between items-center transition-colors duration-300">
-            <div>
-              <h2 className="text-3xl font-extrabold text-indigo-900 dark:text-white tracking-tight">
-                Welcome back, {currentUser?.name}!
-              </h2>
-              <p className="text-slate-500 dark:text-gray-400 mt-1.5 font-medium">
-                Role: <span className="font-bold text-indigo-600 dark:text-violet-400 capitalize">{currentUser?.role}</span>
-              </p>
-            </div>
-            {isAdmin && (
-              <div className="mt-4 md:mt-0 flex gap-2">
-                <Link
-                  to="/new-bill"
-                  className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold px-4 py-2.5 rounded-xl shadow-md transition duration-200"
-                >
-                  + New Bill
-                </Link>
-                <Link
-                  to="/new-employee"
-                  className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold px-4 py-2.5 rounded-xl shadow-md transition duration-200"
-                >
-                  + Add Employee
-                </Link>
-              </div>
-            )}
-          </div>
-
           {error && (
             <div className="bg-red-100 dark:bg-red-950/40 border border-red-400 dark:border-red-900/50 text-red-700 dark:text-red-400 px-6 py-4 rounded-[2rem] mb-8 shadow-sm text-center font-medium">
               {error}

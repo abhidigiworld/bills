@@ -61,22 +61,27 @@ function InvoiceComponent({ invoiceDetails }) {
     const calculateBill = () => {
         let totalAmount = 0;
         items.forEach(item => {
-            totalAmount += parseFloat(item.totalValue);
+            totalAmount += parseFloat(item.totalValue) || 0;
         });
         setTotal(totalAmount);
 
-        const totalTaxableAmount = parseFloat(totalAmount) + parseFloat(freight);
+        const freightVal = parseFloat(freight) || 0;
+        const totalTaxableAmount = totalAmount + freightVal;
+
+        const cgstRateVal = parseFloat(cgstRate) || 0;
+        const sgstRateVal = parseFloat(sgstRate) || 0;
+        const igstRateVal = parseFloat(igstRate) || 0;
 
         // Calculate individual taxes
-        const totalCgst = (parseFloat(totalTaxableAmount) * parseFloat(cgstRate)) / 100;
-        const totalSgst = (totalTaxableAmount * sgstRate) / 100;
-        const totalIgst = (totalTaxableAmount * igstRate) / 100;
+        const totalCgst = (totalTaxableAmount * cgstRateVal) / 100;
+        const totalSgst = (totalTaxableAmount * sgstRateVal) / 100;
+        const totalIgst = (totalTaxableAmount * igstRateVal) / 100;
 
-        setFreightCharges(parseFloat(freight).toFixed(2));
-        setCgst(parseFloat(totalCgst).toFixed(2));
-        setSgst(parseFloat(totalSgst).toFixed(2));
-        setIgst(parseFloat(totalIgst).toFixed(2));
-        const calculatedGrandTotal = (parseFloat(totalTaxableAmount) + parseFloat(totalCgst) + parseFloat(totalSgst) + parseFloat(totalIgst)).toFixed(2);
+        setFreightCharges(freightVal.toFixed(2));
+        setCgst(totalCgst.toFixed(2));
+        setSgst(totalSgst.toFixed(2));
+        setIgst(totalIgst.toFixed(2));
+        const calculatedGrandTotal = (totalTaxableAmount + totalCgst + totalSgst + totalIgst).toFixed(2);
         setGrandTotal(calculatedGrandTotal);
         const grandTotalWords = convertNumberToWords(parseFloat(calculatedGrandTotal));
         setGrandTotalInWords(grandTotalWords);
@@ -85,30 +90,34 @@ function InvoiceComponent({ invoiceDetails }) {
 
 
     const convertNumberToWords = (number) => {
-        if (number === 0) return 'Zero';
+        if (isNaN(number) || number === null || number === undefined) return '';
+
+        let num = parseFloat(number);
+        if (num < 0) return 'Negative ' + convertNumberToWords(Math.abs(num));
+        if (num === 0) return 'Zero';
 
         const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 
                       'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
         const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
 
-        const convertToWordsLessThanThousand = (num) => {
+        const convertToWordsLessThanThousand = (val) => {
             let words = '';
-            if (num >= 100) {
-                words += ones[Math.floor(num / 100)] + ' Hundred ';
-                num %= 100;
+            if (val >= 100) {
+                words += ones[Math.floor(val / 100)] + ' Hundred ';
+                val %= 100;
             }
-            if (num >= 20) {
-                words += tens[Math.floor(num / 10)] + ' ';
-                num %= 10;
+            if (val >= 20) {
+                words += tens[Math.floor(val / 10)] + ' ';
+                val %= 10;
             }
-            if (num > 0) {
-                words += ones[num] + ' ';
+            if (val > 0) {
+                words += ones[val] + ' ';
             }
             return words.trim();
         };
 
-        let integerPart = Math.floor(number);
-        let decimalPart = Math.round((number - integerPart) * 100);
+        let integerPart = Math.floor(num);
+        let decimalPart = Math.round((num - integerPart) * 100);
         let result = '';
 
         if (integerPart >= 10000000) { // Crore (1,00,00,000)
@@ -134,7 +143,11 @@ function InvoiceComponent({ invoiceDetails }) {
 
         // Convert decimal part to words (Paisa)
         if (decimalPart > 0) {
-            words += ' and ' + convertToWordsLessThanThousand(decimalPart) + ' Paisa';
+            if (words !== '') {
+                words += ' and ' + convertToWordsLessThanThousand(decimalPart) + ' Paisa';
+            } else {
+                words = convertToWordsLessThanThousand(decimalPart) + ' Paisa';
+            }
         }
 
         return words.trim();
