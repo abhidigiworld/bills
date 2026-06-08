@@ -103,21 +103,27 @@
     border-color: #000000 !important;
   }
 
-  /* Style the invoice print header for paper */
-  .invoice-print-header {
-    background-color: #f1f5f9 !important; /* light grey fallback */
-    background-image: none !important;
-    color: #000000 !important;
+  /* Style the invoice print header for paper, retaining gradient backgrounds */
+  .printdata .invoice-print-header {
+    background: linear-gradient(to right, #818cf8, #a78bfa) !important; /* indigo-400 to violet-400 */
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
     border: 1px solid #000000 !important;
     border-bottom: 2px solid #000000 !important;
   }
 
-  .invoice-print-header * {
-    color: #000000 !important;
+  .printdata .invoice-print-header, 
+  .printdata .invoice-print-header * {
+    color: #ffffff !important;
   }
 
   /* Style table header background in print */
   .printdata th, .printdata thead tr {
     background-color: #f8fafc !important; /* slate-50 */
+  }
+
+  /* Force hide all elements with print-hidden, print:hidden, and aside/header tags */
+  header, aside, .print-hidden, .print\:hidden, [class*="print-hidden"], [class*="print\:hidden"] {
+    display: none !important;
   }
 }
