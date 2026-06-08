@@ -12,11 +12,34 @@ function AttendanceRegister() {
 
     // Modal Edit states
     const [selectedCell, setSelectedCell] = useState(null); // { employee, dayNum }
-    const [modalForm, setModalForm] = useState({ status: 'Absent', checkIn: '', checkOut: '', overtimeHours: 0, isNightShift: false, nightShiftHours: 0 });
+    const [modalForm, setModalForm] = useState({ 
+        status: 'Absent', 
+        workedDay: true,
+        workedNight: false,
+        checkIn: '09:00', 
+        checkOut: '17:00', 
+        nightCheckIn: '20:00', 
+        nightCheckOut: '04:00',
+        overtimeHours: 0, 
+        isNightShift: false, 
+        nightShiftHours: 0 
+    });
 
     // Blanket Edit states
     const [isBlanketModalOpen, setIsBlanketModalOpen] = useState(false);
-    const [blanketForm, setBlanketForm] = useState({ dayNum: 1, status: 'Present', checkIn: '09:00', checkOut: '17:00', overtimeHours: 0, isNightShift: false, nightShiftHours: 0 });
+    const [blanketForm, setBlanketForm] = useState({ 
+        dayNum: 1, 
+        status: 'Present', 
+        workedDay: true,
+        workedNight: false,
+        checkIn: '09:00', 
+        checkOut: '17:00', 
+        nightCheckIn: '20:00', 
+        nightCheckOut: '04:00',
+        overtimeHours: 0, 
+        isNightShift: false, 
+        nightShiftHours: 0 
+    });
 
     // Hover tooltip state
     const [hoveredCell, setHoveredCell] = useState(null);
@@ -104,34 +127,39 @@ function AttendanceRegister() {
         return ot > 0 ? parseFloat(ot.toFixed(2)) : 0;
     };
 
+    const formatTimeFromDate = (dateStr, defaultVal = '') => {
+        if (!dateStr) return defaultVal;
+        try {
+            return new Date(dateStr).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+        } catch (e) {
+            return defaultVal;
+        }
+    };
+
     const handleModalFormChange = (updatedFields) => {
         setModalForm(prev => {
             let nextForm = { ...prev, ...updatedFields };
             
-            // If isNightShift is toggled, adjust default times if they are currently default day times or empty
-            if ('isNightShift' in updatedFields) {
-                if (updatedFields.isNightShift) {
-                    if (nextForm.checkIn === '09:00' || !nextForm.checkIn) nextForm.checkIn = '20:00';
-                    if (nextForm.checkOut === '17:00' || !nextForm.checkOut) nextForm.checkOut = '04:00';
-                } else {
-                    if (nextForm.checkIn === '20:00' || !nextForm.checkIn) nextForm.checkIn = '09:00';
-                    if (nextForm.checkOut === '04:00' || !nextForm.checkOut) nextForm.checkOut = '17:00';
-                }
-            }
-            
             if (nextForm.status === 'Present') {
-                const calculatedOt = calculateOvertime(nextForm.checkIn, nextForm.checkOut, nextForm.isNightShift);
-                const totalHours = calculateTotalHours(nextForm.checkIn, nextForm.checkOut, nextForm.isNightShift);
+                const hasDay = nextForm.workedDay;
+                const hasNight = nextForm.workedNight;
                 
-                if ('checkIn' in updatedFields || 'checkOut' in updatedFields || 'isNightShift' in updatedFields || 'status' in updatedFields) {
-                    nextForm.overtimeHours = calculatedOt;
-                    if (nextForm.isNightShift) {
-                        nextForm.nightShiftHours = totalHours;
-                    } else {
-                        nextForm.nightShiftHours = 0;
-                    }
+                if (hasDay) {
+                    nextForm.overtimeHours = calculateOvertime(nextForm.checkIn, nextForm.checkOut, false);
+                } else {
+                    nextForm.overtimeHours = 0;
+                }
+
+                if (hasNight) {
+                    nextForm.nightShiftHours = calculateTotalHours(nextForm.nightCheckIn, nextForm.nightCheckOut, true);
+                    nextForm.isNightShift = true;
+                } else {
+                    nextForm.nightShiftHours = 0;
+                    nextForm.isNightShift = false;
                 }
             } else {
+                nextForm.workedDay = true;
+                nextForm.workedNight = false;
                 nextForm.overtimeHours = 0;
                 nextForm.isNightShift = false;
                 nextForm.nightShiftHours = 0;
@@ -144,30 +172,26 @@ function AttendanceRegister() {
         setBlanketForm(prev => {
             let nextForm = { ...prev, ...updatedFields };
             
-            // If isNightShift is toggled, adjust default times if they are currently default day times or empty
-            if ('isNightShift' in updatedFields) {
-                if (updatedFields.isNightShift) {
-                    if (nextForm.checkIn === '09:00' || !nextForm.checkIn) nextForm.checkIn = '20:00';
-                    if (nextForm.checkOut === '17:00' || !nextForm.checkOut) nextForm.checkOut = '04:00';
-                } else {
-                    if (nextForm.checkIn === '20:00' || !nextForm.checkIn) nextForm.checkIn = '09:00';
-                    if (nextForm.checkOut === '04:00' || !nextForm.checkOut) nextForm.checkOut = '17:00';
-                }
-            }
-            
             if (nextForm.status === 'Present') {
-                const calculatedOt = calculateOvertime(nextForm.checkIn, nextForm.checkOut, nextForm.isNightShift);
-                const totalHours = calculateTotalHours(nextForm.checkIn, nextForm.checkOut, nextForm.isNightShift);
+                const hasDay = nextForm.workedDay;
+                const hasNight = nextForm.workedNight;
                 
-                if ('checkIn' in updatedFields || 'checkOut' in updatedFields || 'isNightShift' in updatedFields || 'status' in updatedFields) {
-                    nextForm.overtimeHours = calculatedOt;
-                    if (nextForm.isNightShift) {
-                        nextForm.nightShiftHours = totalHours;
-                    } else {
-                        nextForm.nightShiftHours = 0;
-                    }
+                if (hasDay) {
+                    nextForm.overtimeHours = calculateOvertime(nextForm.checkIn, nextForm.checkOut, false);
+                } else {
+                    nextForm.overtimeHours = 0;
+                }
+
+                if (hasNight) {
+                    nextForm.nightShiftHours = calculateTotalHours(nextForm.nightCheckIn, nextForm.nightCheckOut, true);
+                    nextForm.isNightShift = true;
+                } else {
+                    nextForm.nightShiftHours = 0;
+                    nextForm.isNightShift = false;
                 }
             } else {
+                nextForm.workedDay = true;
+                nextForm.workedNight = false;
                 nextForm.overtimeHours = 0;
                 nextForm.isNightShift = false;
                 nextForm.nightShiftHours = 0;
@@ -184,38 +208,50 @@ function AttendanceRegister() {
             let colorClass = '';
             let tooltip = '';
 
-            const formatTime = (dateStr) => {
-                if (!dateStr) return '';
-                try {
-                    return new Date(dateStr).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-                } catch (e) {
-                    return '';
-                }
-            };
-
-            const checkInStr = formatTime(log.checkIn);
-            const checkOutStr = formatTime(log.checkOut);
+            const checkInStr = formatTimeFromDate(log.checkIn, '');
+            const checkOutStr = formatTimeFromDate(log.checkOut, '');
+            const nightCheckInStr = formatTimeFromDate(log.nightCheckIn, '');
+            const nightCheckOutStr = formatTimeFromDate(log.nightCheckOut, '');
 
             if (status === 'Present') {
                 const ot = log.overtimeHours || 0;
-                const ns = log.isNightShift || false;
+                const workedDay = !!log.checkIn;
+                const workedNight = !!log.nightCheckIn || (log.isNightShift && log.nightShiftHours > 0);
                 
-                if (ns && ot > 0) {
-                    display = 'P🌙⁺';
-                    colorClass = 'text-indigo-600 dark:text-violet-400 font-extrabold';
-                } else if (ns) {
-                    display = 'P🌙';
+                if (workedDay && workedNight) {
+                    display = ot > 0 ? 'P☀️🌙⁺' : 'P☀️🌙';
+                    colorClass = 'text-violet-600 dark:text-violet-400 font-black';
+                } else if (workedNight) {
+                    display = ot > 0 ? 'P🌙⁺' : 'P🌙';
                     colorClass = 'text-cyan-600 dark:text-cyan-400 font-bold';
-                } else if (ot > 0) {
-                    display = 'P⁺';
-                    colorClass = 'text-emerald-600 dark:text-emerald-400 font-bold';
+                } else if (workedDay) {
+                    display = ot > 0 ? 'P⁺' : 'P';
+                    colorClass = ot > 0 ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-green-600 dark:text-green-400';
                 } else {
-                    display = 'P';
-                    colorClass = 'text-green-600 dark:text-green-400';
+                    const ns = log.isNightShift || false;
+                    if (ns && ot > 0) {
+                        display = 'P🌙⁺';
+                        colorClass = 'text-indigo-600 dark:text-violet-400 font-extrabold';
+                    } else if (ns) {
+                        display = 'P🌙';
+                        colorClass = 'text-cyan-600 dark:text-cyan-400 font-bold';
+                    } else if (ot > 0) {
+                        display = 'P⁺';
+                        colorClass = 'text-emerald-600 dark:text-emerald-400 font-bold';
+                    } else {
+                        display = 'P';
+                        colorClass = 'text-green-600 dark:text-green-400';
+                    }
                 }
                 
-                tooltip = `Present | In: ${checkInStr || '-'} | Out: ${checkOutStr || '-'}`;
-                if (ns) tooltip += ` | Night Shift: ${log.nightShiftHours || 0} hrs`;
+                tooltip = 'Present';
+                if (workedDay || (!workedDay && !workedNight)) {
+                    tooltip += ` | Day: ${checkInStr || '-'} to ${checkOutStr || '-'}`;
+                }
+                if (workedNight) {
+                    tooltip += ` | Night: ${nightCheckInStr || '-'} to ${nightCheckOutStr || '-'}`;
+                }
+                if (workedNight) tooltip += ` | Night Shift: ${log.nightShiftHours || 0} hrs`;
                 if (ot > 0) tooltip += ` | OT: ${ot} hrs`;
             } else if (status === 'Absent') {
                 display = 'A';
@@ -288,10 +324,16 @@ function AttendanceRegister() {
         const log = getLogForDay(employee._id, dayNum);
         setSelectedCell({ employee, dayNum });
         if (log) {
+            const hasCheckIn = !!log.checkIn;
+            const hasNightCheckIn = !!log.nightCheckIn;
             setModalForm({
                 status: log.status === 'Present' ? 'Present' : (log.status === 'Leave' ? 'Leave' : (log.status === 'Holiday' ? 'Holiday' : 'Absent')),
-                checkIn: log.checkIn ? new Date(log.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : '',
-                checkOut: log.checkOut ? new Date(log.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : '',
+                workedDay: hasCheckIn || (!hasCheckIn && !hasNightCheckIn),
+                workedNight: hasNightCheckIn,
+                checkIn: formatTimeFromDate(log.checkIn, '09:00'),
+                checkOut: formatTimeFromDate(log.checkOut, '17:00'),
+                nightCheckIn: formatTimeFromDate(log.nightCheckIn, '20:00'),
+                nightCheckOut: formatTimeFromDate(log.nightCheckOut, '04:00'),
                 overtimeHours: log.overtimeHours || 0,
                 isNightShift: log.isNightShift || false,
                 nightShiftHours: log.nightShiftHours || 0
@@ -303,14 +345,33 @@ function AttendanceRegister() {
             const cellDate = new Date(selectedYear, selectedMonth - 1, dayNum);
             
             const isNight = employee.defaultShift === 'Night';
-            const defaultCheckIn = isNight ? '20:00' : '09:00';
-            const defaultCheckOut = isNight ? '04:00' : '17:00';
-            const defaultNsHours = isNight ? 8 : 0;
             
             if (cellDate > today) {
-                setModalForm({ status: 'Present', checkIn: defaultCheckIn, checkOut: defaultCheckOut, overtimeHours: 0, isNightShift: isNight, nightShiftHours: defaultNsHours });
+                setModalForm({ 
+                    status: 'Present', 
+                    workedDay: !isNight,
+                    workedNight: isNight,
+                    checkIn: '09:00', 
+                    checkOut: '17:00', 
+                    nightCheckIn: '20:00', 
+                    nightCheckOut: '04:00',
+                    overtimeHours: 0, 
+                    isNightShift: isNight, 
+                    nightShiftHours: isNight ? 8 : 0 
+                });
             } else {
-                setModalForm({ status: 'Absent', checkIn: '', checkOut: '', overtimeHours: 0, isNightShift: isNight, nightShiftHours: 0 });
+                setModalForm({ 
+                    status: 'Absent', 
+                    workedDay: !isNight,
+                    workedNight: isNight,
+                    checkIn: '09:00', 
+                    checkOut: '17:00', 
+                    nightCheckIn: '20:00', 
+                    nightCheckOut: '04:00',
+                    overtimeHours: 0, 
+                    isNightShift: isNight, 
+                    nightShiftHours: 0 
+                });
             }
         }
     };
@@ -325,8 +386,12 @@ function AttendanceRegister() {
                 employeeId: employee._id,
                 date: dateStr,
                 status: modalForm.status,
-                checkIn: modalForm.status === 'Present' ? modalForm.checkIn : null,
-                checkOut: modalForm.status === 'Present' ? modalForm.checkOut : null,
+                workedDay: modalForm.status === 'Present' ? modalForm.workedDay : false,
+                workedNight: modalForm.status === 'Present' ? modalForm.workedNight : false,
+                checkIn: modalForm.status === 'Present' && modalForm.workedDay ? modalForm.checkIn : null,
+                checkOut: modalForm.status === 'Present' && modalForm.workedDay ? modalForm.checkOut : null,
+                nightCheckIn: modalForm.status === 'Present' && modalForm.workedNight ? modalForm.nightCheckIn : null,
+                nightCheckOut: modalForm.status === 'Present' && modalForm.workedNight ? modalForm.nightCheckOut : null,
                 overtimeHours: modalForm.status === 'Present' ? modalForm.overtimeHours : 0,
                 isNightShift: modalForm.status === 'Present' ? modalForm.isNightShift : false,
                 nightShiftHours: modalForm.status === 'Present' ? modalForm.nightShiftHours : 0
@@ -345,8 +410,12 @@ function AttendanceRegister() {
             await axios.post(`${API_BASE_URL}/api/attendance/blanket-mark`, {
                 date: dateStr,
                 status: blanketForm.status,
-                checkIn: blanketForm.status === 'Present' ? blanketForm.checkIn : null,
-                checkOut: blanketForm.status === 'Present' ? blanketForm.checkOut : null,
+                workedDay: blanketForm.status === 'Present' ? blanketForm.workedDay : false,
+                workedNight: blanketForm.status === 'Present' ? blanketForm.workedNight : false,
+                checkIn: blanketForm.status === 'Present' && blanketForm.workedDay ? blanketForm.checkIn : null,
+                checkOut: blanketForm.status === 'Present' && blanketForm.workedDay ? blanketForm.checkOut : null,
+                nightCheckIn: blanketForm.status === 'Present' && blanketForm.workedNight ? blanketForm.nightCheckIn : null,
+                nightCheckOut: blanketForm.status === 'Present' && blanketForm.workedNight ? blanketForm.nightCheckOut : null,
                 overtimeHours: blanketForm.status === 'Present' ? blanketForm.overtimeHours : 0,
                 isNightShift: blanketForm.status === 'Present' ? blanketForm.isNightShift : false,
                 nightShiftHours: blanketForm.status === 'Present' ? blanketForm.nightShiftHours : 0
@@ -482,6 +551,8 @@ function AttendanceRegister() {
                                                                                     status: log.status,
                                                                                     checkIn: log.checkIn ? new Date(log.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : null,
                                                                                     checkOut: log.checkOut ? new Date(log.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : null,
+                                                                                    nightCheckIn: log.nightCheckIn ? new Date(log.nightCheckIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : null,
+                                                                                    nightCheckOut: log.nightCheckOut ? new Date(log.nightCheckOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : null,
                                                                                     isNightShift: log.isNightShift,
                                                                                     nightShiftHours: log.nightShiftHours || 0,
                                                                                     overtimeHours: log.overtimeHours,
@@ -523,9 +594,9 @@ function AttendanceRegister() {
                     )}
 
                     {/* Legend Section */}
-                    <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl p-6 mt-8 transition-colors duration-300">
+                    <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl p-6 mt-8 transition-colors duration-300 print-hidden">
                         <h4 className="text-sm font-bold text-slate-900 dark:text-white mb-4 uppercase tracking-wider">Attendance Status Legend & Guide</h4>
-                        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-4 text-xs">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-10 gap-4 text-xs">
                             <div className="flex items-center gap-2">
                                 <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-green-50 dark:bg-green-950/20 text-green-600 dark:text-green-400 border border-green-200 dark:border-green-900/30">P</span>
                                 <div>
@@ -550,8 +621,22 @@ function AttendanceRegister() {
                             <div className="flex items-center gap-2">
                                 <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-violet-400 border border-indigo-200 dark:border-indigo-900/30">P🌙⁺</span>
                                 <div>
-                                    <p className="font-semibold text-slate-800 dark:text-white">Night Shift + OT</p>
+                                    <p className="font-semibold text-slate-800 dark:text-white">Night + OT</p>
                                     <p className="text-[10px] text-slate-400">Overnight + OT</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-violet-50 dark:bg-violet-950/20 text-violet-600 dark:text-violet-400 border border-violet-200 dark:border-violet-900/30">P☀️🌙</span>
+                                <div>
+                                    <p className="font-semibold text-slate-800 dark:text-white">Both Shifts</p>
+                                    <p className="text-[10px] text-slate-400">Day & Night</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-violet-100 dark:bg-violet-950/40 text-violet-750 dark:text-violet-350 border border-violet-300 dark:border-violet-900/40">P☀️🌙⁺</span>
+                                <div>
+                                    <p className="font-semibold text-slate-800 dark:text-white">Both + OT</p>
+                                    <p className="text-[10px] text-slate-400">Day/Night + OT</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-2">
@@ -629,72 +714,126 @@ function AttendanceRegister() {
                             </div>
 
                             {modalForm.status === 'Present' && (
-                                <div className="space-y-4 animate-fade-in">
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Check In</label>
-                                            <input
-                                                type="time"
-                                                value={modalForm.checkIn}
-                                                onChange={(e) => handleModalFormChange({ checkIn: e.target.value })}
-                                                className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Check Out</label>
-                                            <input
-                                                type="time"
-                                                value={modalForm.checkOut}
-                                                onChange={(e) => handleModalFormChange({ checkOut: e.target.value })}
-                                                className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-col gap-2 bg-slate-50 dark:bg-[#201d2c] p-2.5 rounded-lg border border-slate-200 dark:border-[#37314e]">
-                                        <div className="flex items-center justify-between">
-                                            <label className="text-xs font-bold text-slate-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer select-none flex items-center gap-2">
+                                <div className="space-y-4 animate-fade-in print-hidden">
+                                    {/* Day Shift Section */}
+                                    <div className="flex flex-col bg-slate-50 dark:bg-[#201d2c] p-3 rounded-lg border border-slate-200 dark:border-[#37314e] transition">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <label className="text-xs font-bold text-slate-700 dark:text-gray-200 uppercase tracking-wider cursor-pointer select-none flex items-center gap-2">
                                                 <input
                                                     type="checkbox"
-                                                    checked={modalForm.isNightShift}
-                                                    onChange={(e) => handleModalFormChange({ isNightShift: e.target.checked })}
+                                                    checked={modalForm.workedDay}
+                                                    onChange={(e) => handleModalFormChange({ workedDay: e.target.checked })}
                                                     className="rounded text-violet-600 focus:ring-violet-500 bg-slate-100 dark:bg-[#201d2c] border-slate-300 dark:border-[#37314e] h-4 w-4"
                                                 />
-                                                🌙 Night Shift
+                                                ☀️ Day Shift
                                             </label>
-                                            <div className="flex items-center gap-2">
-                                                <label className="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider">OT (Hrs):</label>
-                                                <input
-                                                    type="number"
-                                                    step="0.5"
-                                                    min="0"
-                                                    value={modalForm.overtimeHours}
-                                                    onChange={(e) => handleModalFormChange({ overtimeHours: parseFloat(e.target.value) || 0 })}
-                                                    className="w-16 px-2 py-1 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded text-sm text-center text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 font-semibold"
-                                                />
-                                            </div>
+                                            {modalForm.workedDay && modalForm.overtimeHours > 0 && (
+                                                <span className="text-[10px] font-extrabold bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 px-2 py-0.5 rounded-full">
+                                                    OT: {modalForm.overtimeHours} hrs
+                                                </span>
+                                            )}
                                         </div>
-                                        {modalForm.isNightShift && (
-                                            <div className="flex items-center justify-between border-t border-slate-200 dark:border-[#37314e] pt-2 mt-1 animate-fade-in">
-                                                <span className="text-xs font-semibold text-slate-500 dark:text-gray-400">Night Shift Duration:</span>
-                                                <div className="flex items-center gap-2">
-                                                    <label className="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider">NS (Hrs):</label>
+
+                                        {modalForm.workedDay && (
+                                            <div className="grid grid-cols-2 gap-3 mt-1 animate-fade-in">
+                                                <div>
+                                                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Check In</label>
                                                     <input
-                                                        type="number"
-                                                        step="0.5"
-                                                        min="0"
-                                                        value={modalForm.nightShiftHours}
-                                                        onChange={(e) => handleModalFormChange({ nightShiftHours: parseFloat(e.target.value) || 0 })}
-                                                        className="w-16 px-2 py-1 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded text-sm text-center text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 font-semibold"
+                                                        type="time"
+                                                        value={modalForm.checkIn}
+                                                        onChange={(e) => handleModalFormChange({ checkIn: e.target.value })}
+                                                        className="w-full px-2.5 py-1.5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center animate-fade-in"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Check Out</label>
+                                                    <input
+                                                        type="time"
+                                                        value={modalForm.checkOut}
+                                                        onChange={(e) => handleModalFormChange({ checkOut: e.target.value })}
+                                                        className="w-full px-2.5 py-1.5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center animate-fade-in"
                                                     />
                                                 </div>
                                             </div>
                                         )}
                                     </div>
+
+                                    {/* Night Shift Section */}
+                                    <div className="flex flex-col bg-slate-50 dark:bg-[#201d2c] p-3 rounded-lg border border-slate-200 dark:border-[#37314e] transition">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <label className="text-xs font-bold text-slate-700 dark:text-gray-200 uppercase tracking-wider cursor-pointer select-none flex items-center gap-2">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={modalForm.workedNight}
+                                                    onChange={(e) => handleModalFormChange({ workedNight: e.target.checked })}
+                                                    className="rounded text-violet-600 focus:ring-violet-500 bg-slate-100 dark:bg-[#201d2c] border-slate-300 dark:border-[#37314e] h-4 w-4"
+                                                />
+                                                🌙 Night Shift
+                                            </label>
+                                            {modalForm.workedNight && modalForm.nightShiftHours > 0 && (
+                                                <span className="text-[10px] font-extrabold bg-cyan-100 dark:bg-cyan-950/40 text-cyan-700 dark:text-cyan-300 px-2 py-0.5 rounded-full">
+                                                    NS: {modalForm.nightShiftHours} hrs
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        {modalForm.workedNight && (
+                                            <div className="grid grid-cols-2 gap-3 mt-1 animate-fade-in">
+                                                <div>
+                                                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Check In</label>
+                                                    <input
+                                                        type="time"
+                                                        value={modalForm.nightCheckIn}
+                                                        onChange={(e) => handleModalFormChange({ nightCheckIn: e.target.value })}
+                                                        className="w-full px-2.5 py-1.5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center animate-fade-in"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Check Out</label>
+                                                    <input
+                                                        type="time"
+                                                        value={modalForm.nightCheckOut}
+                                                        onChange={(e) => handleModalFormChange({ nightCheckOut: e.target.value })}
+                                                        className="w-full px-2.5 py-1.5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center animate-fade-in"
+                                                    />
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Manual Overrides Display/Adjust */}
+                                    <div className="grid grid-cols-2 gap-4 bg-slate-50 dark:bg-[#201d2c] p-3 rounded-lg border border-slate-200 dark:border-[#37314e] text-xs">
+                                        <div className="flex items-center justify-between col-span-2 pb-1.5 border-b border-slate-200 dark:border-[#37314e] font-semibold text-slate-500 uppercase tracking-wider text-[10px]">
+                                            <span>Manual adjustments</span>
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <label className="font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider">OT (Hrs):</label>
+                                            <input
+                                                type="number"
+                                                step="0.5"
+                                                min="0"
+                                                value={modalForm.overtimeHours}
+                                                onChange={(e) => setModalForm(prev => ({ ...prev, overtimeHours: parseFloat(e.target.value) || 0 }))}
+                                                className="w-16 px-2 py-1 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded text-sm text-center text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 font-semibold"
+                                            />
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <label className="font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider">NS (Hrs):</label>
+                                            <input
+                                                type="number"
+                                                step="0.5"
+                                                min="0"
+                                                value={modalForm.nightShiftHours}
+                                                onChange={(e) => setModalForm(prev => ({ ...prev, nightShiftHours: parseFloat(e.target.value) || 0 }))}
+                                                className="w-16 px-2 py-1 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded text-sm text-center text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 font-semibold"
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             )}
                         </div>
 
-                        <div className="flex gap-3 mt-6">
+                        <div className="flex gap-3 mt-6 print-hidden">
                             <button
                                 onClick={handleSaveAttendance}
                                 className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-2.5 rounded-lg shadow transition duration-200 text-sm"
@@ -714,7 +853,7 @@ function AttendanceRegister() {
 
             {/* Blanket Mark Attendance Modal */}
             {isBlanketModalOpen && (
-                <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-65 backdrop-blur-sm flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-65 backdrop-blur-sm flex items-center justify-center p-4 print-hidden">
                     <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] w-full max-w-sm rounded-xl p-6 shadow-2xl relative transition-all duration-300 animate-slide-down">
                         <h3 className="text-lg font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-[#262235] pb-2 mb-4">
                             Blanket Attendance Mark
@@ -753,71 +892,125 @@ function AttendanceRegister() {
 
                             {blanketForm.status === 'Present' && (
                                 <div className="space-y-4 animate-fade-in">
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Check In</label>
-                                            <input
-                                                type="time"
-                                                value={blanketForm.checkIn}
-                                                onChange={(e) => handleBlanketFormChange({ checkIn: e.target.value })}
-                                                className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Check Out</label>
-                                            <input
-                                                type="time"
-                                                value={blanketForm.checkOut}
-                                                onChange={(e) => handleBlanketFormChange({ checkOut: e.target.value })}
-                                                className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-col gap-2 bg-slate-50 dark:bg-[#201d2c] p-2.5 rounded-lg border border-slate-200 dark:border-[#37314e]">
-                                        <div className="flex items-center justify-between">
-                                            <label className="text-xs font-bold text-slate-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer select-none flex items-center gap-2">
+                                    {/* Day Shift Section */}
+                                    <div className="flex flex-col bg-slate-50 dark:bg-[#201d2c] p-3 rounded-lg border border-slate-200 dark:border-[#37314e] transition">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <label className="text-xs font-bold text-slate-700 dark:text-gray-200 uppercase tracking-wider cursor-pointer select-none flex items-center gap-2">
                                                 <input
                                                     type="checkbox"
-                                                    checked={blanketForm.isNightShift}
-                                                    onChange={(e) => handleBlanketFormChange({ isNightShift: e.target.checked })}
-                                                    className="rounded text-indigo-600 focus:ring-indigo-500 bg-slate-100 dark:bg-[#201d2c] border-slate-300 dark:border-[#37314e] h-4 w-4"
+                                                    checked={blanketForm.workedDay}
+                                                    onChange={(e) => handleBlanketFormChange({ workedDay: e.target.checked })}
+                                                    className="rounded text-violet-600 focus:ring-violet-500 bg-slate-100 dark:bg-[#201d2c] border-slate-300 dark:border-[#37314e] h-4 w-4"
                                                 />
-                                                🌙 Night Shift
+                                                ☀️ Day Shift
                                             </label>
-                                            <div className="flex items-center gap-2">
-                                                <label className="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider">OT (Hrs):</label>
-                                                <input
-                                                    type="number"
-                                                    step="0.5"
-                                                    min="0"
-                                                    value={blanketForm.overtimeHours}
-                                                    onChange={(e) => handleBlanketFormChange({ overtimeHours: parseFloat(e.target.value) || 0 })}
-                                                    className="w-16 px-2 py-1 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded text-sm text-center text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-500 font-semibold"
-                                                />
-                                            </div>
+                                            {blanketForm.workedDay && blanketForm.overtimeHours > 0 && (
+                                                <span className="text-[10px] font-extrabold bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 px-2 py-0.5 rounded-full">
+                                                    OT: {blanketForm.overtimeHours} hrs
+                                                </span>
+                                            )}
                                         </div>
-                                        {blanketForm.isNightShift && (
-                                            <div className="flex items-center justify-between border-t border-slate-200 dark:border-[#37314e] pt-2 mt-1 animate-fade-in">
-                                                <span className="text-xs font-semibold text-slate-500 dark:text-gray-400">Night Shift Duration:</span>
-                                                <div className="flex items-center gap-2">
-                                                    <label className="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider">NS (Hrs):</label>
+
+                                        {blanketForm.workedDay && (
+                                            <div className="grid grid-cols-2 gap-3 mt-1 animate-fade-in">
+                                                <div>
+                                                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Check In</label>
                                                     <input
-                                                        type="number"
-                                                        step="0.5"
-                                                        min="0"
-                                                        value={blanketForm.nightShiftHours}
-                                                        onChange={(e) => handleBlanketFormChange({ nightShiftHours: parseFloat(e.target.value) || 0 })}
-                                                        className="w-16 px-2 py-1 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded text-sm text-center text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-500 font-semibold"
+                                                        type="time"
+                                                        value={blanketForm.checkIn}
+                                                        onChange={(e) => handleBlanketFormChange({ checkIn: e.target.value })}
+                                                        className="w-full px-2.5 py-1.5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center animate-fade-in"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Check Out</label>
+                                                    <input
+                                                        type="time"
+                                                        value={blanketForm.checkOut}
+                                                        onChange={(e) => handleBlanketFormChange({ checkOut: e.target.value })}
+                                                        className="w-full px-2.5 py-1.5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center animate-fade-in"
                                                     />
                                                 </div>
                                             </div>
                                         )}
                                     </div>
+
+                                    {/* Night Shift Section */}
+                                    <div className="flex flex-col bg-slate-50 dark:bg-[#201d2c] p-3 rounded-lg border border-slate-200 dark:border-[#37314e] transition">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <label className="text-xs font-bold text-slate-700 dark:text-gray-200 uppercase tracking-wider cursor-pointer select-none flex items-center gap-2">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={blanketForm.workedNight}
+                                                    onChange={(e) => handleBlanketFormChange({ workedNight: e.target.checked })}
+                                                    className="rounded text-violet-600 focus:ring-violet-500 bg-slate-100 dark:bg-[#201d2c] border-slate-300 dark:border-[#37314e] h-4 w-4"
+                                                />
+                                                🌙 Night Shift
+                                            </label>
+                                            {blanketForm.workedNight && blanketForm.nightShiftHours > 0 && (
+                                                <span className="text-[10px] font-extrabold bg-cyan-100 dark:bg-cyan-950/40 text-cyan-700 dark:text-cyan-300 px-2 py-0.5 rounded-full">
+                                                    NS: {blanketForm.nightShiftHours} hrs
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        {blanketForm.workedNight && (
+                                            <div className="grid grid-cols-2 gap-3 mt-1 animate-fade-in">
+                                                <div>
+                                                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Check In</label>
+                                                    <input
+                                                        type="time"
+                                                        value={blanketForm.nightCheckIn}
+                                                        onChange={(e) => handleBlanketFormChange({ nightCheckIn: e.target.value })}
+                                                        className="w-full px-2.5 py-1.5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center animate-fade-in"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Check Out</label>
+                                                    <input
+                                                        type="time"
+                                                        value={blanketForm.nightCheckOut}
+                                                        onChange={(e) => handleBlanketFormChange({ nightCheckOut: e.target.value })}
+                                                        className="w-full px-2.5 py-1.5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center animate-fade-in"
+                                                    />
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Manual Overrides Display/Adjust */}
+                                    <div className="grid grid-cols-2 gap-4 bg-slate-50 dark:bg-[#201d2c] p-3 rounded-lg border border-slate-200 dark:border-[#37314e] text-xs">
+                                        <div className="flex items-center justify-between col-span-2 pb-1.5 border-b border-slate-200 dark:border-[#37314e] font-semibold text-slate-500 uppercase tracking-wider text-[10px]">
+                                            <span>Manual adjustments</span>
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <label className="font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider">OT (Hrs):</label>
+                                            <input
+                                                type="number"
+                                                step="0.5"
+                                                min="0"
+                                                value={blanketForm.overtimeHours}
+                                                onChange={(e) => setBlanketForm(prev => ({ ...prev, overtimeHours: parseFloat(e.target.value) || 0 }))}
+                                                className="w-16 px-2 py-1 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded text-sm text-center text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 font-semibold"
+                                            />
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <label className="font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider">NS (Hrs):</label>
+                                            <input
+                                                type="number"
+                                                step="0.5"
+                                                min="0"
+                                                value={blanketForm.nightShiftHours}
+                                                onChange={(e) => setBlanketForm(prev => ({ ...prev, nightShiftHours: parseFloat(e.target.value) || 0 }))}
+                                                className="w-16 px-2 py-1 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded text-sm text-center text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 font-semibold"
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             )}
                         </div>
 
-                        <div className="flex gap-3 mt-6">
+                        <div className="flex gap-3 mt-6 print-hidden">
                             <button
                                 onClick={handleSaveBlanketAttendance}
                                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-lg shadow transition duration-200 text-sm"
@@ -837,7 +1030,7 @@ function AttendanceRegister() {
             {/* Custom Hover Tooltip */}
             {hoveredCell && (
                 <div 
-                    className="fixed z-50 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] text-slate-800 dark:text-gray-200 p-4 rounded-xl shadow-2xl text-xs space-y-2 pointer-events-none transition-all duration-150"
+                    className="fixed z-50 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] text-slate-800 dark:text-gray-200 p-4 rounded-xl shadow-2xl text-xs space-y-2 pointer-events-none transition-all duration-150 print-hidden"
                     style={{ 
                         left: `${hoveredCell.x}px`, 
                         top: `${hoveredCell.y}px`,
@@ -859,18 +1052,30 @@ function AttendanceRegister() {
                     </div>
                     {hoveredCell.status === 'Present' && (
                         <>
-                            <div className="flex justify-between">
-                                <span className="text-slate-400 dark:text-gray-500">In / Out Time:</span>
-                                <span className="font-semibold text-slate-900 dark:text-white">
-                                    {hoveredCell.checkIn || '-'} to {hoveredCell.checkOut || '-'}
-                                </span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span className="text-slate-400 dark:text-gray-500">Shift Type:</span>
-                                <span className="font-semibold text-slate-900 dark:text-white">
-                                    {hoveredCell.isNightShift ? `🌙 Night (${hoveredCell.nightShiftHours || 0} hrs)` : '☀️ Regular Shift'}
-                                </span>
-                            </div>
+                            {(hoveredCell.checkIn || hoveredCell.checkOut) && (
+                                <div className="flex justify-between">
+                                    <span className="text-slate-400 dark:text-gray-500">☀️ Day Shift:</span>
+                                    <span className="font-semibold text-slate-900 dark:text-white">
+                                        {hoveredCell.checkIn || '-'} to {hoveredCell.checkOut || '-'}
+                                    </span>
+                                </div>
+                            )}
+                            {(hoveredCell.nightCheckIn || hoveredCell.nightCheckOut || hoveredCell.isNightShift) && (
+                                <div className="flex justify-between">
+                                    <span className="text-slate-400 dark:text-gray-500">🌙 Night Shift:</span>
+                                    <span className="font-semibold text-slate-900 dark:text-white">
+                                        {hoveredCell.nightCheckIn || '-'} to {hoveredCell.nightCheckOut || '-'}
+                                    </span>
+                                </div>
+                            )}
+                            {hoveredCell.isNightShift && (
+                                <div className="flex justify-between">
+                                    <span className="text-slate-400 dark:text-gray-500">Night Duration:</span>
+                                    <span className="font-semibold text-slate-900 dark:text-white">
+                                        {hoveredCell.nightShiftHours || 0} hrs
+                                    </span>
+                                </div>
+                            )}
                             <div className="flex justify-between">
                                 <span className="text-slate-400 dark:text-gray-500">Overtime:</span>
                                 <span className="font-bold text-emerald-600 dark:text-emerald-400">
