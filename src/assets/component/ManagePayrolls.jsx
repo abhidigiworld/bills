@@ -277,7 +277,8 @@ function ManagePayrolls() {
     };
 
     return (
-        <div className="max-w-7xl mx-auto animate-fade-in">
+        <>
+            <div className="max-w-7xl mx-auto animate-fade-in">
 
                     {error && (
                         <div className="max-w-md mx-auto mb-6 bg-red-100 dark:bg-red-950/40 border border-red-400 dark:border-red-900/50 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg text-center text-sm font-medium">
@@ -796,7 +797,7 @@ function ManagePayrolls() {
                     </div>
                 );
             })()}
-        </div>
+        </>
     );
 }
 
