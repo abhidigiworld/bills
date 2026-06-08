@@ -304,7 +304,7 @@ function DashboardLayout() {
         <aside 
           onMouseEnter={() => setIsSidebarHovered(true)}
           onMouseLeave={() => setIsSidebarHovered(false)}
-          className={`${isSidebarHovered ? 'w-64' : 'w-20'} bg-white dark:bg-[#181622] border-r border-slate-200/50 dark:border-[#262235]/65 flex flex-col justify-between pb-6 shrink-0 transition-all duration-300 ease-in-out print:hidden z-20 h-full`}
+          className={`${isSidebarHovered ? 'w-64' : 'w-20'} bg-white/70 dark:bg-[#181622]/70 backdrop-blur-md border-r border-slate-200/40 dark:border-[#262235]/40 flex flex-col justify-between pb-6 shrink-0 transition-all duration-300 ease-in-out print:hidden z-20 h-full`}
         >
           <div className="w-full flex flex-col overflow-y-auto overflow-x-hidden scrollbar-none pt-0">
             {/* Grouped Sidebar Menu Items */}
