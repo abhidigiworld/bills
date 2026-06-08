@@ -15,11 +15,23 @@ function AddEmployee() {
         defaultShift: 'Day'
     });
     const [isEditing, setIsEditing] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
     const [error, setError] = useState('');
 
     useEffect(() => {
         fetchEmployees();
     }, []);
+
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape' && isOpen) {
+                setIsOpen(false);
+                setIsEditing(false);
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isOpen]);
 
     const fetchEmployees = async () => {
         try {
@@ -69,6 +81,7 @@ function AddEmployee() {
                 status: 'Active',
                 defaultShift: 'Day'
             });
+            setIsOpen(false);
             fetchEmployees();
         } catch (error) {
             console.error("Error saving employee:", error);
@@ -86,6 +99,7 @@ function AddEmployee() {
             defaultShift: emp.defaultShift || 'Day'
         });
         setIsEditing(true);
+        setIsOpen(true);
     };
 
     const handleDelete = async (id) => {
@@ -102,137 +116,35 @@ function AddEmployee() {
 
     return (
         <div className="max-w-5xl mx-auto animate-fade-in">
-            {error && (
-                <div className="max-w-lg mx-auto mb-6 bg-red-100 dark:bg-red-950/40 border border-red-400 dark:border-red-900/50 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg text-center text-sm font-medium">
-                    {error}
-                </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-6 sm:p-8 mb-10 max-w-lg mx-auto transition-colors duration-300">
-                <h3 className="text-lg font-black mb-4 text-indigo-900 dark:text-white pb-2 border-b border-slate-100 dark:border-[#262235]">
-                    {isEditing ? 'Edit Employee Profile' : 'Register New Employee'}
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                    <div>
-                        <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Name</label>
-                        <input
-                            type="text"
-                            name="name"
-                            placeholder="Employee Name"
-                            value={employee.name}
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
-                            required
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Email</label>
-                        <input
-                            type="email"
-                            name="email"
-                            placeholder="name@company.com"
-                            value={employee.email}
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
-                            required
-                        />
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                    <div>
-                        <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Designation</label>
-                        <input
-                            type="text"
-                            name="designation"
-                            placeholder="e.g. Developer, Staff"
-                            value={employee.designation}
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Location</label>
-                        <input
-                            type="text"
-                            name="location"
-                            placeholder="e.g. New Delhi"
-                            value={employee.location}
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
-                        />
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                    <div>
-                        <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Date of Joining</label>
-                        <input
-                            type="date"
-                            name="dateOfJoining"
-                            value={employee.dateOfJoining}
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
-                            required
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Gross Salary (Monthly)</label>
-                        <input
-                            type="number"
-                            name="grossSalary"
-                            placeholder="Gross Salary in ₹"
-                            value={employee.grossSalary || ''}
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
-                            required
-                        />
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                    <div>
-                        <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Status</label>
-                        <select
-                            name="status"
-                            value={employee.status}
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
-                        >
-                            <option value="Active">Active</option>
-                            <option value="On Hold">On Hold</option>
-                            <option value="On Holiday">On Holiday</option>
-                            <option value="Inactive">Inactive</option>
-                            <option value="Discontinued">Discontinued</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Default Shift</label>
-                        <select
-                            name="defaultShift"
-                            value={employee.defaultShift || 'Day'}
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
-                        >
-                            <option value="Day">Day Shift (09:00 - 17:00)</option>
-                            <option value="Night">Night Shift (20:00 - 04:00)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <button 
-                    type="submit" 
-                    className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition duration-200 transform hover:scale-[1.01] active:scale-[0.99] w-full text-sm"
+            {/* Header row: Title on the left, Add button on the right */}
+            <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">Registered Employees</h3>
+                <button
+                    onClick={() => {
+                        setEmployee({ 
+                            name: '', 
+                            email: '', 
+                            dateOfJoining: '', 
+                            grossSalary: 0, 
+                            designation: '',
+                            location: '',
+                            status: 'Active',
+                            defaultShift: 'Day'
+                        });
+                        setError('');
+                        setIsEditing(false);
+                        setIsOpen(true);
+                    }}
+                    className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2.5 px-4 rounded-xl text-sm transition-all duration-200 shadow-md hover:scale-[1.02] active:scale-[0.98]"
                 >
-                    {isEditing ? 'Update Employee Profile' : 'Register Employee'}
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    <span>Add Employee</span>
                 </button>
-            </form>
+            </div>
 
-            <h3 className="text-xl font-extrabold mb-4 text-indigo-900 dark:text-white text-center">Registered Employees</h3>
-
+            {/* Registered Employees Table */}
             <div className="overflow-x-auto bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-4 transition-colors duration-300">
                 {employees.length > 0 ? (
                     <table className="w-full text-sm text-left">
@@ -301,6 +213,167 @@ function AddEmployee() {
                     <p className="text-gray-500 text-center py-6 font-medium">No employees registered in the system.</p>
                 )}
             </div>
+
+            {/* REGISTRATION & EDIT MODAL OVERLAY */}
+            {isOpen && (
+                <div 
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget) {
+                            setIsOpen(false);
+                            setIsEditing(false);
+                            setError('');
+                        }
+                    }}
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto"
+                >
+                    <div className="relative bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-2xl rounded-2xl w-full max-w-lg overflow-y-auto p-6 sm:p-8 transition-colors duration-300 animate-slide-down">
+                        {/* Close button */}
+                        <button
+                            onClick={() => {
+                                setIsOpen(false);
+                                setIsEditing(false);
+                                setError('');
+                            }}
+                            className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+                            title="Close"
+                        >
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <h3 className="text-lg font-black text-indigo-950 dark:text-white pb-2 border-b border-slate-100 dark:border-[#262235] mb-4">
+                                {isEditing ? 'Edit Employee Profile' : 'Register New Employee'}
+                            </h3>
+
+                            {error && (
+                                <div className="mb-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/40 text-red-700 dark:text-red-400 px-4 py-2.5 rounded-lg text-center text-xs font-semibold">
+                                    {error}
+                                </div>
+                            )}
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-[10px] font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Name</label>
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        placeholder="Employee Name"
+                                        value={employee.name}
+                                        onChange={handleInputChange}
+                                        className="w-full px-3.5 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-violet-500 transition"
+                                        required
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-[10px] font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Email</label>
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        placeholder="name@company.com"
+                                        value={employee.email}
+                                        onChange={handleInputChange}
+                                        className="w-full px-3.5 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-violet-500 transition"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-[10px] font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Designation</label>
+                                    <input
+                                        type="text"
+                                        name="designation"
+                                        placeholder="e.g. Developer, Staff"
+                                        value={employee.designation}
+                                        onChange={handleInputChange}
+                                        className="w-full px-3.5 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-violet-500 transition"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-[10px] font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Location</label>
+                                    <input
+                                        type="text"
+                                        name="location"
+                                        placeholder="e.g. New Delhi"
+                                        value={employee.location}
+                                        onChange={handleInputChange}
+                                        className="w-full px-3.5 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-violet-500 transition"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-[10px] font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Date of Joining</label>
+                                    <input
+                                        type="date"
+                                        name="dateOfJoining"
+                                        value={employee.dateOfJoining}
+                                        onChange={handleInputChange}
+                                        className="w-full px-3.5 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition"
+                                        required
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-[10px] font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Gross Salary (Monthly)</label>
+                                    <input
+                                        type="number"
+                                        name="grossSalary"
+                                        placeholder="Gross Salary in ₹"
+                                        value={employee.grossSalary || ''}
+                                        onChange={handleInputChange}
+                                        className="w-full px-3.5 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-violet-500 transition"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-[10px] font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Status</label>
+                                    <select
+                                        name="status"
+                                        value={employee.status}
+                                        onChange={handleInputChange}
+                                        className="w-full px-3.5 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition cursor-pointer"
+                                    >
+                                        <option value="Active">Active</option>
+                                        <option value="On Hold">On Hold</option>
+                                        <option value="On Holiday">On Holiday</option>
+                                        <option value="Inactive">Inactive</option>
+                                        <option value="Discontinued">Discontinued</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Default Shift</label>
+                                    <select
+                                        name="defaultShift"
+                                        value={employee.defaultShift || 'Day'}
+                                        onChange={handleInputChange}
+                                        className="w-full px-3.5 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition cursor-pointer"
+                                    >
+                                        <option value="Day">Day Shift (09:00 - 17:00)</option>
+                                        <option value="Night">Night Shift (20:00 - 04:00)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button 
+                                type="submit" 
+                                className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2.5 px-4 rounded-xl shadow-lg transition duration-200 transform hover:scale-[1.01] active:scale-[0.99] w-full text-xs mt-6"
+                            >
+                                {isEditing ? 'Update Employee Profile' : 'Register Employee'}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
