@@ -12,6 +12,8 @@ function Bills() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
   const [invoiceToUpdate, setInvoiceToUpdate] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
     const fetchBills = async () => {
@@ -50,6 +52,7 @@ function Bills() {
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
+    setCurrentPage(1);
   };
 
   const handleUpdate = (bill) => {
@@ -75,6 +78,7 @@ function Bills() {
       direction = 'desc';
     }
     setSortConfig({ key, direction });
+    setCurrentPage(1);
   };
 
   const getSortIcon = (key) => {
@@ -145,6 +149,22 @@ function Bills() {
     return sortableBills;
   }, [filteredBills, sortConfig]);
 
+  const totalItems = sortedBills.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+
+  // Auto-adjust currentPage if it exceeds totalPages due to filtering/search
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [totalItems, itemsPerPage, totalPages, currentPage]);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+  const displayedBills = React.useMemo(() => {
+    return sortedBills.slice(startIndex, endIndex);
+  }, [sortedBills, startIndex, endIndex]);
+
   return (
     <div className="max-w-6xl mx-auto animate-fade-in">
       {alertMessage && (
@@ -214,8 +234,8 @@ function Bills() {
               </tr>
             </thead>
             <tbody>
-              {sortedBills.length > 0 ? (
-                sortedBills.map((bill) => (
+              {displayedBills.length > 0 ? (
+                displayedBills.map((bill) => (
                   <tr key={bill._id} className="border-b border-slate-100 dark:border-[#262235] hover:bg-slate-50 dark:hover:bg-[#201d2c]/50 transition duration-150">
                     <td className="px-4 py-3 font-semibold text-slate-900 dark:text-white">{bill.companyName}</td>
                     <td className="px-4 py-3 text-slate-600 dark:text-gray-300">{bill.gstin || '-'}</td>
@@ -255,6 +275,121 @@ function Bills() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Controls */}
+        {sortedBills.length > 0 && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-4 border-t border-slate-100 dark:border-[#262235]/65 print-hidden text-slate-600 dark:text-gray-300 text-xs font-semibold select-none">
+            {/* Left: Size Selector & Total count info */}
+            <div className="flex items-center gap-4 flex-wrap">
+              <div className="flex items-center gap-2">
+                <span>Show</span>
+                <select
+                  value={itemsPerPage}
+                  onChange={(e) => {
+                    setItemsPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="px-2.5 py-1 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-slate-800 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 cursor-pointer font-bold transition"
+                >
+                  <option value={10}>10</option>
+                  <option value={20}>20</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
+                <span>invoices per page</span>
+              </div>
+              <span className="text-slate-300 dark:text-slate-700">|</span>
+              <span>
+                Showing {totalItems === 0 ? 0 : startIndex + 1} to {endIndex} of {totalItems} invoices
+              </span>
+            </div>
+
+            {/* Right: Next / Prev navigation buttons */}
+            <div className="flex items-center gap-1">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(1)}
+                className="p-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-[#201d2c] disabled:opacity-40 disabled:hover:bg-transparent transition cursor-pointer text-slate-500 hover:text-indigo-600 dark:hover:text-violet-400"
+                title="First Page"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
+                </svg>
+              </button>
+              
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-[#201d2c] disabled:opacity-40 disabled:hover:bg-transparent transition cursor-pointer text-slate-500 hover:text-indigo-600 dark:hover:text-violet-400"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                </svg>
+                <span>Prev</span>
+              </button>
+
+              <div className="flex items-center gap-1 mx-1.5">
+                {Array.from({ length: totalPages }).map((_, index) => {
+                  const pageNum = index + 1;
+                  // Only display current page, one before, and one after, or first/last if small range
+                  if (
+                    totalPages <= 5 ||
+                    pageNum === 1 ||
+                    pageNum === totalPages ||
+                    Math.abs(pageNum - currentPage) <= 1
+                  ) {
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => setCurrentPage(pageNum)}
+                        className={`w-7 h-7 flex items-center justify-center rounded-lg text-xs font-bold transition ${
+                          currentPage === pageNum
+                            ? 'bg-indigo-600 dark:bg-violet-600 text-white shadow-sm'
+                            : 'hover:bg-slate-50 dark:hover:bg-[#201d2c] text-slate-600 dark:text-gray-300'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  }
+                  if (
+                    (pageNum === 2 && currentPage > 3) ||
+                    (pageNum === totalPages - 1 && currentPage < totalPages - 2)
+                  ) {
+                    return (
+                      <span key={pageNum} className="text-slate-450 px-0.5 select-none">
+                        ...
+                      </span>
+                    );
+                  }
+                  return null;
+                })}
+              </div>
+
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-[#201d2c] disabled:opacity-40 disabled:hover:bg-transparent transition cursor-pointer text-slate-500 hover:text-indigo-600 dark:hover:text-violet-400"
+              >
+                <span>Next</span>
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                </svg>
+              </button>
+
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(totalPages)}
+                className="p-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-[#201d2c] disabled:opacity-40 disabled:hover:bg-transparent transition cursor-pointer text-slate-500 hover:text-indigo-600 dark:hover:text-violet-400"
+                title="Last Page"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Details/Update modals */}
