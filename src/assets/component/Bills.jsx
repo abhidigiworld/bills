@@ -146,7 +146,7 @@ function Bills() {
   }, [filteredBills, sortConfig]);
 
   return (
-    <div className="max-w-6xl mx-auto animate-fade-in">
+    <div className={`max-w-6xl mx-auto animate-fade-in ${selectedInvoice || isUpdating ? 'print-hidden' : ''}`}>
       {alertMessage && (
         <div className="max-w-md mx-auto mb-6 bg-green-100 dark:bg-green-950/40 border border-green-400 dark:border-green-900/50 text-green-700 dark:text-green-400 px-4 py-3 rounded-lg text-center text-sm font-medium">
           {alertMessage}

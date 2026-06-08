@@ -53,8 +53,72 @@
     animation: customBounce 2s infinite;
   }
 
-  body, html, #root, .min-h-screen, .bg-indigo-50, [class*="bg-indigo-50"] {
-    background: #ffffff !important;
+  /* Strip all backgrounds and shadows from layout containers by default when printing */
+  * {
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  /* Override body, root, main workspace, and printdata to print on solid white background */
+  body, html, #root, main, .printdata, .bg-white, [class*="bg-white"] {
     background-color: #ffffff !important;
+    background-image: none !important;
+  }
+
+  body, html, #root {
+    color: #000000 !important;
+  }
+
+  /* Reset layout constraints for printing */
+  html, body, #root, 
+  [class*="h-screen"], 
+  [class*="overflow-hidden"], 
+  [class*="overflow-y-auto"], 
+  [class*="h-[calc"], 
+  main, 
+  aside {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    position: static !important;
+  }
+
+  /* Reset layout positioning for static/absolute rendering on paper */
+  .fixed, [class*="fixed"] {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* Remove flex container layout constraints in print */
+  .flex, [class*="flex-row"], [class*="flex-col"] {
+    display: block !important;
+  }
+
+  /* Force black text inside printed bills and statements, overriding dark mode text colors */
+  .printdata, .printdata * {
+    color: #000000 !important;
+    border-color: #000000 !important;
+  }
+
+  /* Style the invoice print header for paper */
+  .invoice-print-header {
+    background-color: #f1f5f9 !important; /* light grey fallback */
+    background-image: none !important;
+    color: #000000 !important;
+    border: 1px solid #000000 !important;
+    border-bottom: 2px solid #000000 !important;
+  }
+
+  .invoice-print-header * {
+    color: #000000 !important;
+  }
+
+  /* Style table header background in print */
+  .printdata th, .printdata thead tr {
+    background-color: #f8fafc !important; /* slate-50 */
   }
 }

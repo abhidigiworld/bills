@@ -268,7 +268,7 @@ function WelcomePage() {
     <>
       {isAdmin ? (
         /* ADMIN GRID (Flup Dribbble style) */
-        <div className="space-y-8 animate-fade-in">
+        <div className={`space-y-8 animate-fade-in ${activeSlip ? 'print-hidden' : ''}`}>
           
           {/* TOP STATS ROW */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
@@ -436,7 +436,7 @@ function WelcomePage() {
         </div>
       ) : (
         /* EMPLOYEE GRID */
-        <div className="space-y-8 animate-fade-in">
+        <div className={`space-y-8 animate-fade-in ${activeSlip ? 'print-hidden' : ''}`}>
           
           {/* WELCOME ROW & CLOCK CARD */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">

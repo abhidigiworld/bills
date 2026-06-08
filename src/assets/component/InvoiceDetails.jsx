@@ -162,7 +162,7 @@ function InvoiceDetails({ invoiceId, onClose }) {
                 </button>
 
                 <div className='printdata font-mono m-auto'>
-                    <div className="bg-gradient-to-r from-indigo-400 to-violet-400 text-white p-4 rounded-t-lg mr-1">
+                    <div className="bg-gradient-to-r from-indigo-400 to-violet-400 text-white p-4 rounded-t-lg mr-1 invoice-print-header border-b border-black">
                         <p className="text-2xl font-bold text-center">Tax Invoice</p>
                         <div className="flex justify-between items-center relative">
                             <div className="absolute" style={{ top: '0px', left: '-10px' }}>
