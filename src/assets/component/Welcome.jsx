@@ -4,7 +4,7 @@ import PaymentChart from './PaymentChart';
 import axios from 'axios';
 import { API_BASE_URL } from '../../config';
 import './printStyles.css';
-import logo from '../images/LOGO.png';
+import logo from '../images/LOGO1.jpeg';
 import signature from '../images/sign.png';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip } from 'recharts';
 
@@ -30,7 +30,6 @@ function WelcomePage() {
 
   // Dribbble Screen Layout States
   const [isSidebarHovered, setIsSidebarHovered] = useState(false);
-  const [activeTimeframe, setActiveTimeframe] = useState('monthly');
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
 
   // Admin stats
@@ -452,8 +451,8 @@ function WelcomePage() {
         <div className="w-full flex flex-col overflow-y-auto overflow-x-hidden scrollbar-none">
           {/* Logo Brand Header */}
           <div className="flex items-center gap-3 px-5 mb-8 border-b border-slate-100 dark:border-[#262235]/50 pb-5 h-14 overflow-hidden shrink-0">
-            {/* Permanent brand logo image (no SE text emblem) */}
-            <img src={logo} alt="Sakshi Enterprises" className="w-10 h-10 object-contain rounded-lg shrink-0" />
+            {/* Permanent brand logo image (no SE text emblem, matching other pages' background/border/shadow) */}
+            <img src={logo} alt="Sakshi Enterprises" className="w-10 h-10 object-cover rounded-xl shadow-md border border-slate-200 dark:border-[#3e3857] shrink-0" />
             
             {/* Sliding logo image and branding text */}
             <div 
@@ -586,39 +585,6 @@ function WelcomePage() {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                       </svg>
                     ), "Manage Users")}
-                    
-                    {/* Theme Toggle menu item */}
-                    <button
-                      type="button"
-                      onClick={toggleTheme}
-                      title={!isSidebarHovered ? "Toggle Theme" : ""}
-                      className={`flex items-center rounded-xl transition-all duration-300 ease-in-out h-12 w-full ${
-                        isSidebarHovered 
-                          ? 'px-4 justify-start gap-3' 
-                          : 'w-12 mx-auto justify-center px-0 gap-0'
-                      } text-slate-500 hover:text-slate-800 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-slate-50 dark:hover:bg-[#201d2c]/50`}
-                    >
-                      <span className="shrink-0">
-                        {theme === 'light' ? (
-                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                          </svg>
-                        ) : (
-                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
-                          </svg>
-                        )}
-                      </span>
-                      <span 
-                        className={`text-sm font-semibold whitespace-nowrap transition-all duration-300 ease-in-out ${
-                          isSidebarHovered 
-                            ? 'opacity-100 w-auto ml-1 visible' 
-                            : 'opacity-0 w-0 overflow-hidden invisible'
-                        }`}
-                      >
-                        {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
-                      </span>
-                    </button>
                   </div>
                 </div>
               </>
@@ -699,39 +665,6 @@ function WelcomePage() {
                         My Profile
                       </span>
                     </button>
-                    
-                    {/* Theme Toggle menu item */}
-                    <button
-                      type="button"
-                      onClick={toggleTheme}
-                      title={!isSidebarHovered ? "Toggle Theme" : ""}
-                      className={`flex items-center rounded-xl transition-all duration-300 ease-in-out h-12 w-full ${
-                        isSidebarHovered 
-                          ? 'px-4 justify-start gap-3' 
-                          : 'w-12 mx-auto justify-center px-0 gap-0'
-                      } text-slate-500 hover:text-slate-800 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-slate-50 dark:hover:bg-[#201d2c]/50`}
-                    >
-                      <span className="shrink-0">
-                        {theme === 'light' ? (
-                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                          </svg>
-                        ) : (
-                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
-                          </svg>
-                        )}
-                      </span>
-                      <span 
-                        className={`text-sm font-semibold whitespace-nowrap transition-all duration-300 ease-in-out ${
-                          isSidebarHovered 
-                            ? 'opacity-100 w-auto ml-1 visible' 
-                            : 'opacity-0 w-0 overflow-hidden invisible'
-                        }`}
-                      >
-                        {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
-                      </span>
-                    </button>
                   </div>
                 </div>
               </>
@@ -810,23 +743,23 @@ function WelcomePage() {
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Time period dropdown switcher */}
-            <div className="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-[#110f18]/60 rounded-xl border border-slate-200/30 dark:border-[#2b263e]/40 text-xs font-bold text-slate-500 dark:text-gray-400">
-              <button 
-                type="button" 
-                onClick={() => setActiveTimeframe('monthly')}
-                className={`px-3 py-1.5 rounded-lg transition ${activeTimeframe === 'monthly' ? 'bg-white dark:bg-[#181622] text-indigo-600 dark:text-violet-400 shadow-sm' : 'hover:text-slate-800 dark:hover:text-white'}`}
-              >
-                Monthly
-              </button>
-              <button 
-                type="button" 
-                onClick={() => setActiveTimeframe('quarterly')}
-                className={`px-3 py-1.5 rounded-lg transition ${activeTimeframe === 'quarterly' ? 'bg-white dark:bg-[#181622] text-indigo-600 dark:text-violet-400 shadow-sm' : 'hover:text-slate-800 dark:hover:text-white'}`}
-              >
-                Quarterly
-              </button>
-            </div>
+            {/* Theme Toggle Button */}
+            <button 
+              type="button"
+              onClick={toggleTheme}
+              className="p-2.5 rounded-xl border border-slate-200/60 dark:border-[#2b263e]/40 bg-slate-50 dark:bg-[#110f18]/60 hover:bg-slate-100 dark:hover:bg-[#110f18] transition-all duration-300 shadow-sm text-slate-500 dark:text-gray-400 focus:outline-none shrink-0"
+              title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
+            >
+              {theme === 'light' ? (
+                <svg className="w-5 h-5 text-amber-500 transition-transform duration-300 hover:rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5 text-violet-400 transition-transform duration-300 hover:-rotate-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+              )}
+            </button>
           </div>
         </header>
 
