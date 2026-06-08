@@ -1,9 +1,8 @@
 @media print {
 
-  /* Hide all elements with .print-hidden */
-  .print-hidden {
+  /* Hide all elements with .print-hidden, headers, and sidebars */
+  header, aside, .print-hidden, [class*="print-hidden"] {
     display: none !important;
-    /* Ensure elements hidden */
   }
 
   /* Define A4 page size */
