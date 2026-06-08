@@ -278,24 +278,24 @@ function InvoiceDetails({ invoiceId, onClose }) {
 
                     <div className="p-2 px-8 flex justify-between mt-2">
                         <div>
-                            <p className="text-xs text-gray-500">Terms & Conditions: </p>
-                            <ul className="list-disc pl-2 text-sm text-gray-600 text-left">
+                            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Terms & Conditions: </p>
+                            <ul className="list-disc pl-4 text-[10px] text-gray-600 text-left leading-normal mt-1">
                                 <li>All disputes are subject to jurisdiction of Delhi Courts</li>
                                 <li>Payment should be made by cash/cheque/draft only.</li>
                                 <li>Late payment will be charged if bill unpaid for 15 days.</li>
                             </ul>
                         </div>
-                        <div className="text-right flex flex-col justify-between h-32 min-w-[220px]">
-                            <p className="text-sm font-semibold">For Sakshi Enterprises</p>
-                            <div className="relative h-16 w-full flex items-center justify-end my-1">
+                        <div className="text-right flex flex-col justify-between h-24 min-w-[200px]">
+                            <p className="text-[10px] font-bold text-gray-750">For Sakshi Enterprises</p>
+                            <div className="relative h-10 w-full flex items-center justify-end my-0.5">
                                 {showSignature && (
-                                    <img src={signature} alt="Signature" className="absolute max-h-16 w-auto object-contain z-10" />
+                                    <img src={signature} alt="Signature" className="absolute max-h-10 w-auto object-contain z-10" />
                                 )}
                                 {showStamp && (
-                                    <img src={stamp} alt="stamp" className="absolute max-h-24 w-auto object-contain z-0 opacity-80" />
+                                    <img src={stamp} alt="stamp" className="absolute max-h-16 w-auto object-contain z-0 opacity-80" />
                                 )}
                             </div>
-                            <p className="text-sm font-semibold">Authorised Signatory</p>
+                            <p className="text-[10px] font-bold text-gray-750">Authorised Signatory</p>
                         </div>
                     </div>
                 </div>

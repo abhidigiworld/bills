@@ -92,8 +92,10 @@
     overflow: visible !important;
   }
 
-  /* Remove flex container layout constraints in print */
-  .flex, [class*="flex-row"], [class*="flex-col"] {
+  /* Remove flex container layout constraints in print, except for the invoice container itself (.printdata) */
+  .flex:not(.printdata):not(.printdata *), 
+  [class*="flex-row"]:not(.printdata):not(.printdata *), 
+  [class*="flex-col"]:not(.printdata):not(.printdata *) {
     display: block !important;
   }
 
