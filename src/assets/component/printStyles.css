@@ -93,9 +93,9 @@
   }
 
   /* Remove flex container layout constraints in print, except for the invoice container itself (.printdata) */
-  .flex:not(.printdata):not(.printdata *), 
-  [class*="flex-row"]:not(.printdata):not(.printdata *), 
-  [class*="flex-col"]:not(.printdata):not(.printdata *) {
+  .flex:not(.printdata):not(.printdata *):not(.print-hidden):not(.print\:hidden):not(header):not(aside), 
+  [class*="flex-row"]:not(.printdata):not(.printdata *):not(.print-hidden):not(.print\:hidden):not(header):not(aside), 
+  [class*="flex-col"]:not(.printdata):not(.printdata *):not(.print-hidden):not(.print\:hidden):not(header):not(aside) {
     display: block !important;
   }
 

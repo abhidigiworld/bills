@@ -256,7 +256,7 @@ function DashboardLayout() {
     <div className="flex flex-col h-screen bg-[#F5F6FA] dark:bg-[#110f18] text-slate-800 dark:text-gray-200 transition-colors duration-300 font-sans overflow-hidden">
       
       {/* Top Navbar Header (Full Width) */}
-      <header className="flex justify-between items-center h-16 px-6 bg-white/70 dark:bg-[#181622]/70 backdrop-blur-md border-b border-slate-200/40 dark:border-[#262235]/40 shrink-0 z-30 w-full print:hidden">
+      <header className="flex justify-between items-center h-16 px-6 bg-white/70 dark:bg-[#181622]/70 backdrop-blur-md border-b border-slate-200/40 dark:border-[#262235]/40 shrink-0 z-30 w-full print-hidden">
         <div className="flex items-center gap-4">
           {/* Brand Logo & Name */}
           <div className="flex items-center gap-2.5">
@@ -304,7 +304,7 @@ function DashboardLayout() {
         <aside 
           onMouseEnter={() => setIsSidebarHovered(true)}
           onMouseLeave={() => setIsSidebarHovered(false)}
-          className={`${isSidebarHovered ? 'w-64' : 'w-20'} bg-white/70 dark:bg-[#181622]/70 backdrop-blur-md border-r border-slate-200/40 dark:border-[#262235]/40 flex flex-col justify-between pb-6 shrink-0 transition-all duration-300 ease-in-out print:hidden z-20 h-full`}
+          className={`${isSidebarHovered ? 'w-64' : 'w-20'} bg-white/70 dark:bg-[#181622]/70 backdrop-blur-md border-r border-slate-200/40 dark:border-[#262235]/40 flex flex-col justify-between pb-6 shrink-0 transition-all duration-300 ease-in-out print-hidden z-20 h-full`}
         >
           <div className="w-full flex flex-col overflow-y-auto overflow-x-hidden scrollbar-none pt-0">
             {/* Grouped Sidebar Menu Items */}

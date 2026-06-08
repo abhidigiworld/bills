@@ -153,7 +153,7 @@ function InvoiceDetails({ invoiceId, onClose }) {
                 {/* Close Button */}
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 print:hidden"
+                    className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 print-hidden"
                     title="Close"
                 >
                     <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
@@ -377,7 +377,7 @@ function InvoiceDetails({ invoiceId, onClose }) {
                     </div>
                 </div>
 
-                <div className="flex justify-end gap-4 border-t border-slate-100 dark:border-[#262235] pt-4 mt-6 print:hidden">
+                <div className="flex justify-end gap-4 border-t border-slate-100 dark:border-[#262235] pt-4 mt-6 print-hidden">
                     <button
                         onClick={onClose}
                         className="bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-2 px-5 rounded-lg text-xs transition duration-200 shadow-sm"
