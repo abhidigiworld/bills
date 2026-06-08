@@ -611,7 +611,7 @@ function ManagePayrolls() {
                                     <p className="text-xl font-bold text-center uppercase tracking-wide">Salary Statement</p>
                                     <div className="flex justify-between items-center relative mt-2">
                                         <div className="absolute" style={{ top: '-10px', left: '-10px' }}>
-                                            <img src={logo} alt="Your Company Logo" className="w-24 h-auto rounded-md" />
+                                            <img src={logo} alt="Your Company Logo" className="w-24 h-auto rounded-md bg-white p-1" />
                                         </div>
                                         <div className="flex-1 text-center pt-2" style={{ marginLeft: '120px' }}>
                                             <p className="text-2xl font-bold uppercase tracking-wider">Sakshi Enterprises</p>
