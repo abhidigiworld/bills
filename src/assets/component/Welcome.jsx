@@ -440,32 +440,62 @@ function WelcomePage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#F5F6FA] dark:bg-[#110f18] text-slate-800 dark:text-gray-200 transition-colors duration-300 font-sans">
+    <div className="flex flex-col h-screen bg-[#F5F6FA] dark:bg-[#110f18] text-slate-800 dark:text-gray-200 transition-colors duration-300 font-sans overflow-hidden">
       
-      {/* UNIFIED HOVER-EXPANDABLE SIDEBAR */}
-      <aside 
-        onMouseEnter={() => setIsSidebarHovered(true)}
-        onMouseLeave={() => setIsSidebarHovered(false)}
-        className={`${isSidebarHovered ? 'w-64' : 'w-20'} bg-white dark:bg-[#181622] border-r border-slate-200/50 dark:border-[#262235]/65 flex flex-col justify-between py-6 shrink-0 transition-all duration-300 ease-in-out print:hidden z-30 h-screen sticky top-0`}
-      >
-        <div className="w-full flex flex-col overflow-y-auto overflow-x-hidden scrollbar-none">
-          {/* Logo Brand Header */}
-          <div className="flex items-center gap-3 px-5 mb-8 border-b border-slate-100 dark:border-[#262235]/50 pb-5 h-14 overflow-hidden shrink-0">
-            {/* Permanent brand logo image (no SE text emblem, matching other pages' background/border/shadow) */}
-            <img src={logo} alt="Sakshi Enterprises" className="w-10 h-10 object-cover rounded-xl shadow-md border border-slate-200 dark:border-[#3e3857] shrink-0" />
-            
-            {/* Sliding logo image and branding text */}
-            <div 
-              className={`flex flex-col justify-center leading-none transition-all duration-300 ease-in-out ${
-                isSidebarHovered 
-                  ? 'opacity-100 w-36 ml-1 visible' 
-                  : 'opacity-0 w-0 overflow-hidden invisible'
-              }`}
-            >
-              <span className="text-[11px] font-black tracking-widest text-slate-800 dark:text-white uppercase whitespace-nowrap">SAKSHI</span>
-              <span className="text-[7px] font-bold tracking-[0.25em] text-slate-400 dark:text-slate-500 uppercase mt-0.5 whitespace-nowrap">ENTERPRISES</span>
+      {/* Top Navbar Header (Full Width) */}
+      <header className="flex justify-between items-center h-16 px-6 bg-white/70 dark:bg-[#181622]/70 backdrop-blur-md border-b border-slate-200/40 dark:border-[#262235]/40 shrink-0 z-30 w-full">
+        <div className="flex items-center gap-4">
+          {/* Brand Logo & Name */}
+          <div className="flex items-center gap-2.5">
+            <img src={logo} alt="Sakshi Enterprises Logo" className="h-9 w-auto rounded-md shadow-md border border-slate-200 dark:border-[#3e3857]" />
+            <div className="flex flex-col justify-center leading-[1.05]">
+              <span className="text-[13px] font-black tracking-wider text-slate-800 dark:text-white uppercase">SAKSHI</span>
+              <span className="text-[8px] font-bold tracking-[0.22em] text-slate-400 dark:text-slate-500 uppercase mt-0.5">ENTERPRISES</span>
             </div>
           </div>
+          
+          {/* Small vertical divider */}
+          <div className="h-8 w-px bg-slate-200 dark:bg-[#262235]/60" />
+
+          <div>
+            <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight leading-none">Dashboard</h1>
+            <p className="text-slate-400 dark:text-gray-400 text-[10px] mt-1.5 font-medium">
+              {isAdmin ? "Unified controls and reporting analytics" : "Employee profile and record logs"}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          {/* Theme Toggle Button */}
+          <button 
+            type="button"
+            onClick={toggleTheme}
+            className="p-2.5 rounded-xl border border-slate-200/60 dark:border-[#2b263e]/40 bg-slate-50 dark:bg-[#110f18]/60 hover:bg-slate-100 dark:hover:bg-[#110f18] transition-all duration-300 shadow-sm text-slate-500 dark:text-gray-400 focus:outline-none shrink-0"
+            title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
+          >
+            {theme === 'light' ? (
+              <svg className="w-5 h-5 text-amber-500 transition-transform duration-300 hover:rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
+              </svg>
+            ) : (
+              <svg className="w-5 h-5 text-violet-400 transition-transform duration-300 hover:-rotate-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              </svg>
+            )}
+          </button>
+        </div>
+      </header>
+
+      {/* Body container (sidebar & main content side-by-side) */}
+      <div className="flex flex-row flex-grow h-[calc(100vh-4rem)] overflow-hidden">
+        
+        {/* UNIFIED HOVER-EXPANDABLE SIDEBAR */}
+        <aside 
+          onMouseEnter={() => setIsSidebarHovered(true)}
+          onMouseLeave={() => setIsSidebarHovered(false)}
+          className={`${isSidebarHovered ? 'w-64' : 'w-20'} bg-white dark:bg-[#181622] border-r border-slate-200/50 dark:border-[#262235]/65 flex flex-col justify-between pb-6 shrink-0 transition-all duration-300 ease-in-out print:hidden z-20 h-full`}
+        >
+          <div className="w-full flex flex-col overflow-y-auto overflow-x-hidden scrollbar-none pt-0">
 
           {/* Grouped Sidebar Menu Items */}
           <div className="space-y-4 px-2">
@@ -730,41 +760,8 @@ function WelcomePage() {
         </div>
       </aside>
 
-      {/* 3. MAIN WORKSPACE CONTAINER */}
-      <div className="flex-grow flex flex-col h-screen overflow-y-auto z-10">
-        
-        {/* Top Navbar Header */}
-        <header className="flex justify-between items-center px-6 py-4 bg-white/70 dark:bg-[#181622]/70 backdrop-blur-md border-b border-slate-200/40 dark:border-[#262235]/40 shrink-0 sticky top-0 z-30">
-          <div>
-            <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight leading-none">Dashboard</h1>
-            <p className="text-slate-400 dark:text-gray-400 text-xs mt-1.5 font-medium">
-              {isAdmin ? "Unified controls and reporting analytics" : "Employee profile and record logs"}
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            {/* Theme Toggle Button */}
-            <button 
-              type="button"
-              onClick={toggleTheme}
-              className="p-2.5 rounded-xl border border-slate-200/60 dark:border-[#2b263e]/40 bg-slate-50 dark:bg-[#110f18]/60 hover:bg-slate-100 dark:hover:bg-[#110f18] transition-all duration-300 shadow-sm text-slate-500 dark:text-gray-400 focus:outline-none shrink-0"
-              title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
-            >
-              {theme === 'light' ? (
-                <svg className="w-5 h-5 text-amber-500 transition-transform duration-300 hover:rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
-                </svg>
-              ) : (
-                <svg className="w-5 h-5 text-violet-400 transition-transform duration-300 hover:-rotate-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                </svg>
-              )}
-            </button>
-          </div>
-        </header>
-
-        {/* Dashboard Content Workspace */}
-        <main className="flex-grow p-6 sm:p-8 max-w-7xl w-full mx-auto print:p-0">
+      {/* Dashboard Content Workspace */}
+      <main className="flex-grow p-6 sm:p-8 max-w-7xl w-full mx-auto overflow-y-auto print:p-0">
           {isAdmin ? (
             /* ADMIN GRID (Flup Dribbble style) */
             <div className="space-y-8 animate-fade-in">
