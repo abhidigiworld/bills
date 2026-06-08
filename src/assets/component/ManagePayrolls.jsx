@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import axios from 'axios';
-import Header from './Header';
-import Footer from './Footer';
 import { API_BASE_URL } from '../../config';
 import logo from '../images/LOGO.png';
 import signature from '../images/sign.png';
@@ -280,22 +277,7 @@ function ManagePayrolls() {
     };
 
     return (
-        <div className="flex flex-col min-h-screen bg-indigo-50 dark:bg-[#110f18] text-slate-800 dark:text-gray-200 transition-colors duration-300">
-            <Header />
-            <main className="flex-grow p-4 sm:p-6 md:p-8 print-hidden">
-                <div className="max-w-7xl mx-auto">
-                    <Link
-                        to="/Main"
-                        className="inline-flex items-center gap-2 mb-6 px-4 py-2.5 rounded-lg border border-slate-200 dark:border-[#3e3857] hover:bg-slate-100 dark:hover:bg-[#201d2c] text-xs font-bold text-slate-600 dark:text-gray-300 transition duration-200 shadow-sm print:hidden"
-                    >
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                        Back to Dashboard
-                    </Link>
-                    <h2 className="text-3xl font-extrabold mb-6 text-center text-indigo-900 dark:text-white tracking-tight">
-                        Manage Saved Payrolls
-                    </h2>
+        <div className="max-w-7xl mx-auto animate-fade-in">
 
                     {error && (
                         <div className="max-w-md mx-auto mb-6 bg-red-100 dark:bg-red-950/40 border border-red-400 dark:border-red-900/50 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg text-center text-sm font-medium">
@@ -449,8 +431,7 @@ function ManagePayrolls() {
                         </div>
                     )}
                 </div>
-            </main>
-            <Footer />
+
 
             {/* EDIT SLIP MODAL */}
             {editingSlip && liveCalculations && (

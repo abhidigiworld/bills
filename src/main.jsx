@@ -14,9 +14,10 @@ import SignUp from './assets/component/SignUp.jsx'
 import ForgotPassword from './assets/component/ForgotPassword.jsx'
 import AttendanceRegister from './assets/component/AttendanceRegister.jsx'
 import ManagePayrolls from './assets/component/ManagePayrolls.jsx'
-import ManageUsers from './assets/component/ManageUsers.jsx'
 import BulkUpload from './assets/component/BulkUpload.jsx'
+import ManageUsers from './assets/component/ManageUsers.jsx'
 import AICopilot from './assets/component/AICopilot.jsx'
+import DashboardLayout from './assets/component/DashboardLayout.jsx'
 
 // Protected Route Wrapper Component
 const ProtectedRoute = ({ children, requireAdmin }) => {
@@ -51,44 +52,49 @@ const router = createBrowserRouter([
     element: <ForgotPassword/>
   },
   {
-    path: '/Main',
-    element : <ProtectedRoute><WelcomePage/></ProtectedRoute>
-  },
-  {
-    path: '/existing-bills',
-    element: <ProtectedRoute requireAdmin><Bills/></ProtectedRoute>
-  },
-  {
-    path: '/new-bill',
-    element: <ProtectedRoute requireAdmin><InvoiceForm/></ProtectedRoute>
-  },
-  {
-    path: '/new-employee',
-    element: <ProtectedRoute requireAdmin><AddEmployee/></ProtectedRoute>
-  },
-  {
-    path: '/new-Salary',
-    element: <ProtectedRoute requireAdmin><SalarySlip/></ProtectedRoute>
-  },
-  {
-    path: '/attendance-register',
-    element: <ProtectedRoute requireAdmin><AttendanceRegister/></ProtectedRoute>
-  },
-  {
-    path: '/manage-payrolls',
-    element: <ProtectedRoute requireAdmin><ManagePayrolls/></ProtectedRoute>
-  },
-  {
-    path: '/manage-users',
-    element: <ProtectedRoute requireAdmin><ManageUsers/></ProtectedRoute>
-  },
-  {
-    path: '/bulk-upload',
-    element: <ProtectedRoute requireAdmin><BulkUpload/></ProtectedRoute>
+    element: <DashboardLayout />,
+    children: [
+      {
+        path: '/Main',
+        element: <ProtectedRoute><WelcomePage /></ProtectedRoute>
+      },
+      {
+        path: '/existing-bills',
+        element: <ProtectedRoute requireAdmin><Bills /></ProtectedRoute>
+      },
+      {
+        path: '/new-bill',
+        element: <ProtectedRoute requireAdmin><InvoiceForm /></ProtectedRoute>
+      },
+      {
+        path: '/new-employee',
+        element: <ProtectedRoute requireAdmin><AddEmployee /></ProtectedRoute>
+      },
+      {
+        path: '/new-Salary',
+        element: <ProtectedRoute requireAdmin><SalarySlip /></ProtectedRoute>
+      },
+      {
+        path: '/attendance-register',
+        element: <ProtectedRoute requireAdmin><AttendanceRegister /></ProtectedRoute>
+      },
+      {
+        path: '/manage-payrolls',
+        element: <ProtectedRoute requireAdmin><ManagePayrolls /></ProtectedRoute>
+      },
+      {
+        path: '/manage-users',
+        element: <ProtectedRoute requireAdmin><ManageUsers /></ProtectedRoute>
+      },
+      {
+        path: '/bulk-upload',
+        element: <ProtectedRoute requireAdmin><BulkUpload /></ProtectedRoute>
+      }
+    ]
   },
   {
     path: '*',
-    element : <ErrorPage/>
+    element: <ErrorPage />
   }
 ])
 

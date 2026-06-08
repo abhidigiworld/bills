@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import './printStyles.css';
 import axios from 'axios';
-import Header from './Header';
-import Footer from './Footer';
 import InvoiceDetails from './InvoiceDetails';
 import UpdateInvoice from './UpdateInvoice';
 import { API_BASE_URL } from '../../config';
@@ -84,7 +81,7 @@ function Bills() {
     if (sortConfig.key !== key) {
       return (
         <svg className="w-3.5 h-3.5 ml-1.5 opacity-40 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 15L12 8.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
         </svg>
       );
     }
@@ -149,134 +146,116 @@ function Bills() {
   }, [filteredBills, sortConfig]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-indigo-50 dark:bg-[#110f18] text-slate-800 dark:text-gray-200 transition-colors duration-300">
-      <Header />
-      <main className="flex-grow p-4 sm:p-6 md:p-8 print-hidden">
-        <div className="max-w-6xl mx-auto">
-          <Link 
-            to="/Main" 
-            className="inline-flex items-center gap-2 mb-6 px-4 py-2.5 rounded-lg border border-slate-200 dark:border-[#3e3857] hover:bg-slate-100 dark:hover:bg-[#201d2c] text-xs font-bold text-slate-600 dark:text-gray-300 transition duration-200 shadow-sm print:hidden"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Back to Dashboard
-          </Link>
-          <h1 className="text-3xl font-extrabold mb-6 text-center text-indigo-900 dark:text-white tracking-tight">
-            Existing Invoices
-          </h1>
-
-          {alertMessage && (
-            <div className="max-w-md mx-auto mb-6 bg-green-100 dark:bg-green-950/40 border border-green-400 dark:border-green-900/50 text-green-700 dark:text-green-400 px-4 py-3 rounded-lg text-center text-sm font-medium">
-              {alertMessage}
-            </div>
-          )}
-
-          {/* Search Box */}
-          <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl p-6 mb-8 transition-colors duration-300">
-            <label htmlFor="search" className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">
-              Search by Invoice No or Company Name
-            </label>
-            <input
-              id="search"
-              type="text"
-              className="w-full px-4 py-3 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
-              placeholder="Enter Invoice No or Company Name..."
-              value={searchTerm}
-              onChange={handleSearchChange}
-            />
-          </div>
-
-          {/* Invoices List Table */}
-          <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-4 transition-colors duration-300">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead>
-                  <tr className="border-b border-slate-200 dark:border-[#262235] text-slate-500 dark:text-gray-400 font-bold uppercase text-xs select-none">
-                    <th className="px-4 py-3 cursor-pointer group hover:text-indigo-600 dark:hover:text-violet-400 transition-colors" onClick={() => handleSort('companyName')}>
-                      <div className="flex items-center">
-                        Company Name
-                        {getSortIcon('companyName')}
-                      </div>
-                    </th>
-                    <th className="px-4 py-3 cursor-pointer group hover:text-indigo-600 dark:hover:text-violet-400 transition-colors" onClick={() => handleSort('gstin')}>
-                      <div className="flex items-center">
-                        GSTIN
-                        {getSortIcon('gstin')}
-                      </div>
-                    </th>
-                    <th className="px-4 py-3 cursor-pointer group hover:text-indigo-600 dark:hover:text-violet-400 transition-colors" onClick={() => handleSort('state')}>
-                      <div className="flex items-center">
-                        State
-                        {getSortIcon('state')}
-                      </div>
-                    </th>
-                    <th className="px-4 py-3 text-center cursor-pointer group hover:text-indigo-600 dark:hover:text-violet-400 transition-colors" onClick={() => handleSort('stateCode')}>
-                      <div className="flex items-center justify-center">
-                        State Code
-                        {getSortIcon('stateCode')}
-                      </div>
-                    </th>
-                    <th className="px-4 py-3 text-center cursor-pointer group hover:text-indigo-600 dark:hover:text-violet-400 transition-colors" onClick={() => handleSort('invoiceNo')}>
-                      <div className="flex items-center justify-center">
-                        Invoice No
-                        {getSortIcon('invoiceNo')}
-                      </div>
-                    </th>
-                    <th className="px-4 py-3 text-center cursor-pointer group hover:text-indigo-600 dark:hover:text-violet-400 transition-colors" onClick={() => handleSort('invoiceDate')}>
-                      <div className="flex items-center justify-center">
-                        Invoice Date
-                        {getSortIcon('invoiceDate')}
-                      </div>
-                    </th>
-                    <th className="px-4 py-3 text-center">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {sortedBills.length > 0 ? (
-                    sortedBills.map((bill) => (
-                      <tr key={bill._id} className="border-b border-slate-100 dark:border-[#262235] hover:bg-slate-50 dark:hover:bg-[#201d2c]/50 transition duration-150">
-                        <td className="px-4 py-3 font-semibold text-slate-900 dark:text-white">{bill.companyName}</td>
-                        <td className="px-4 py-3 text-slate-600 dark:text-gray-300">{bill.gstin || '-'}</td>
-                        <td className="px-4 py-3 text-slate-600 dark:text-gray-300">{bill.state}</td>
-                        <td className="px-4 py-3 text-center text-slate-600 dark:text-gray-300">{bill.stateCode}</td>
-                        <td className="px-4 py-3 text-center font-mono text-slate-900 dark:text-white font-bold">{bill.invoiceNo}</td>
-                        <td className="px-4 py-3 text-center text-slate-600 dark:text-gray-300">{formatDate(bill.invoiceDate)}</td>
-                        <td className="px-4 py-3 flex items-center justify-center gap-2">
-                          <button
-                            className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-1.5 px-3 rounded-md text-xs transition duration-200 shadow-sm"
-                            onClick={() => handleViewDetails(bill._id)}
-                          >
-                            View
-                          </button>
-                          <button
-                            className="bg-amber-500 hover:bg-amber-600 text-white font-bold py-1.5 px-3 rounded-md text-xs transition duration-200 shadow-sm"
-                            onClick={() => handleUpdate(bill)}
-                          >
-                            Update
-                          </button>
-                          <button
-                            className="bg-red-500 hover:bg-red-600 text-white font-bold py-1.5 px-3 rounded-md text-xs transition duration-200 shadow-sm"
-                            onClick={() => handleDelete(bill._id)}
-                          >
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="7" className="text-center py-6 font-medium text-gray-500">
-                        No invoices found.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
+    <div className="max-w-6xl mx-auto animate-fade-in">
+      {alertMessage && (
+        <div className="max-w-md mx-auto mb-6 bg-green-100 dark:bg-green-950/40 border border-green-400 dark:border-green-900/50 text-green-700 dark:text-green-400 px-4 py-3 rounded-lg text-center text-sm font-medium">
+          {alertMessage}
         </div>
-      </main>
+      )}
+
+      {/* Search Box */}
+      <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl p-6 mb-8 transition-colors duration-300">
+        <label htmlFor="search" className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+          Search by Invoice No or Company Name
+        </label>
+        <input
+          id="search"
+          type="text"
+          className="w-full px-4 py-3 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+          placeholder="Enter Invoice No or Company Name..."
+          value={searchTerm}
+          onChange={handleSearchChange}
+        />
+      </div>
+
+      {/* Invoices List Table */}
+      <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-4 transition-colors duration-300">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left">
+            <thead>
+              <tr className="border-b border-slate-200 dark:border-[#262235] text-slate-500 dark:text-gray-400 font-bold uppercase text-xs select-none">
+                <th className="px-4 py-3 cursor-pointer group hover:text-indigo-600 dark:hover:text-violet-400 transition-colors" onClick={() => handleSort('companyName')}>
+                  <div className="flex items-center">
+                    Company Name
+                    {getSortIcon('companyName')}
+                  </div>
+                </th>
+                <th className="px-4 py-3 cursor-pointer group hover:text-indigo-600 dark:hover:text-violet-400 transition-colors" onClick={() => handleSort('gstin')}>
+                  <div className="flex items-center">
+                    GSTIN
+                    {getSortIcon('gstin')}
+                  </div>
+                </th>
+                <th className="px-4 py-3 cursor-pointer group hover:text-indigo-600 dark:hover:text-violet-400 transition-colors" onClick={() => handleSort('state')}>
+                  <div className="flex items-center">
+                    State
+                    {getSortIcon('state')}
+                  </div>
+                </th>
+                <th className="px-4 py-3 text-center cursor-pointer group hover:text-indigo-600 dark:hover:text-violet-400 transition-colors" onClick={() => handleSort('stateCode')}>
+                  <div className="flex items-center justify-center">
+                    State Code
+                    {getSortIcon('stateCode')}
+                  </div>
+                </th>
+                <th className="px-4 py-3 text-center cursor-pointer group hover:text-indigo-600 dark:hover:text-violet-400 transition-colors" onClick={() => handleSort('invoiceNo')}>
+                  <div className="flex items-center justify-center">
+                    Invoice No
+                    {getSortIcon('invoiceNo')}
+                  </div>
+                </th>
+                <th className="px-4 py-3 text-center cursor-pointer group hover:text-indigo-600 dark:hover:text-violet-400 transition-colors" onClick={() => handleSort('invoiceDate')}>
+                  <div className="flex items-center justify-center">
+                    Invoice Date
+                    {getSortIcon('invoiceDate')}
+                  </div>
+                </th>
+                <th className="px-4 py-3 text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sortedBills.length > 0 ? (
+                sortedBills.map((bill) => (
+                  <tr key={bill._id} className="border-b border-slate-100 dark:border-[#262235] hover:bg-slate-50 dark:hover:bg-[#201d2c]/50 transition duration-150">
+                    <td className="px-4 py-3 font-semibold text-slate-900 dark:text-white">{bill.companyName}</td>
+                    <td className="px-4 py-3 text-slate-600 dark:text-gray-300">{bill.gstin || '-'}</td>
+                    <td className="px-4 py-3 text-slate-600 dark:text-gray-300">{bill.state}</td>
+                    <td className="px-4 py-3 text-center text-slate-600 dark:text-gray-300">{bill.stateCode}</td>
+                    <td className="px-4 py-3 text-center font-mono text-slate-900 dark:text-white font-bold">{bill.invoiceNo}</td>
+                    <td className="px-4 py-3 text-center text-slate-600 dark:text-gray-300">{formatDate(bill.invoiceDate)}</td>
+                    <td className="px-4 py-3 flex items-center justify-center gap-2">
+                      <button
+                        className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-1.5 px-3 rounded-md text-xs transition duration-200 shadow-sm"
+                        onClick={() => handleViewDetails(bill._id)}
+                      >
+                        View
+                      </button>
+                      <button
+                        className="bg-amber-500 hover:bg-amber-600 text-white font-bold py-1.5 px-3 rounded-md text-xs transition duration-200 shadow-sm"
+                        onClick={() => handleUpdate(bill)}
+                      >
+                        Update
+                      </button>
+                      <button
+                        className="bg-red-500 hover:bg-red-600 text-white font-bold py-1.5 px-3 rounded-md text-xs transition duration-200 shadow-sm"
+                        onClick={() => handleDelete(bill._id)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7" className="text-center py-6 font-medium text-gray-500">
+                    No invoices found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       {/* Details/Update modals */}
       {isUpdating && (
@@ -285,7 +264,6 @@ function Bills() {
       {selectedInvoice && (
         <InvoiceDetails invoiceId={selectedInvoice} onClose={() => setSelectedInvoice(null)} />
       )}
-      <Footer />
     </div>
   );
 }
