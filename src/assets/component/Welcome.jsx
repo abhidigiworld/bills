@@ -4,7 +4,7 @@ import PaymentChart from './PaymentChart';
 import axios from 'axios';
 import { API_BASE_URL } from '../../config';
 import './printStyles.css';
-import logo from '../images/LOGO.png';
+import logo from '../images/LOGO1.jpeg';
 import signature from '../images/sign.png';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip } from 'recharts';
 
@@ -372,7 +372,7 @@ function WelcomePage() {
                   <p className="text-[10px] text-slate-400 dark:text-gray-500 mt-1">Invoice billing summary by customer companies</p>
                 </div>
               </div>
-              <div className="h-72">
+              <div className="h-auto">
                 <PaymentChart />
               </div>
             </div>
@@ -653,7 +653,7 @@ function WelcomePage() {
                   <p className="text-xl font-bold text-center uppercase tracking-wide">Salary Statement</p>
                   <div className="flex justify-between items-center relative mt-2">
                     <div className="absolute" style={{ top: '-10px', left: '-10px' }}>
-                      <img src={logo} alt="Your Company Logo" className="w-24 h-auto rounded-md bg-white p-1" />
+                      <img src={logo} alt="Your Company Logo" className="w-24 h-auto rounded-md" />
                     </div>
                     <div className="flex-1 text-center pt-2" style={{ marginLeft: '120px' }}>
                       <p className="text-2xl font-bold uppercase tracking-wider">Sakshi Enterprises</p>

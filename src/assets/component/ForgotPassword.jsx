@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import logo from '../images/LOGO.png';
+import logo from '../images/LOGO1.jpeg';
 import dunesBg from '../images/dark_dunes_bg.png';
 import { API_BASE_URL } from '../../config';
 
@@ -115,7 +115,7 @@ function ForgotPassword() {
           {/* Top Row: Logo & Button */}
           <div className="relative z-10 flex items-center w-full">
             <div className="flex items-center gap-2">
-              <img src={logo} alt="Sakshi Logo" className="h-9 w-auto rounded-md shadow-md border border-[#3e3857] bg-white p-1" />
+              <img src={logo} alt="Sakshi Logo" className="h-9 w-auto rounded-md shadow-md border border-[#3e3857]" />
               <div className="flex flex-col justify-center leading-[1.05]">
                 <span className="company-name-light text-[13px] tracking-wider block">
                   SAKSHI
@@ -166,7 +166,7 @@ function ForgotPassword() {
 
           {/* Logo overlay on Mobile screens */}
           <div className="flex md:hidden items-center gap-2 mb-6">
-            <img src={logo} alt="Sakshi Logo" className="h-9 w-auto rounded-md bg-white p-1" />
+            <img src={logo} alt="Sakshi Logo" className="h-9 w-auto rounded-md" />
             <div className="flex flex-col justify-center leading-[1.05]">
               <span className="company-name text-[13px] tracking-wider block">
                 Sakshi
