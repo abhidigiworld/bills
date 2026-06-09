@@ -11,6 +11,13 @@ function BulkUpload() {
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('success'); // 'success' or 'fail'
 
+  const triggerError = (msg) => {
+    setError(msg);
+    setTimeout(() => {
+      setError('');
+    }, 3000);
+  };
+
   const handleDragOver = (e) => {
     e.preventDefault();
     setIsDragging(true);
@@ -25,7 +32,7 @@ function BulkUpload() {
     setIsDragging(false);
     const files = Array.from(e.dataTransfer.files).filter(file => file.type === 'application/pdf');
     if (files.length === 0) {
-      setError('Please drop PDF files only.');
+      triggerError('Please drop PDF files only.');
       return;
     }
     
@@ -33,7 +40,7 @@ function BulkUpload() {
       const existing = new Set(prev.map(f => `${f.name}-${f.size}`));
       const newFiles = files.filter(f => !existing.has(`${f.name}-${f.size}`));
       if (newFiles.length < files.length) {
-        setError('Duplicate files in selection were skipped.');
+        triggerError('Duplicate files in selection were skipped.');
       } else {
         setError('');
       }
@@ -44,7 +51,7 @@ function BulkUpload() {
   const handleFileSelect = (e) => {
     const files = Array.from(e.target.files).filter(file => file.type === 'application/pdf');
     if (files.length === 0) {
-      setError('Please select PDF files only.');
+      triggerError('Please select PDF files only.');
       return;
     }
 
@@ -52,7 +59,7 @@ function BulkUpload() {
       const existing = new Set(prev.map(f => `${f.name}-${f.size}`));
       const newFiles = files.filter(f => !existing.has(`${f.name}-${f.size}`));
       if (newFiles.length < files.length) {
-        setError('Duplicate files in selection were skipped.');
+        triggerError('Duplicate files in selection were skipped.');
       } else {
         setError('');
       }
@@ -66,7 +73,7 @@ function BulkUpload() {
 
   const handleUpload = async () => {
     if (selectedFiles.length === 0) {
-      setError('Please select at least one PDF invoice file.');
+      triggerError('Please select at least one PDF invoice file.');
       return;
     }
 
@@ -95,7 +102,7 @@ function BulkUpload() {
       setSelectedFiles([]); // clear files
     } catch (err) {
       console.error('Error uploading invoices:', err);
-      setError(err.response?.data?.error || 'Failed to upload and parse invoices. Please try again.');
+      triggerError(err.response?.data?.error || 'Failed to upload and parse invoices. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -103,12 +110,6 @@ function BulkUpload() {
 
   return (
     <div className="max-w-4xl mx-auto animate-fade-in">
-      {error && (
-        <div className="max-w-md mx-auto mb-6 bg-red-100 dark:bg-red-950/40 border border-red-400 dark:border-red-900/50 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg text-center text-sm font-medium">
-          {error}
-        </div>
-      )}
-
       {/* Upload Box */}
       {!loading && !results && (
         <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-6 sm:p-8 transition-colors duration-300">
@@ -300,6 +301,36 @@ function BulkUpload() {
             >
               Upload More Invoices
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Centered Premium Overlay Modal for Notifications */}
+      {error && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-md animate-fade-in print-hidden">
+          <div className="bg-white dark:bg-[#181622]/95 border border-slate-200 dark:border-[#262235] shadow-2xl rounded-2xl p-6 sm:p-8 w-full max-w-sm text-center relative transition-all duration-300 animate-slide-down">
+            {/* Close button */}
+            <button
+              onClick={() => {
+                setError('');
+              }}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+              title="Close"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            <div className="space-y-4">
+              <div className="mx-auto w-16 h-16 bg-red-100 dark:bg-red-950/40 rounded-full flex items-center justify-center text-red-600 dark:text-red-400">
+                <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-black text-slate-900 dark:text-white">Notification</h3>
+              <p className="text-sm text-slate-600 dark:text-gray-300">{error}</p>
+            </div>
           </div>
         </div>
       )}

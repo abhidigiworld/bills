@@ -8,7 +8,8 @@ import { API_BASE_URL } from '../../config';
 function Bills() {
   const [bills, setBills] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [alertMessage, setAlertMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
@@ -42,10 +43,12 @@ function Bills() {
       try {
         await axios.delete(`${API_BASE_URL}/api/invoices/${id}`);
         setBills(bills.filter((bill) => bill._id !== id));
-        setAlertMessage('Invoice deleted successfully');
+        setSuccessMessage('Invoice deleted successfully');
+        setTimeout(() => setSuccessMessage(''), 3000);
       } catch (error) {
         console.error('Error deleting bill:', error);
-        setAlertMessage('An error occurred while deleting the invoice');
+        setErrorMessage('An error occurred while deleting the invoice');
+        setTimeout(() => setErrorMessage(''), 3000);
       }
     }
   };
@@ -171,11 +174,6 @@ function Bills() {
 
   return (
     <div className="max-w-6xl mx-auto animate-fade-in">
-      {alertMessage && (
-        <div className="max-w-md mx-auto mb-6 bg-green-100 dark:bg-green-950/40 border border-green-400 dark:border-green-900/50 text-green-700 dark:text-green-400 px-4 py-3 rounded-lg text-center text-sm font-medium print-hidden">
-          {alertMessage}
-        </div>
-      )}
 
       {/* Search Box */}
       <div className={`bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl p-6 mb-8 transition-colors duration-300 ${selectedInvoice || isUpdating ? 'print-hidden' : ''}`}>
@@ -410,6 +408,49 @@ function Bills() {
       )}
       {selectedInvoice && (
         <InvoiceDetails invoiceId={selectedInvoice} onClose={() => setSelectedInvoice(null)} />
+      )}
+
+      {/* Centered Premium Overlay Modal for Notifications */}
+      {(successMessage || errorMessage) && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-md animate-fade-in print-hidden">
+          <div className="bg-white dark:bg-[#181622]/95 border border-slate-200 dark:border-[#262235] shadow-2xl rounded-2xl p-6 sm:p-8 w-full max-w-sm text-center relative transition-all duration-300 animate-slide-down">
+            {/* Close button */}
+            <button
+              onClick={() => {
+                setSuccessMessage('');
+                setErrorMessage('');
+              }}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+              title="Close"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {successMessage ? (
+              <div className="space-y-4">
+                <div className="mx-auto w-16 h-16 bg-green-100 dark:bg-green-950/40 rounded-full flex items-center justify-center text-green-600 dark:text-green-400">
+                  <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-black text-slate-900 dark:text-white">Success!</h3>
+                <p className="text-sm text-slate-600 dark:text-gray-300">{successMessage}</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="mx-auto w-16 h-16 bg-red-100 dark:bg-red-950/40 rounded-full flex items-center justify-center text-red-600 dark:text-red-400">
+                  <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-black text-slate-900 dark:text-white">Notification</h3>
+                <p className="text-sm text-slate-600 dark:text-gray-300">{errorMessage}</p>
+              </div>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );
