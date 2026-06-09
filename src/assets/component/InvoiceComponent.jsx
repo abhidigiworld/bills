@@ -488,8 +488,8 @@ function InvoiceComponent({ invoiceDetails }) {
                             <div className="text-right flex flex-col justify-between h-20 min-w-[200px] relative print:h-20">
                                 <p className="text-[10px] font-bold text-gray-750">For Sakshi Enterprises</p>
                                 <div className="relative h-8 w-full flex items-end justify-end">
-                                    <img src={signature} alt="Signature" className="absolute bottom-[-8px] right-2 max-h-16 w-auto object-contain z-20 pointer-events-none" />
-                                    <img src={stamp} alt="stamp" className="absolute bottom-[-12px] right-8 max-h-22 w-auto object-contain z-10 opacity-85 pointer-events-none" />
+                                    <img src={signature} alt="Signature" className="absolute bottom-[-40px] right-2 max-h-16 w-auto object-contain z-20 pointer-events-none" />
+                                    <img src={stamp} alt="stamp" className="absolute bottom-[-45px] right-8 max-h-22 w-auto object-contain z-10 opacity-85 pointer-events-none" />
                                 </div>
                                 <p className="text-[10px] font-bold text-gray-750 relative z-0">Authorised Signatory</p>
                             </div>
