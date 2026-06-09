@@ -75,9 +75,9 @@ function AICopilot() {
   };
 
   const suggestions = [
+    'Mark Ramesh and Suresh present today',
+    'Mark all present 7:30 AM to 5:30 PM',
     'Draft an invoice email',
-    'Explain CGST vs SGST',
-    'How do I add a new employee?',
     'Help with salary slip advances'
   ];
 
@@ -187,7 +187,7 @@ function AICopilot() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyPress}
               disabled={loading || cooldown > 0}
-              placeholder={cooldown > 0 ? 'Waiting for cooldown...' : 'Ask about GST, payroll, or emails...'}
+              placeholder={cooldown > 0 ? 'Waiting for cooldown...' : 'Mark attendance, ask about GST, payroll...'}
               className="flex-grow text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-[#110f18] border border-slate-200 dark:border-[#2c273e] text-slate-800 dark:text-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:focus:ring-violet-500 disabled:opacity-50"
             />
             <button

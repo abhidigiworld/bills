@@ -41,6 +41,23 @@ function AttendanceRegister() {
         nightShiftHours: 0 
     });
 
+    // Bulk Edit states
+    const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
+    const [selectedEmployeeIds, setSelectedEmployeeIds] = useState([]);
+    const [bulkForm, setBulkForm] = useState({ 
+        dayNum: 1, 
+        status: 'Present', 
+        workedDay: true,
+        workedNight: false,
+        checkIn: '09:30', 
+        checkOut: '17:30', 
+        nightCheckIn: '20:00', 
+        nightCheckOut: '04:00',
+        overtimeHours: 0, 
+        isNightShift: false, 
+        nightShiftHours: 0 
+    });
+
     // Hover tooltip state
     const [hoveredCell, setHoveredCell] = useState(null);
 
@@ -48,10 +65,12 @@ function AttendanceRegister() {
         const today = new Date();
         if (today.getFullYear() === selectedYear && (today.getMonth() + 1) === selectedMonth) {
             setBlanketForm(prev => ({ ...prev, dayNum: today.getDate() }));
+            setBulkForm(prev => ({ ...prev, dayNum: today.getDate() }));
         } else {
             setBlanketForm(prev => ({ ...prev, dayNum: 1 }));
+            setBulkForm(prev => ({ ...prev, dayNum: 1 }));
         }
-    }, [selectedYear, selectedMonth, isBlanketModalOpen]);
+    }, [selectedYear, selectedMonth, isBlanketModalOpen, isBulkModalOpen]);
 
     useEffect(() => {
         fetchData();
@@ -203,6 +222,79 @@ function AttendanceRegister() {
             }
             return nextForm;
         });
+    };
+
+    const handleBulkFormChange = (updatedFields) => {
+        setBulkForm(prev => {
+            let nextForm = { ...prev, ...updatedFields };
+            
+            if (nextForm.status === 'Present') {
+                const hasDay = nextForm.workedDay;
+                const hasNight = nextForm.workedNight;
+                
+                if (hasDay) {
+                    nextForm.overtimeHours = calculateOvertime(nextForm.checkIn, nextForm.checkOut, false);
+                } else {
+                    nextForm.overtimeHours = 0;
+                }
+
+                if (hasNight) {
+                    nextForm.nightShiftHours = calculateTotalHours(nextForm.nightCheckIn, nextForm.nightCheckOut, true);
+                    nextForm.isNightShift = true;
+                } else {
+                    nextForm.nightShiftHours = 0;
+                    nextForm.isNightShift = false;
+                }
+            } else {
+                nextForm.workedDay = true;
+                nextForm.workedNight = false;
+                nextForm.overtimeHours = 0;
+                nextForm.isNightShift = false;
+                nextForm.nightShiftHours = 0;
+            }
+            return nextForm;
+        });
+    };
+
+    const handleSelectEmployee = (empId) => {
+        setSelectedEmployeeIds(prev => 
+            prev.includes(empId) ? prev.filter(id => id !== empId) : [...prev, empId]
+        );
+    };
+
+    const handleSelectAllEmployees = () => {
+        if (selectedEmployeeIds.length === employees.length) {
+            setSelectedEmployeeIds([]);
+        } else {
+            setSelectedEmployeeIds(employees.map(emp => emp._id));
+        }
+    };
+
+    const handleSaveBulkAttendance = async () => {
+        if (selectedEmployeeIds.length === 0) return;
+        const dateStr = `${selectedYear}-${String(selectedMonth).padStart(2, '0')}-${String(bulkForm.dayNum).padStart(2, '0')}`;
+        try {
+            await axios.post(`${API_BASE_URL}/api/attendance/bulk-mark`, {
+                employeeIds: selectedEmployeeIds,
+                date: dateStr,
+                status: bulkForm.status,
+                workedDay: bulkForm.status === 'Present' ? bulkForm.workedDay : false,
+                workedNight: bulkForm.status === 'Present' ? bulkForm.workedNight : false,
+                checkIn: bulkForm.status === 'Present' && bulkForm.workedDay ? bulkForm.checkIn : null,
+                checkOut: bulkForm.status === 'Present' && bulkForm.workedDay ? bulkForm.checkOut : null,
+                nightCheckIn: bulkForm.status === 'Present' && bulkForm.workedNight ? bulkForm.nightCheckIn : null,
+                nightCheckOut: bulkForm.status === 'Present' && bulkForm.workedNight ? bulkForm.nightCheckOut : null,
+                overtimeHours: bulkForm.status === 'Present' ? bulkForm.overtimeHours : 0,
+                isNightShift: bulkForm.status === 'Present' ? bulkForm.isNightShift : false,
+                nightShiftHours: bulkForm.status === 'Present' ? bulkForm.nightShiftHours : 0
+            });
+            setIsBulkModalOpen(false);
+            setSelectedEmployeeIds([]);
+            fetchData();
+        } catch (error) {
+            console.error("Error saving bulk attendance:", error);
+            alert("Failed to save bulk attendance.");
+        }
     };
 
     const getCellDisplayInfo = (employeeId, dayNum) => {
@@ -506,6 +598,17 @@ function AttendanceRegister() {
                         </div>
 
                         <div className="flex gap-4 items-center">
+                            {selectedEmployeeIds.length > 0 && (
+                                <button
+                                    onClick={() => setIsBulkModalOpen(true)}
+                                    className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-750 hover:to-teal-750 text-white font-bold rounded-lg text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition duration-200 flex items-center gap-2 animate-fade-in"
+                                >
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                    Bulk Mark ({selectedEmployeeIds.length})
+                                </button>
+                            )}
                             <button
                                 onClick={() => setIsBlanketModalOpen(true)}
                                 className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-750 hover:to-violet-750 text-white font-bold rounded-lg text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition duration-200 flex items-center gap-2"
@@ -533,6 +636,14 @@ function AttendanceRegister() {
                                     <thead>
                                         <tr className="border-b border-slate-200 dark:border-[#262235] text-slate-500 dark:text-gray-400 font-bold uppercase">
                                             <th className="px-2 py-3 text-center border-r border-slate-100 dark:border-[#262235]">Sl</th>
+                                            <th className="px-2 py-3 text-center border-r border-slate-100 dark:border-[#262235] print-hidden">
+                                                <input 
+                                                    type="checkbox" 
+                                                    checked={selectedEmployeeIds.length === employees.length && employees.length > 0} 
+                                                    onChange={handleSelectAllEmployees} 
+                                                    className="rounded text-violet-600 focus:ring-violet-500 bg-slate-100 dark:bg-[#201d2c] border-slate-300 dark:border-[#37314e] h-4 w-4 cursor-pointer"
+                                                />
+                                            </th>
                                             <th className="px-3 py-3 min-w-[140px] border-r border-slate-100 dark:border-[#262235]">Name</th>
                                             <th className="px-3 py-3 min-w-[100px] border-r border-slate-100 dark:border-[#262235]">Designation</th>
                                             <th className="px-3 py-3 min-w-[100px] border-r border-slate-100 dark:border-[#262235]">Location</th>
@@ -556,6 +667,14 @@ function AttendanceRegister() {
                                                 return (
                                                     <tr key={emp._id} className="border-b border-slate-100 dark:border-[#262235] hover:bg-slate-50 dark:hover:bg-[#201d2c]/50 transition duration-150">
                                                         <td className="px-2 py-3 text-center font-bold text-slate-400 border-r border-slate-100 dark:border-[#262235]">{index + 1}</td>
+                                                        <td className="px-2 py-3 text-center border-r border-slate-100 dark:border-[#262235] print-hidden">
+                                                            <input 
+                                                                type="checkbox" 
+                                                                checked={selectedEmployeeIds.includes(emp._id)} 
+                                                                onChange={() => handleSelectEmployee(emp._id)}
+                                                                className="rounded text-violet-600 focus:ring-violet-500 bg-slate-100 dark:bg-[#201d2c] border-slate-300 dark:border-[#37314e] h-4 w-4 cursor-pointer"
+                                                            />
+                                                        </td>
                                                         <td className="px-3 py-3 font-semibold text-slate-900 dark:text-white border-r border-slate-100 dark:border-[#262235]">{emp.name}</td>
                                                         <td className="px-3 py-3 text-slate-600 dark:text-gray-300 border-r border-slate-100 dark:border-[#262235]">{emp.designation || '-'}</td>
                                                         <td className="px-3 py-3 text-slate-600 dark:text-gray-300 border-r border-slate-100 dark:border-[#262235]">{emp.location || '-'}</td>
@@ -609,7 +728,7 @@ function AttendanceRegister() {
                                             })
                                         ) : (
                                             <tr>
-                                                <td colSpan={daysInMonth + 6} className="text-center py-6 font-medium text-gray-500">
+                                                <td colSpan={daysInMonth + 7} className="text-center py-6 font-medium text-gray-500">
                                                     No employees registered in the system.
                                                 </td>
                                             </tr>
@@ -1046,6 +1165,183 @@ function AttendanceRegister() {
                             </button>
                             <button
                                 onClick={() => setIsBlanketModalOpen(false)}
+                                className="w-full bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-2.5 rounded-lg shadow transition duration-200 text-sm"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Bulk Mark Attendance Modal */}
+            {isBulkModalOpen && (
+                <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-65 backdrop-blur-sm flex items-center justify-center p-4 print-hidden">
+                    <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] w-full max-w-sm rounded-xl p-6 shadow-2xl relative transition-all duration-300 animate-slide-down">
+                        <h3 className="text-lg font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-[#262235] pb-2 mb-4">
+                            Bulk Mark Selected
+                        </h3>
+                        <p className="text-xs text-slate-500 dark:text-gray-400 mb-4">
+                            Marking attendance for <span className="font-bold text-indigo-600 dark:text-violet-400">{selectedEmployeeIds.length} selected employees</span> for a single day of {monthName} {selectedYear}.
+                        </p>
+
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Select Day of Month</label>
+                                <select
+                                    value={bulkForm.dayNum}
+                                    onChange={(e) => setBulkForm({ ...bulkForm, dayNum: parseInt(e.target.value) })}
+                                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition font-medium"
+                                >
+                                    {daysArray.map(day => (
+                                        <option key={day} value={day}>{day} ({new Date(selectedYear, selectedMonth - 1, day).toLocaleString('default', { weekday: 'short' })})</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Status</label>
+                                <select
+                                    value={bulkForm.status}
+                                    onChange={(e) => handleBulkFormChange({ status: e.target.value })}
+                                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition font-medium"
+                                >
+                                    <option value="Present">Present</option>
+                                    <option value="Absent">Absent</option>
+                                    <option value="Leave">Leave</option>
+                                    <option value="Holiday">Holiday</option>
+                                </select>
+                            </div>
+
+                            {bulkForm.status === 'Present' && (
+                                <div className="space-y-4 animate-fade-in">
+                                    {/* Day Shift Section */}
+                                    <div className="flex flex-col bg-slate-50 dark:bg-[#201d2c] p-3 rounded-lg border border-slate-200 dark:border-[#37314e] transition">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <label className="text-xs font-bold text-slate-700 dark:text-gray-200 uppercase tracking-wider cursor-pointer select-none flex items-center gap-2">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={bulkForm.workedDay}
+                                                    onChange={(e) => handleBulkFormChange({ workedDay: e.target.checked })}
+                                                    className="rounded text-violet-600 focus:ring-violet-500 bg-slate-100 dark:bg-[#201d2c] border-slate-300 dark:border-[#37314e] h-4 w-4"
+                                                />
+                                                ☀️ Day Shift
+                                            </label>
+                                            {bulkForm.workedDay && bulkForm.overtimeHours > 0 && (
+                                                <span className="text-[10px] font-extrabold bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 px-2 py-0.5 rounded-full">
+                                                    OT: {bulkForm.overtimeHours} hrs
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        {bulkForm.workedDay && (
+                                            <div className="grid grid-cols-2 gap-3 mt-1 animate-fade-in">
+                                                <div>
+                                                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Check In</label>
+                                                    <input
+                                                        type="time"
+                                                        value={bulkForm.checkIn}
+                                                        onChange={(e) => handleBulkFormChange({ checkIn: e.target.value })}
+                                                        className="w-full px-2.5 py-1.5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center animate-fade-in"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Check Out</label>
+                                                    <input
+                                                        type="time"
+                                                        value={bulkForm.checkOut}
+                                                        onChange={(e) => handleBulkFormChange({ checkOut: e.target.value })}
+                                                        className="w-full px-2.5 py-1.5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center animate-fade-in"
+                                                    />
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Night Shift Section */}
+                                    <div className="flex flex-col bg-slate-50 dark:bg-[#201d2c] p-3 rounded-lg border border-slate-200 dark:border-[#37314e] transition">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <label className="text-xs font-bold text-slate-700 dark:text-gray-200 uppercase tracking-wider cursor-pointer select-none flex items-center gap-2">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={bulkForm.workedNight}
+                                                    onChange={(e) => handleBulkFormChange({ workedNight: e.target.checked })}
+                                                    className="rounded text-violet-600 focus:ring-violet-500 bg-slate-100 dark:bg-[#201d2c] border-slate-300 dark:border-[#37314e] h-4 w-4"
+                                                />
+                                                🌙 Night Shift
+                                            </label>
+                                            {bulkForm.workedNight && bulkForm.nightShiftHours > 0 && (
+                                                <span className="text-[10px] font-extrabold bg-cyan-100 dark:bg-cyan-950/40 text-cyan-700 dark:text-cyan-300 px-2 py-0.5 rounded-full">
+                                                    NS: {bulkForm.nightShiftHours} hrs
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        {bulkForm.workedNight && (
+                                            <div className="grid grid-cols-2 gap-3 mt-1 animate-fade-in">
+                                                <div>
+                                                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Check In</label>
+                                                    <input
+                                                        type="time"
+                                                        value={bulkForm.nightCheckIn}
+                                                        onChange={(e) => handleBulkFormChange({ nightCheckIn: e.target.value })}
+                                                        className="w-full px-2.5 py-1.5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center animate-fade-in"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Check Out</label>
+                                                    <input
+                                                        type="time"
+                                                        value={bulkForm.nightCheckOut}
+                                                        onChange={(e) => handleBulkFormChange({ nightCheckOut: e.target.value })}
+                                                        className="w-full px-2.5 py-1.5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition text-center animate-fade-in"
+                                                    />
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Manual Overrides Display/Adjust */}
+                                    <div className="grid grid-cols-2 gap-4 bg-slate-50 dark:bg-[#201d2c] p-3 rounded-lg border border-slate-200 dark:border-[#37314e] text-xs">
+                                        <div className="flex items-center justify-between col-span-2 pb-1.5 border-b border-slate-200 dark:border-[#37314e] font-semibold text-slate-500 uppercase tracking-wider text-[10px]">
+                                            <span>Manual adjustments</span>
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <label className="font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider">OT (Hrs):</label>
+                                            <input
+                                                type="number"
+                                                step="0.5"
+                                                min="0"
+                                                value={bulkForm.overtimeHours}
+                                                onChange={(e) => setBulkForm(prev => ({ ...prev, overtimeHours: parseFloat(e.target.value) || 0 }))}
+                                                className="w-16 px-2 py-1 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded text-sm text-center text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 font-semibold"
+                                            />
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <label className="font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider">NS (Hrs):</label>
+                                            <input
+                                                type="number"
+                                                step="0.5"
+                                                min="0"
+                                                value={bulkForm.nightShiftHours}
+                                                onChange={(e) => setBulkForm(prev => ({ ...prev, nightShiftHours: parseFloat(e.target.value) || 0 }))}
+                                                className="w-16 px-2 py-1 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded text-sm text-center text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 font-semibold"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="flex gap-3 mt-6 print-hidden">
+                            <button
+                                onClick={handleSaveBulkAttendance}
+                                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-lg shadow transition duration-200 text-sm"
+                            >
+                                Save Changes
+                            </button>
+                            <button
+                                onClick={() => setIsBulkModalOpen(false)}
                                 className="w-full bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-2.5 rounded-lg shadow transition duration-200 text-sm"
                             >
                                 Cancel
