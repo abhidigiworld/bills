@@ -148,7 +148,7 @@ function InvoiceDetails({ invoiceId, onClose }) {
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto print:static print:bg-transparent print:backdrop-blur-none print:block print:p-0"
             onClick={handleBackdropClick}
         >
-            <div className="relative bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-2xl rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto p-6 md:p-8 transition-colors duration-300 print:static print:max-h-none print:overflow-visible print:p-0 print:border-none print:shadow-none print:bg-transparent">
+            <div className="relative bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-2xl rounded-2xl w-full max-w-7xl max-h-[95vh] overflow-y-auto p-4 md:p-6 transition-colors duration-300 print:static print:max-h-none print:overflow-visible print:p-0 print:border-none print:shadow-none print:bg-transparent">
                 
                 {/* Close Button */}
                 <button
@@ -208,15 +208,15 @@ function InvoiceDetails({ invoiceId, onClose }) {
                     </div>
 
                     <div className="overflow-x-auto mr-1">
-                        <table className="w-full table-auto sm:min-w-full mb-1">
+                        <table className="w-full table-fixed mb-1 text-xs">
                             <thead>
                                 <tr className="bg-gray-200">
-                                    <th className="border border-black py-0.5">S.No</th>
-                                    <th className="border border-black py-0.5">Description</th>
-                                    <th className="border border-black py-0.5">HSN/SAC Code</th>
-                                    <th className="border border-black py-0.5">Quantity</th>
-                                    <th className="border border-black py-0.5">Rate</th>
-                                    <th className="border border-black py-0.5">Total Value</th>
+                                    <th className="border border-black py-0.5 w-[8%]">S.No</th>
+                                    <th className="border border-black py-0.5 w-[37%]">Description</th>
+                                    <th className="border border-black py-0.5 w-[15%]">HSN/SAC Code</th>
+                                    <th className="border border-black py-0.5 w-[12%]">Quantity</th>
+                                    <th className="border border-black py-0.5 w-[13%]">Rate</th>
+                                    <th className="border border-black py-0.5 w-[15%]">Total Value</th>
                                 </tr>
                             </thead>
                             <tbody>

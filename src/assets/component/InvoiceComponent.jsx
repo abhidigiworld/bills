@@ -250,9 +250,9 @@ function InvoiceComponent({ invoiceDetails }) {
 
     return (
         <>
-            <div className="container mx-auto px-4 lg:px-8 mb-12 pb-8 font-mono text-slate-800 dark:text-gray-200">
+            <div className="w-full px-4 lg:px-8 mb-12 pb-8 font-mono text-slate-800 dark:text-gray-200">
                 <div className="flex flex-col lg:flex-row gap-6">
-                    <div className="flex flex-col space-y-4 w-full lg:w-1/3 print-hidden flex-shrink-0 lg:max-w-[360px]">
+                    <div className="flex flex-col space-y-4 w-full lg:w-[300px] print-hidden flex-shrink-0">
                         <div className="p-5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl space-y-3 transition-colors duration-300">
                             <h4 className="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">Add Invoice Item</h4>
                             <input
