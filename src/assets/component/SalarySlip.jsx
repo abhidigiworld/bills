@@ -2,6 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_BASE_URL } from '../../config';
 
+const monthMap = {
+    'January': '01', 'February': '02', 'March': '03', 'April': '04',
+    'May': '05', 'June': '06', 'July': '07', 'August': '08',
+    'September': '09', 'October': '10', 'November': '11', 'December': '12'
+};
+
 function SalarySlip() {
     const [employees, setEmployees] = useState([]);
     const [selectedEmployee, setSelectedEmployee] = useState(null);
@@ -17,8 +23,10 @@ function SalarySlip() {
         lunchRate: 0,
         nightShiftHours: 0,
         nightShiftDays: 0,
-        nightShiftRate: 0
+        nightShiftRate: 0,
+        hra: 0
     });
+    const [monthlyBreakdown, setMonthlyBreakdown] = useState([]);
     const [calculating, setCalculating] = useState(false);
 
     useEffect(() => {
@@ -47,11 +55,6 @@ function SalarySlip() {
             const response = await axios.get(`${API_BASE_URL}/api/attendance`);
             const logs = Array.isArray(response.data) ? response.data : [];
             
-            const monthMap = {
-                'January': '01', 'February': '02', 'March': '03', 'April': '04',
-                'May': '05', 'June': '06', 'July': '07', 'August': '08',
-                'September': '09', 'October': '10', 'November': '11', 'December': '12'
-            };
             const monthPrefix = `${year}-${monthMap[month]}`;
             
             const employeeLogs = logs.filter(log => {
@@ -70,6 +73,7 @@ function SalarySlip() {
                     nightShiftDays: 0,
                     lunchDays: 0
                 }));
+                setMonthlyBreakdown([]);
                 setCalculating(false);
                 return;
             }
@@ -82,72 +86,176 @@ function SalarySlip() {
                 return `${yyyy}-${mm}-${dd}`;
             };
 
-            // Helper to get status of any specific date (YYYY-MM-DD)
-            const getStatusForDate = (dateStr) => {
+            const daysInMonth = new Date(year, parseInt(monthMap[month]), 0).getDate();
+            const dailyCredits = [];
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `${year}-${monthMap[month]}-${String(day).padStart(2, '0')}`;
+                
+                // Find log
+                const log = employeeLogs.find(l => l.date === dateStr);
+
+                let status = 'Absent';
+                if (log) {
+                    status = log.status;
+                } else {
+                    const d = new Date(year, parseInt(monthMap[month]) - 1, day);
+                    if (d.getDay() === 0) {
+                        status = 'Holiday'; // Sunday defaults to Holiday (paid)
+                    } else {
+                        const todayStr = getYYYYMMDD(new Date());
+                        if (dateStr > todayStr) {
+                            status = 'Unmarked';
+                        } else {
+                            status = 'Absent';
+                        }
+                    }
+                }
+
+                let checkIn = '-';
+                let checkOut = '-';
+                let workedHours = 0;
+                let credit = 0.0;
+                let description = '';
+
+                const d = new Date(year, parseInt(monthMap[month]) - 1, day);
+                const isSunday = d.getDay() === 0;
+
+                if (status === 'Present') {
+                    if (log) {
+                        if (log.checkIn && log.checkOut) {
+                            const inTime = new Date(log.checkIn);
+                            const outTime = new Date(log.checkOut);
+                            workedHours = (outTime - inTime) / (1000 * 60 * 60);
+                            workedHours = parseFloat(workedHours.toFixed(2));
+                            checkIn = inTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            checkOut = outTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                            // Apply thresholds
+                            if (workedHours < 1.0) {
+                                credit = 0.0;
+                                description = 'Short Login (< 1 hr)';
+                            } else if (workedHours < 7.0) {
+                                credit = 0.5;
+                                description = 'Half Day (1 - 7 hrs)';
+                            } else {
+                                credit = 1.0;
+                                description = 'Full Day (>= 7 hrs)';
+                            }
+                        } else if (log.checkIn) {
+                            const inTime = new Date(log.checkIn);
+                            checkIn = inTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            credit = 0.0;
+                            description = 'Missed Punch-Out';
+                        } else {
+                            // Blanket Present (manual override)
+                            credit = 1.0;
+                            workedHours = 8.0; // Standard day
+                            description = 'Manual Mark';
+                        }
+                    } else {
+                        credit = 1.0;
+                        description = 'Manual Mark';
+                    }
+                } else if (status === 'Holiday') {
+                    credit = 1.0;
+                    description = isSunday ? 'Sunday' : 'Holiday';
+                } else if (status === 'Leave') {
+                    credit = 0.0;
+                    description = 'Unpaid Leave';
+                } else if (status === 'Absent') {
+                    credit = 0.0;
+                    description = 'Absent';
+                } else {
+                    credit = 0.0;
+                    description = 'Unmarked';
+                }
+
+                dailyCredits.push({
+                    day,
+                    dateStr,
+                    status,
+                    checkIn,
+                    checkOut,
+                    workedHours,
+                    credit,
+                    description,
+                    isSunday
+                });
+            }
+
+            // Helper to compute credit for arbitrary dates (for sandwich rule check outside current month if needed)
+            const getCreditForDateStr = (dStr) => {
                 const log = logs.find(l => {
                     const empId = l.employeeId?._id || l.employeeId;
-                    return empId === selectedEmployee._id && l.date === dateStr;
+                    return empId === selectedEmployee._id && l.date === dStr;
                 });
-                if (log) return log.status; // 'Present', 'Absent', 'Leave', 'Holiday'
                 
-                // If no log exists in database:
-                const todayStr = getYYYYMMDD(new Date());
-                if (dateStr > todayStr) {
-                    return 'Unmarked'; 
+                let s = 'Absent';
+                if (log) {
+                    s = log.status;
                 } else {
-                    // Sundays in the past default to Holiday (paid off), others default to Absent (unpaid)
-                    const parts = dateStr.split('-');
-                    const d = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-                    if (d.getDay() === 0) {
-                        return 'Holiday';
+                    const parts = dStr.split('-');
+                    const dt = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                    if (dt.getDay() === 0) {
+                        s = 'Holiday';
+                    } else {
+                        const todayStr = getYYYYMMDD(new Date());
+                        if (dStr > todayStr) {
+                            s = 'Unmarked';
+                        } else {
+                            s = 'Absent';
+                        }
                     }
-                    return 'Absent';
+                }
+
+                if (s === 'Present') {
+                    if (log) {
+                        if (log.checkIn && log.checkOut) {
+                            const inTime = new Date(log.checkIn);
+                            const outTime = new Date(log.checkOut);
+                            const wh = (outTime - inTime) / (1000 * 60 * 60);
+                            if (wh < 1.0) return 0.0;
+                            if (wh < 7.0) return 0.5;
+                            return 1.0;
+                        } else if (log.checkIn) {
+                            return 0.0; // Missed punch-out
+                        } else {
+                            return 1.0;
+                        }
+                    }
+                    return 1.0;
+                } else if (s === 'Holiday') {
+                    return 1.0;
+                } else {
+                    return 0.0;
                 }
             };
 
-            // Calculate paid days for the month
+            // Second pass: Apply sandwich rule on Sundays
             let workDaysCount = 0;
-            const daysInMonth = new Date(year, parseInt(monthMap[month]), 0).getDate();
-            
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dateStr = `${year}-${monthMap[month]}-${String(day).padStart(2, '0')}`;
-                const status = getStatusForDate(dateStr);
-                
-                const d = new Date(year, parseInt(monthMap[month]) - 1, day);
-                const isSunday = d.getDay() === 0;
-                
-                if (isSunday) {
-                    if (status === 'Leave' || status === 'Absent') {
-                        // Explicitly marked unpaid
-                    } else {
-                        // Check Sandwich Rule: if Saturday before and Monday after are Leave/Absent
-                        const prevDate = new Date(year, parseInt(monthMap[month]) - 1, day - 1);
-                        const nextDate = new Date(year, parseInt(monthMap[month]) - 1, day + 1);
-                        
+            dailyCredits.forEach((entry) => {
+                if (entry.isSunday) {
+                    if (entry.status !== 'Absent' && entry.status !== 'Leave') {
+                        // Check Saturday & Monday
+                        const prevDate = new Date(year, parseInt(monthMap[month]) - 1, entry.day - 1);
+                        const nextDate = new Date(year, parseInt(monthMap[month]) - 1, entry.day + 1);
                         const prevDateStr = getYYYYMMDD(prevDate);
                         const nextDateStr = getYYYYMMDD(nextDate);
-                        
-                        let prevStatus = getStatusForDate(prevDateStr);
-                        let nextStatus = getStatusForDate(nextDateStr);
-                        
-                        // Rule 2: Treat 'Unmarked' future/past days as 'Absent' for sandwich calculations
-                        if (prevStatus === 'Unmarked') prevStatus = 'Absent';
-                        if (nextStatus === 'Unmarked') nextStatus = 'Absent';
-                        
-                        const isSandwich = (prevStatus === 'Leave' || prevStatus === 'Absent') && 
-                                           (nextStatus === 'Leave' || nextStatus === 'Absent');
-                        
-                        if (!isSandwich) {
-                            workDaysCount++;
+
+                        const prevCredit = getCreditForDateStr(prevDateStr);
+                        const nextCredit = getCreditForDateStr(nextDateStr);
+
+                        if (prevCredit === 0.0 && nextCredit === 0.0) {
+                            entry.credit = 0.0;
+                            entry.description = 'Sunday (Sandwich Rule)';
                         }
                     }
-                } else {
-                    // Weekdays are paid if marked Present or Holiday
-                    if (status === 'Present' || status === 'Holiday') {
-                        workDaysCount++;
-                    }
                 }
-            }
+                workDaysCount += entry.credit;
+            });
+
+            setMonthlyBreakdown(dailyCredits);
 
             // Calculate overtime hours & night shift hours
             let otHoursCount = 0;
@@ -169,7 +277,7 @@ function SalarySlip() {
                 otHours: parseFloat(otHoursCount.toFixed(2)),
                 nightShiftHours: parseFloat(nightShiftHoursCount.toFixed(2)),
                 nightShiftDays: nightShiftDaysCount,
-                lunchDays: workDaysCount // Default lunch days to work days
+                lunchDays: Math.ceil(workDaysCount) // Default lunch days to ceiling of work days
             }));
         } catch (err) {
             console.error("Error auto-calculating attendance:", err);
@@ -185,6 +293,10 @@ function SalarySlip() {
                 ...emp,
                 dateOfJoining: formatDate(emp.dateOfJoining),
             });
+            setSalarySlip(prev => ({
+                ...prev,
+                hra: emp.hra || 0
+            }));
         }
     };
 
@@ -198,11 +310,11 @@ function SalarySlip() {
 
     // Calculate days in the selected month
     const getCalendarDays = () => {
-        const monthMap = {
+        const monthMapNums = {
             'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5, 'June': 6,
             'July': 7, 'August': 8, 'September': 9, 'October': 10, 'November': 11, 'December': 12
         };
-        return new Date(year, monthMap[month], 0).getDate();
+        return new Date(year, monthMapNums[month], 0).getDate();
     };
 
     const calendarDays = getCalendarDays();
@@ -213,7 +325,7 @@ function SalarySlip() {
     const hourlyOtRate = Math.floor(dailyRate / shiftHours);
     const otSalary = Math.floor(salarySlip.otHours * hourlyOtRate);
     const nightShiftAllowance = Math.floor((salarySlip.nightShiftHours || 0) * (salarySlip.nightShiftRate || 0));
-    const totalSalary = Math.floor(salaryByWorkDays + otSalary + nightShiftAllowance);
+    const totalSalary = Math.floor(salaryByWorkDays + otSalary + nightShiftAllowance + Math.floor(salarySlip.hra || 0));
     const lunchDeduction = Math.floor(salarySlip.lunchDays * salarySlip.lunchRate);
     const inHandSalary = Math.floor(totalSalary - salarySlip.esic - salarySlip.advance - lunchDeduction);
 
@@ -241,6 +353,7 @@ function SalarySlip() {
                 nightShiftDays: salarySlip.nightShiftDays || 0,
                 nightShiftRate: salarySlip.nightShiftRate || 0,
                 nightShiftAllowance,
+                hra: salarySlip.hra || 0,
                 advance: salarySlip.advance,
                 esic: salarySlip.esic,
                 lunchDays: salarySlip.lunchDays,
@@ -397,6 +510,24 @@ function SalarySlip() {
                             )}
                         </div>
 
+                        {/* Allowances: HRA */}
+                        <div className="border-t border-slate-100 dark:border-[#262235] pt-4">
+                            <h3 className="text-sm font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-3">Allowances</h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">HRA (House Rent Allowance) (₹)</label>
+                                    <input
+                                        type="number"
+                                        name="hra"
+                                        value={salarySlip.hra || ''}
+                                        placeholder="e.g. 3000"
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
                         {/* Deductions: Advance, ESIC, Lunch */}
                         <div className="border-t border-slate-100 dark:border-[#262235] pt-4">
                             <h3 className="text-sm font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-3">Deductions</h3>
@@ -452,6 +583,61 @@ function SalarySlip() {
                             </div>
                         </div>
 
+                        {/* Daily Attendance Audit Trail Table */}
+                        {monthlyBreakdown.length > 0 && (
+                            <div className="border-t border-slate-100 dark:border-[#262235] pt-6">
+                                <h3 className="text-sm font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-3 flex items-center justify-between">
+                                    <span>Daily Attendance Audit Trail</span>
+                                    <span className="text-xs normal-case font-normal text-indigo-600 dark:text-violet-400">
+                                        Total Credits: <span className="font-bold">{salarySlip.workDays} days</span>
+                                    </span>
+                                </h3>
+                                <div className="border border-slate-200 dark:border-[#262235] rounded-lg overflow-hidden">
+                                    <div className="max-h-64 overflow-y-auto overflow-x-auto">
+                                        <table className="w-full text-xs text-left border-collapse table-auto">
+                                            <thead className="bg-slate-50 dark:bg-[#201d2c]/50 text-slate-500 dark:text-gray-400 font-bold uppercase sticky top-0 z-10 border-b border-slate-200 dark:border-[#262235]">
+                                                <tr>
+                                                    <th className="px-4 py-2.5">Date</th>
+                                                    <th className="px-4 py-2.5">Status</th>
+                                                    <th className="px-4 py-2.5">Check-In</th>
+                                                    <th className="px-4 py-2.5">Check-Out</th>
+                                                    <th className="px-4 py-2.5">Worked Hours</th>
+                                                    <th className="px-4 py-2.5 text-center">Paid Credit</th>
+                                                    <th className="px-4 py-2.5">Remark</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-slate-100 dark:divide-[#262235]">
+                                                {monthlyBreakdown.map((row) => (
+                                                    <tr key={row.day} className="hover:bg-slate-50 dark:hover:bg-[#201d2c]/20 transition duration-150">
+                                                        <td className="px-4 py-2 font-medium text-slate-900 dark:text-white whitespace-nowrap">
+                                                            {row.day} {month} ({new Date(year, parseInt(monthMap[month]) - 1, row.day).toLocaleDateString('default', { weekday: 'short' })})
+                                                        </td>
+                                                        <td className="px-4 py-2 whitespace-nowrap">
+                                                            <span className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                                                                row.status === 'Present' ? 'bg-green-100 dark:bg-green-950/50 text-green-700 dark:text-green-400' :
+                                                                row.status === 'Holiday' ? 'bg-indigo-100 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400' :
+                                                                row.status === 'Leave' ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400' :
+                                                                'bg-rose-100 dark:bg-rose-950/50 text-rose-700 dark:text-rose-400'
+                                                            }`}>
+                                                                {row.status}
+                                                            </span>
+                                                        </td>
+                                                        <td className="px-4 py-2 text-slate-600 dark:text-gray-300 font-mono">{row.checkIn}</td>
+                                                        <td className="px-4 py-2 text-slate-600 dark:text-gray-300 font-mono">{row.checkOut}</td>
+                                                        <td className="px-4 py-2 text-slate-600 dark:text-gray-300 font-semibold">{row.workedHours > 0 ? `${row.workedHours.toFixed(2)} hrs` : '-'}</td>
+                                                        <td className="px-4 py-2 text-center font-bold text-slate-700 dark:text-gray-200">
+                                                            {row.credit.toFixed(1)}
+                                                        </td>
+                                                        <td className="px-4 py-2 text-slate-500 dark:text-gray-400 italic font-medium">{row.description}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                         {/* Summary Calculation Pane */}
                         <div className="border-t border-slate-100 dark:border-[#262235] pt-6 bg-slate-50 dark:bg-[#201d2c]/20 p-5 rounded-lg border border-slate-200/50 dark:border-[#262235] space-y-2.5 text-sm">
                             <div className="flex justify-between">
@@ -466,6 +652,12 @@ function SalarySlip() {
                                 <span className="text-slate-500 dark:text-gray-400">Overtime Salary (Floored):</span>
                                 <span className="font-semibold text-green-600 dark:text-green-400">+ ₹{otSalary.toLocaleString()}</span>
                             </div>
+                            {salarySlip.hra > 0 && (
+                                <div className="flex justify-between">
+                                    <span className="text-slate-500 dark:text-gray-400">House Rent Allowance (HRA):</span>
+                                    <span className="font-semibold text-green-600 dark:text-green-400">+ ₹{Math.floor(salarySlip.hra).toLocaleString()}</span>
+                                </div>
+                            )}
                             {nightShiftAllowance > 0 && (
                                 <div className="flex justify-between">
                                     <span className="text-slate-500 dark:text-gray-400">Night Shift Allowance ({salarySlip.nightShiftHours || salarySlip.nightShiftDays} {salarySlip.nightShiftHours ? 'hrs' : 'shifts'} @ ₹{salarySlip.nightShiftRate}{salarySlip.nightShiftHours ? '/hr' : '/shift'}):</span>

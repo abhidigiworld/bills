@@ -21,8 +21,10 @@ function ManagePayrolls() {
     const [editForm, setEditForm] = useState({
         workDays: 0,
         otHours: 0,
+        nightShiftHours: 0,
         nightShiftDays: 0,
         nightShiftRate: 0,
+        hra: 0,
         advance: 0,
         esic: 0,
         lunchDays: 0,
@@ -79,6 +81,7 @@ function ManagePayrolls() {
             nightShiftHours: slip.nightShiftHours || 0,
             nightShiftDays: slip.nightShiftDays || 0,
             nightShiftRate: slip.nightShiftRate || 0,
+            hra: slip.hra || 0,
             advance: slip.advance || 0,
             esic: slip.esic || 0,
             lunchDays: slip.lunchDays || 0,
@@ -115,7 +118,7 @@ function ManagePayrolls() {
         const hourlyOtRate = Math.floor(dailyRate / editForm.shiftHours);
         const otSalary = Math.floor(editForm.otHours * hourlyOtRate);
         const nightShiftAllowance = Math.floor((editForm.nightShiftHours || 0) * (editForm.nightShiftRate || 0));
-        const totalSalary = Math.floor(salaryByWorkDays + otSalary + nightShiftAllowance);
+        const totalSalary = Math.floor(salaryByWorkDays + otSalary + nightShiftAllowance + Math.floor(editForm.hra || 0));
 
         const lunchDeduction = Math.floor(editForm.lunchDays * editForm.lunchRate);
         const inHandSalary = Math.floor(totalSalary - editForm.esic - editForm.advance - lunchDeduction);
@@ -127,6 +130,7 @@ function ManagePayrolls() {
             hourlyOtRate,
             otSalary,
             nightShiftAllowance,
+            hra: Math.floor(editForm.hra || 0),
             totalSalary,
             lunchDeduction,
             inHandSalary,
@@ -155,6 +159,7 @@ function ManagePayrolls() {
                 nightShiftDays: editForm.nightShiftDays,
                 nightShiftRate: editForm.nightShiftRate,
                 nightShiftAllowance: liveCalculations.nightShiftAllowance,
+                hra: editForm.hra || 0,
                 advance: editForm.advance,
                 esic: editForm.esic,
                 lunchDays: editForm.lunchDays,
@@ -487,6 +492,18 @@ function ManagePayrolls() {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
+                                    <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">HRA (House Rent Allowance) (₹)</label>
+                                    <input
+                                        type="number"
+                                        value={editForm.hra}
+                                        onChange={(e) => setEditForm({ ...editForm, hra: parseFloat(e.target.value) || 0 })}
+                                        className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
                                     <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Advance Taken</label>
                                     <input
                                         type="number"
@@ -555,6 +572,12 @@ function ManagePayrolls() {
                                     <span className="text-slate-500 dark:text-gray-400">O.T. Pay (Hourly Rate ₹{liveCalculations.hourlyOtRate}):</span>
                                     <span className="font-semibold text-slate-800 dark:text-white">₹{liveCalculations.otSalary.toLocaleString()}</span>
                                 </div>
+                                {editForm.hra > 0 && (
+                                    <div className="flex justify-between">
+                                        <span className="text-slate-500 dark:text-gray-400">House Rent Allowance (HRA):</span>
+                                        <span className="font-semibold text-slate-800 dark:text-white">₹{Math.floor(editForm.hra).toLocaleString()}</span>
+                                    </div>
+                                )}
                                 {liveCalculations.nightShiftAllowance > 0 && (
                                     <div className="flex justify-between">
                                         <span className="text-slate-500 dark:text-gray-400">Night Shift Pay ({editForm.nightShiftHours || editForm.nightShiftDays} {editForm.nightShiftHours ? 'hrs' : 'shifts'} @ ₹{editForm.nightShiftRate}{editForm.nightShiftHours ? '/hr' : '/shift'}):</span>
@@ -687,6 +710,16 @@ function ManagePayrolls() {
                                                             <td className="border-r border-black px-3 py-1.5 text-center">₹{Math.floor(activeSlip.nightShiftRate || 0).toLocaleString()} {activeSlip.nightShiftHours ? '/ hr' : '/ shift'}</td>
                                                             <td className="border-r border-black px-3 py-1.5 text-center">{activeSlip.nightShiftHours ? `${activeSlip.nightShiftHours} hrs` : `${activeSlip.nightShiftDays} shifts`}</td>
                                                             <td className="border-r border-black px-3 py-1.5 text-right font-bold text-green-600 print:text-black">₹{Math.floor(activeSlip.nightShiftAllowance || 0).toLocaleString()}</td>
+                                                            <td className="px-3 py-1.5 text-right text-slate-400">-</td>
+                                                        </tr>
+                                                    )}
+                                                    {activeSlip.hra > 0 && (
+                                                        <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
+                                                            <td className="border-r border-black px-2 py-1.5 text-center">{sNo++}</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-left font-semibold">House Rent Allowance (HRA)</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-center">-</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-center">-</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-right font-bold text-green-600 print:text-black">₹{Math.floor(activeSlip.hra).toLocaleString()}</td>
                                                             <td className="px-3 py-1.5 text-right text-slate-400">-</td>
                                                         </tr>
                                                     )}

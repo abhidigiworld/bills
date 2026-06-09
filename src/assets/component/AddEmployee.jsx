@@ -9,6 +9,7 @@ function AddEmployee() {
         email: '', 
         dateOfJoining: '', 
         grossSalary: 0, 
+        hra: 0,
         designation: '',
         location: '',
         status: 'Active',
@@ -48,7 +49,7 @@ function AddEmployee() {
         if (name === 'dateOfJoining') {
             const formattedDate = value.split('T')[0];
             setEmployee({ ...employee, [name]: formattedDate });
-        } else if (name === 'grossSalary') {
+        } else if (name === 'grossSalary' || name === 'hra') {
             setEmployee({ ...employee, [name]: Math.floor(parseFloat(value)) || 0 });
         } else {
             setEmployee({ ...employee, [name]: value });
@@ -71,6 +72,7 @@ function AddEmployee() {
                 email: '', 
                 dateOfJoining: '', 
                 grossSalary: 0, 
+                hra: 0,
                 designation: '',
                 location: '',
                 status: 'Active',
@@ -91,6 +93,7 @@ function AddEmployee() {
             dateOfJoining: formattedDate,
             designation: emp.designation || '',
             location: emp.location || '',
+            hra: emp.hra || 0,
             defaultShift: emp.defaultShift || 'Day (09:30 - 17:30)'
         });
         setIsEditing(true);
@@ -121,6 +124,7 @@ function AddEmployee() {
                             email: '', 
                             dateOfJoining: '', 
                             grossSalary: 0, 
+                            hra: 0,
                             designation: '',
                             location: '',
                             status: 'Active',
@@ -326,6 +330,20 @@ function AddEmployee() {
                                         onChange={handleInputChange}
                                         className="w-full px-3.5 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-violet-500 transition"
                                         required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-[10px] font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">HRA (House Rent Allowance - Optional)</label>
+                                    <input
+                                        type="number"
+                                        name="hra"
+                                        placeholder="HRA in ₹ (e.g. 3000)"
+                                        value={employee.hra || ''}
+                                        onChange={handleInputChange}
+                                        className="w-full px-3.5 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-violet-500 transition"
                                     />
                                 </div>
                             </div>
