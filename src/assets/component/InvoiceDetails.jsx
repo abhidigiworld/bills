@@ -285,17 +285,17 @@ function InvoiceDetails({ invoiceId, onClose }) {
                                 <li>Late payment will be charged if bill unpaid for 15 days.</li>
                             </ul>
                         </div>
-                        <div className="text-right flex flex-col justify-between h-24 min-w-[200px]">
+                        <div className="text-right flex flex-col justify-between h-20 min-w-[200px] relative print:h-20">
                             <p className="text-[10px] font-bold text-gray-750">For Sakshi Enterprises</p>
-                            <div className="relative h-10 w-full flex items-center justify-end my-0.5">
+                            <div className="relative h-8 w-full flex items-end justify-end">
                                 {showSignature && (
-                                    <img src={signature} alt="Signature" className="absolute max-h-10 w-auto object-contain z-10" />
+                                    <img src={signature} alt="Signature" className="absolute bottom-[-8px] right-2 max-h-16 w-auto object-contain z-20 pointer-events-none" />
                                 )}
                                 {showStamp && (
-                                    <img src={stamp} alt="stamp" className="absolute max-h-16 w-auto object-contain z-0 opacity-80" />
+                                    <img src={stamp} alt="stamp" className="absolute bottom-[-12px] right-8 max-h-22 w-auto object-contain z-10 opacity-85 pointer-events-none" />
                                 )}
                             </div>
-                            <p className="text-[10px] font-bold text-gray-750">Authorised Signatory</p>
+                            <p className="text-[10px] font-bold text-gray-750 relative z-0">Authorised Signatory</p>
                         </div>
                     </div>
                 </div>

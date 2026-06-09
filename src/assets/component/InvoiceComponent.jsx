@@ -252,7 +252,7 @@ function InvoiceComponent({ invoiceDetails }) {
         <>
             <div className="container mx-auto px-4 lg:px-8 mb-12 pb-8 font-mono text-slate-800 dark:text-gray-200">
                 <div className="flex flex-col lg:flex-row gap-6">
-                    <div className="flex flex-col space-y-4 w-full lg:w-1/3 print-hidden">
+                    <div className="flex flex-col space-y-4 w-full lg:w-1/3 print-hidden flex-shrink-0 lg:max-w-[360px]">
                         <div className="p-5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl space-y-3 transition-colors duration-300">
                             <h4 className="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">Add Invoice Item</h4>
                             <input
@@ -346,7 +346,7 @@ function InvoiceComponent({ invoiceDetails }) {
                             </button>
                         </div>
                     </div>
-                    <div className='printdata w-full'>
+                    <div className='printdata w-full lg:flex-1 min-w-0'>
                         <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-t-lg ">
                             <p className="text-2xl font-bold text-center">Tax Invoice</p>
                             <div className="flex justify-between items-center relative">
@@ -485,13 +485,13 @@ function InvoiceComponent({ invoiceDetails }) {
                                     <li>Late payment will be charged if bill unpaid for 15 days.</li>
                                 </ul>
                             </div>
-                            <div className="text-right flex flex-col justify-between h-24 min-w-[200px]">
+                            <div className="text-right flex flex-col justify-between h-20 min-w-[200px] relative print:h-20">
                                 <p className="text-[10px] font-bold text-gray-750">For Sakshi Enterprises</p>
-                                <div className="relative h-10 w-full flex items-center justify-end my-0.5">
-                                    <img src={signature} alt="Signature" className="absolute max-h-10 w-auto object-contain z-10" />
-                                    {/* <img src={stamp} alt="stamp" className="absolute max-h-16 w-auto object-contain z-0 opacity-80" /> */}
+                                <div className="relative h-8 w-full flex items-end justify-end">
+                                    <img src={signature} alt="Signature" className="absolute bottom-[-8px] right-2 max-h-16 w-auto object-contain z-20 pointer-events-none" />
+                                    <img src={stamp} alt="stamp" className="absolute bottom-[-12px] right-8 max-h-22 w-auto object-contain z-10 opacity-85 pointer-events-none" />
                                 </div>
-                                <p className="text-[10px] font-bold text-gray-750">Authorised Signatory</p>
+                                <p className="text-[10px] font-bold text-gray-750 relative z-0">Authorised Signatory</p>
                             </div>
                         </div>
                     </div>

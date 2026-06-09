@@ -12,7 +12,7 @@ function AddEmployee() {
         designation: '',
         location: '',
         status: 'Active',
-        defaultShift: 'Day'
+        defaultShift: 'Day (09:30 - 17:30)'
     });
     const [isEditing, setIsEditing] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
@@ -59,11 +59,6 @@ function AddEmployee() {
         e.preventDefault();
         setError('');
 
-        if (!employee.email.trim()) {
-            setError('Email is required');
-            return;
-        }
-
         try {
             if (isEditing) {
                 await axios.put(`${API_BASE_URL}/api/employees/${employee._id}`, employee);
@@ -79,7 +74,7 @@ function AddEmployee() {
                 designation: '',
                 location: '',
                 status: 'Active',
-                defaultShift: 'Day'
+                defaultShift: 'Day (09:30 - 17:30)'
             });
             setIsOpen(false);
             fetchEmployees();
@@ -96,7 +91,7 @@ function AddEmployee() {
             dateOfJoining: formattedDate,
             designation: emp.designation || '',
             location: emp.location || '',
-            defaultShift: emp.defaultShift || 'Day'
+            defaultShift: emp.defaultShift || 'Day (09:30 - 17:30)'
         });
         setIsEditing(true);
         setIsOpen(true);
@@ -129,7 +124,7 @@ function AddEmployee() {
                             designation: '',
                             location: '',
                             status: 'Active',
-                            defaultShift: 'Day'
+                            defaultShift: 'Day (09:30 - 17:30)'
                         });
                         setError('');
                         setIsEditing(false);
@@ -268,7 +263,7 @@ function AddEmployee() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Email</label>
+                                    <label className="block text-[10px] font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Email (Optional)</label>
                                     <input
                                         type="email"
                                         name="email"
@@ -276,7 +271,6 @@ function AddEmployee() {
                                         value={employee.email}
                                         onChange={handleInputChange}
                                         className="w-full px-3.5 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-violet-500 transition"
-                                        required
                                     />
                                 </div>
                             </div>
@@ -354,12 +348,13 @@ function AddEmployee() {
                                     <label className="block text-[10px] font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Default Shift</label>
                                     <select
                                         name="defaultShift"
-                                        value={employee.defaultShift || 'Day'}
+                                        value={employee.defaultShift || 'Day (09:30 - 17:30)'}
                                         onChange={handleInputChange}
                                         className="w-full px-3.5 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition cursor-pointer"
                                     >
-                                        <option value="Day">Day Shift (09:00 - 17:00)</option>
-                                        <option value="Night">Night Shift (20:00 - 04:00)</option>
+                                        <option value="Day (09:30 - 17:30)">Day Shift (09:30 - 17:30)</option>
+                                        <option value="Day (09:00 - 17:00)">Day Shift (09:00 - 17:00)</option>
+                                        <option value="Night (20:00 - 04:00)">Night Shift (20:00 - 04:00)</option>
                                     </select>
                                 </div>
                             </div>

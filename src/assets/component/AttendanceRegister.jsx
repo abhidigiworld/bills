@@ -32,8 +32,8 @@ function AttendanceRegister() {
         status: 'Present', 
         workedDay: true,
         workedNight: false,
-        checkIn: '09:00', 
-        checkOut: '17:00', 
+        checkIn: '09:30', 
+        checkOut: '17:30', 
         nightCheckIn: '20:00', 
         nightCheckOut: '04:00',
         overtimeHours: 0, 
@@ -323,6 +323,30 @@ function AttendanceRegister() {
     const handleCellClick = (employee, dayNum) => {
         const log = getLogForDay(employee._id, dayNum);
         setSelectedCell({ employee, dayNum });
+
+        const defaultShift = employee.defaultShift || 'Day (09:30 - 17:30)';
+        const isNight = defaultShift.includes('Night');
+        
+        let checkInTime = '09:30';
+        let checkOutTime = '17:30';
+        if (defaultShift.includes('09:00')) {
+            checkInTime = '09:00';
+            checkOutTime = '17:00';
+        }
+        let nightCheckInTime = '20:00';
+        let nightCheckOutTime = '04:00';
+
+        const timeMatch = defaultShift.match(/(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})/);
+        if (timeMatch) {
+            if (isNight) {
+                nightCheckInTime = timeMatch[1];
+                nightCheckOutTime = timeMatch[2];
+            } else {
+                checkInTime = timeMatch[1];
+                checkOutTime = timeMatch[2];
+            }
+        }
+
         if (log) {
             const hasCheckIn = !!log.checkIn;
             const hasNightCheckIn = !!log.nightCheckIn;
@@ -330,10 +354,10 @@ function AttendanceRegister() {
                 status: log.status === 'Present' ? 'Present' : (log.status === 'Leave' ? 'Leave' : (log.status === 'Holiday' ? 'Holiday' : 'Absent')),
                 workedDay: hasCheckIn || (!hasCheckIn && !hasNightCheckIn),
                 workedNight: hasNightCheckIn,
-                checkIn: formatTimeFromDate(log.checkIn, '09:00'),
-                checkOut: formatTimeFromDate(log.checkOut, '17:00'),
-                nightCheckIn: formatTimeFromDate(log.nightCheckIn, '20:00'),
-                nightCheckOut: formatTimeFromDate(log.nightCheckOut, '04:00'),
+                checkIn: formatTimeFromDate(log.checkIn, checkInTime),
+                checkOut: formatTimeFromDate(log.checkOut, checkOutTime),
+                nightCheckIn: formatTimeFromDate(log.nightCheckIn, nightCheckInTime),
+                nightCheckOut: formatTimeFromDate(log.nightCheckOut, nightCheckOutTime),
                 overtimeHours: log.overtimeHours || 0,
                 isNightShift: log.isNightShift || false,
                 nightShiftHours: log.nightShiftHours || 0
@@ -344,30 +368,28 @@ function AttendanceRegister() {
             today.setHours(0, 0, 0, 0);
             const cellDate = new Date(selectedYear, selectedMonth - 1, dayNum);
             
-            const isNight = employee.defaultShift === 'Night';
-            
             if (cellDate > today) {
                 setModalForm({ 
                     status: 'Present', 
                     workedDay: !isNight,
                     workedNight: isNight,
-                    checkIn: '09:00', 
-                    checkOut: '17:00', 
-                    nightCheckIn: '20:00', 
-                    nightCheckOut: '04:00',
+                    checkIn: checkInTime, 
+                    checkOut: checkOutTime, 
+                    nightCheckIn: nightCheckInTime, 
+                    nightCheckOut: nightCheckOutTime,
                     overtimeHours: 0, 
                     isNightShift: isNight, 
-                    nightShiftHours: isNight ? 8 : 0 
+                    nightShiftHours: isNight ? calculateTotalHours(nightCheckInTime, nightCheckOutTime, true) : 0 
                 });
             } else {
                 setModalForm({ 
                     status: 'Absent', 
                     workedDay: !isNight,
                     workedNight: isNight,
-                    checkIn: '09:00', 
-                    checkOut: '17:00', 
-                    nightCheckIn: '20:00', 
-                    nightCheckOut: '04:00',
+                    checkIn: checkInTime, 
+                    checkOut: checkOutTime, 
+                    nightCheckIn: nightCheckInTime, 
+                    nightCheckOut: nightCheckOutTime,
                     overtimeHours: 0, 
                     isNightShift: isNight, 
                     nightShiftHours: 0 
