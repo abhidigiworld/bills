@@ -130,7 +130,12 @@ function AttendanceRegister() {
     const formatTimeFromDate = (dateStr, defaultVal = '') => {
         if (!dateStr) return defaultVal;
         try {
-            return new Date(dateStr).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+            return new Date(dateStr).toLocaleTimeString('en-US', {
+                timeZone: 'Asia/Kolkata',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
         } catch (e) {
             return defaultVal;
         }
@@ -571,10 +576,10 @@ function AttendanceRegister() {
                                                                                     employeeName: emp.name,
                                                                                     date: `${day} ${monthName} ${selectedYear}`,
                                                                                     status: log.status,
-                                                                                    checkIn: log.checkIn ? new Date(log.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : null,
-                                                                                    checkOut: log.checkOut ? new Date(log.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : null,
-                                                                                    nightCheckIn: log.nightCheckIn ? new Date(log.nightCheckIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : null,
-                                                                                    nightCheckOut: log.nightCheckOut ? new Date(log.nightCheckOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : null,
+                                                                                    checkIn: formatTimeFromDate(log.checkIn, null),
+                                                                                    checkOut: formatTimeFromDate(log.checkOut, null),
+                                                                                    nightCheckIn: formatTimeFromDate(log.nightCheckIn, null),
+                                                                                    nightCheckOut: formatTimeFromDate(log.nightCheckOut, null),
                                                                                     isNightShift: log.isNightShift,
                                                                                     nightShiftHours: log.nightShiftHours || 0,
                                                                                     overtimeHours: log.overtimeHours,
