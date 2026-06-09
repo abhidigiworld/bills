@@ -57,7 +57,7 @@
     background-color: transparent !important;
     box-shadow: none !important;
   }
-
+˚˙
   /* Override body, root, main workspace, and printdata to print on solid white background */
   body, html, #root, main, .printdata, .bg-white, [class*="bg-white"] {
     background-color: #ffffff !important;
