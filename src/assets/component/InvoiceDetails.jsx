@@ -144,12 +144,12 @@ function InvoiceDetails({ invoiceId, onClose }) {
     };
 
     return (
-        <div 
+        <div
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto print:static print:bg-transparent print:backdrop-blur-none print:block print:p-0"
             onClick={handleBackdropClick}
         >
             <div className="relative bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-2xl rounded-2xl w-full max-w-7xl max-h-[95vh] overflow-y-auto p-4 md:p-6 transition-colors duration-300 print:static print:max-h-none print:overflow-visible print:p-0 print:border-none print:shadow-none print:bg-transparent">
-                
+
                 {/* Close Button */}
                 <button
                     onClick={onClose}
@@ -276,26 +276,26 @@ function InvoiceDetails({ invoiceId, onClose }) {
                         </table>
                     </div>
 
-                    <div className="p-2 px-8 flex justify-between mt-2">
+                    <div className="py-2 pr-8 pl-0 flex justify-between mt-2">
                         <div>
-                            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Terms & Conditions: </p>
-                            <ul className="list-disc pl-4 text-[10px] text-gray-600 text-left leading-normal mt-1">
+                            <p className="text-[12px] font-bold text-gray-500 uppercase tracking-wider">Terms & Conditions: </p>
+                            <ul className="list-disc pl-4 text-[12px] text-gray-600 text-left leading-normal mt-1">
                                 <li>All disputes are subject to jurisdiction of Delhi Courts</li>
                                 <li>Payment should be made by cash/cheque/draft only.</li>
                                 <li>Late payment will be charged if bill unpaid for 15 days.</li>
                             </ul>
                         </div>
                         <div className="text-right flex flex-col justify-between h-20 min-w-[200px] relative print:h-20">
-                            <p className="text-[10px] font-bold text-gray-750">For Sakshi Enterprises</p>
+                            <p className="text-[12px] font-bold text-gray-750">For Sakshi Enterprises</p>
                             <div className="relative h-8 w-full flex items-end justify-end">
                                 {showSignature && (
                                     <img src={signature} alt="Signature" className="absolute bottom-[-20px] right-2 max-h-16 w-auto object-contain z-20 pointer-events-none" />
                                 )}
                                 {showStamp && (
-                                    <img src={stamp} alt="stamp" className="absolute bottom-[-35px] right-2 max-h-22 w-auto object-contain z-10 opacity-85 pointer-events-none" />
+                                    <img src={stamp} alt="stamp" className="absolute bottom-[-35px] max-h-22 w-auto object-contain z-10 opacity-85 pointer-events-none" />
                                 )}
                             </div>
-                            <p className="text-[10px] font-bold text-gray-750 relative z-0">Authorised Signatory</p>
+                            <p className="text-[12px] font-bold text-gray-750 relative z-0">Authorised Signatory</p>
                         </div>
                     </div>
                 </div>
