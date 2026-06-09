@@ -28,6 +28,9 @@ function SalarySlip() {
     });
     const [monthlyBreakdown, setMonthlyBreakdown] = useState([]);
     const [calculating, setCalculating] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
         fetchActiveEmployees();
@@ -36,6 +39,8 @@ function SalarySlip() {
     useEffect(() => {
         if (selectedEmployee) {
             autoCalculateAttendance();
+            setSuccessMessage('');
+            setErrorMessage('');
         }
     }, [selectedEmployee, month, year, shiftHours]);
 
@@ -297,6 +302,8 @@ function SalarySlip() {
                 ...prev,
                 hra: emp.hra || 0
             }));
+            setSuccessMessage('');
+            setErrorMessage('');
         }
     };
 
@@ -341,6 +348,9 @@ function SalarySlip() {
 
     const handleSubmit = async () => {
         if (!selectedEmployee) return;
+        setSubmitting(true);
+        setSuccessMessage('');
+        setErrorMessage('');
         try {
             await axios.post(`${API_BASE_URL}/api/salary-slips`, {
                 employeeId: selectedEmployee._id,
@@ -363,10 +373,18 @@ function SalarySlip() {
                 totalSalary,
                 inHandSalary
             });
-            alert('Salary Slip Saved Successfully!');
+            setSuccessMessage(`Salary Slip generated successfully for ${selectedEmployee.name}!`);
+            setTimeout(() => {
+                setSuccessMessage('');
+            }, 3000);
         } catch (error) {
             console.error("Error saving salary slip:", error);
-            alert("Failed to save salary slip: " + (error.response?.data?.error || error.message));
+            setErrorMessage(error.response?.data?.error || "Failed to save salary slip.");
+            setTimeout(() => {
+                setErrorMessage('');
+            }, 3000);
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -682,14 +700,76 @@ function SalarySlip() {
                         <div className="flex gap-4 pt-2">
                             <button
                                 onClick={handleSubmit}
-                                className="w-full bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition duration-200 transform hover:scale-[1.01] active:scale-[0.99] text-sm"
+                                disabled={submitting}
+                                className={`w-full bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition duration-200 transform hover:scale-[1.01] active:scale-[0.99] text-sm flex items-center justify-center gap-2 ${submitting ? 'opacity-75 cursor-not-allowed' : ''}`}
                             >
-                                Generate Salary Slip
+                                {submitting ? (
+                                    <>
+                                        <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        <span>Generating...</span>
+                                    </>
+                                ) : (
+                                    'Generate Salary Slip'
+                                )}
                             </button>
                         </div>
                     </div>
                 )}
             </div>
+
+            {/* Centered Premium Overlay Modal for Notifications */}
+            {(successMessage || errorMessage) && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-md animate-fade-in">
+                    <div className="bg-white dark:bg-[#181622]/95 border border-slate-200 dark:border-[#262235] shadow-2xl rounded-2xl p-6 sm:p-8 w-full max-w-sm text-center relative transition-all duration-300 animate-slide-down">
+                        {/* Close button */}
+                        <button
+                            onClick={() => {
+                                setSuccessMessage('');
+                                setErrorMessage('');
+                            }}
+                            className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+                            title="Close"
+                        >
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+
+                        {successMessage ? (
+                            <div className="space-y-4">
+                                <div className="mx-auto w-16 h-16 bg-green-100 dark:bg-green-950/40 rounded-full flex items-center justify-center text-green-600 dark:text-green-400">
+                                    <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <h3 className="text-lg font-black text-slate-900 dark:text-white">Success!</h3>
+                                <p className="text-sm text-slate-600 dark:text-gray-300">{successMessage}</p>
+                                <div className="pt-2">
+                                    <a 
+                                        href="/manage-payrolls" 
+                                        className="inline-block bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2.5 px-6 rounded-xl text-xs shadow-md transition duration-200"
+                                    >
+                                        Go to Manage Payrolls →
+                                    </a>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="space-y-4">
+                                <div className="mx-auto w-16 h-16 bg-red-100 dark:bg-red-950/40 rounded-full flex items-center justify-center text-red-600 dark:text-red-400">
+                                    <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                    </svg>
+                                </div>
+                                <h3 className="text-lg font-black text-slate-900 dark:text-white">Error</h3>
+                                <p className="text-sm text-slate-600 dark:text-gray-300">{errorMessage}</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
