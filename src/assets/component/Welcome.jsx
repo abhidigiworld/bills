@@ -259,7 +259,6 @@ function WelcomePage() {
   }
 
   const isAdmin = currentUser?.role === 'admin';
-  const isFallbackAdmin = currentUser && !currentUser.id;
 
   // Donut chart colors
   const DONUT_COLORS = ['#3b82f6', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6'];

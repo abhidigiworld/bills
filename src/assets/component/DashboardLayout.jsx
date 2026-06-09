@@ -163,7 +163,6 @@ function DashboardLayout() {
   };
 
   const isAdmin = currentUser?.role === 'admin';
-  const isFallbackAdmin = currentUser && !currentUser.id;
 
   const getPageDetails = () => {
     switch (location.pathname) {
@@ -584,21 +583,7 @@ function DashboardLayout() {
               My Profile Details
             </h3>
 
-            {isFallbackAdmin ? (
-              <div className="space-y-4">
-                <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/40 text-amber-700 dark:text-amber-400 p-4 rounded-lg text-xs sm:text-sm font-medium leading-relaxed">
-                  You are currently logged in using the default fallback administrator credentials (<strong>Sakshi Admin</strong>). For security and architectural reasons, default/fallback credentials cannot be modified directly from the UI.
-                </div>
-                <div className="flex justify-end pt-2">
-                  <button
-                    onClick={() => setIsProfileModalOpen(false)}
-                    className="bg-slate-200 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-2.5 px-6 rounded-lg transition text-sm shadow-sm"
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            ) : showOtpVerification ? (
+            {showOtpVerification ? (
               <form onSubmit={handleProfileSubmit} className="space-y-4">
                 <div className="bg-indigo-50 dark:bg-indigo-950/20 border border-indigo-200 dark:border-indigo-900/40 text-indigo-700 dark:text-indigo-400 p-4 rounded-lg text-xs sm:text-sm font-medium leading-relaxed">
                   To confirm your password change, please enter the 6-digit verification code sent to <strong>{currentUser?.email}</strong>.
