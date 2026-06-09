@@ -289,10 +289,10 @@ function InvoiceDetails({ invoiceId, onClose }) {
                             <p className="text-[10px] font-bold text-gray-750">For Sakshi Enterprises</p>
                             <div className="relative h-8 w-full flex items-end justify-end">
                                 {showSignature && (
-                                    <img src={signature} alt="Signature" className="absolute bottom-[-50px] right-2 max-h-16 w-auto object-contain z-20 pointer-events-none" />
+                                    <img src={signature} alt="Signature" className="absolute bottom-[-20px] right-2 max-h-16 w-auto object-contain z-20 pointer-events-none" />
                                 )}
                                 {showStamp && (
-                                    <img src={stamp} alt="stamp" className="absolute bottom-[-50px] right-8 max-h-22 w-auto object-contain z-10 opacity-85 pointer-events-none" />
+                                    <img src={stamp} alt="stamp" className="absolute bottom-[-35px] right-2 max-h-22 w-auto object-contain z-10 opacity-85 pointer-events-none" />
                                 )}
                             </div>
                             <p className="text-[10px] font-bold text-gray-750 relative z-0">Authorised Signatory</p>
