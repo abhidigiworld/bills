@@ -4,6 +4,7 @@ import { API_BASE_URL } from '../../config';
 
 function AddEmployee() {
     const [employees, setEmployees] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [employee, setEmployee] = useState({ 
         name: '', 
         email: '', 
@@ -35,12 +36,15 @@ function AddEmployee() {
     }, [isOpen]);
 
     const fetchEmployees = async () => {
+        setLoading(true);
         try {
             const response = await axios.get(`${API_BASE_URL}/api/employees`);
             setEmployees(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
             console.error("Error fetching employees:", error);
             setEmployees([]);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -146,7 +150,11 @@ function AddEmployee() {
             {/* Registered Employees Table */}
             <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-6 transition-colors duration-300">
                 <div className="overflow-x-auto">
-                    {employees.length > 0 ? (
+                    {loading ? (
+                        <div className="text-center py-10">
+                            <div className="text-indigo-600 dark:text-violet-400 text-sm font-bold animate-pulse">Loading employees...</div>
+                        </div>
+                    ) : employees.length > 0 ? (
                         <table className="w-full text-sm text-left border-collapse table-auto">
                             <thead>
                                 <tr className="border-b border-slate-200 dark:border-[#262235] text-slate-500 dark:text-gray-400 font-bold uppercase text-xs">

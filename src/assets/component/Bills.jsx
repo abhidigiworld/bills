@@ -7,6 +7,7 @@ import { API_BASE_URL } from '../../config';
 
 function Bills() {
   const [bills, setBills] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [alertMessage, setAlertMessage] = useState('');
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -17,11 +18,14 @@ function Bills() {
 
   useEffect(() => {
     const fetchBills = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(`${API_BASE_URL}/api/invoices`);
         setBills(response.data);
       } catch (error) {
         console.error('Error fetching bills:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -234,7 +238,15 @@ function Bills() {
               </tr>
             </thead>
             <tbody>
-              {displayedBills.length > 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan="7" className="text-center py-10">
+                    <div className="text-indigo-600 dark:text-violet-400 text-base font-bold animate-pulse">
+                      Loading invoices...
+                    </div>
+                  </td>
+                </tr>
+              ) : displayedBills.length > 0 ? (
                 displayedBills.map((bill) => (
                   <tr key={bill._id} className="border-b border-slate-100 dark:border-[#262235] hover:bg-slate-50 dark:hover:bg-[#201d2c]/50 transition duration-150">
                     <td className="px-4 py-3 font-semibold text-slate-900 dark:text-white">{bill.companyName}</td>
