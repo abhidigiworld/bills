@@ -682,15 +682,9 @@ function SalarySlip() {
                         <div className="flex gap-4 pt-2">
                             <button
                                 onClick={handleSubmit}
-                                className="flex-1 bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition duration-200 transform hover:scale-[1.01] active:scale-[0.99] text-sm"
+                                className="w-full bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition duration-200 transform hover:scale-[1.01] active:scale-[0.99] text-sm"
                             >
                                 Generate Salary Slip
-                            </button>
-                            <button
-                                onClick={() => window.print()}
-                                className="bg-slate-200 hover:bg-slate-300 dark:bg-slate-950 dark:hover:bg-slate-900 text-slate-700 dark:text-gray-300 font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 text-sm"
-                            >
-                                Print View
                             </button>
                         </div>
                     </div>
