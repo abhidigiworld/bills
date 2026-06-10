@@ -68,8 +68,14 @@ function Header() {
     setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await axios.post(`${API_BASE_URL}/logout`);
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
     navigate('/');
   };
 

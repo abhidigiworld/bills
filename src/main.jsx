@@ -18,6 +18,37 @@ import BulkUpload from './assets/component/BulkUpload.jsx'
 import ManageUsers from './assets/component/ManageUsers.jsx'
 import AICopilot from './assets/component/AICopilot.jsx'
 import DashboardLayout from './assets/component/DashboardLayout.jsx'
+import axios from 'axios'
+
+// Setup Axios Interceptors
+axios.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+axios.interceptors.response.use(
+  (response) => {
+    const token = response.headers['x-refresh-token'];
+    if (token) {
+      localStorage.setItem('token', token);
+    }
+    return response;
+  },
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      window.location.href = '/';
+    }
+    return Promise.reject(error);
+  }
+);
 
 // Protected Route Wrapper Component
 const ProtectedRoute = ({ children, requireAdmin }) => {

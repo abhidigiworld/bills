@@ -51,6 +51,7 @@ function Login() {
 
       if (response.data.success) {
         localStorage.setItem('user', JSON.stringify(response.data.user));
+        localStorage.setItem('token', response.data.token);
         navigate('/Main');
       } else {
         setError('Invalid username or password');

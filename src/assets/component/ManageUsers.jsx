@@ -128,6 +128,31 @@ function ManageUsers() {
         }
     };
 
+    const handleDownloadBackup = async () => {
+        try {
+            triggerSuccess("Compiling database backup...");
+            const response = await axios.get(`${API_BASE_URL}/api/admin/backup`, {
+                responseType: 'blob'
+            });
+            
+            const blob = new Blob([response.data], { type: 'application/json' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const today = new Date().toISOString().split('T')[0];
+            a.download = `backup_sakshi_enterprises_${today}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            triggerSuccess("Database backup downloaded successfully!");
+        } catch (err) {
+            console.error("Error downloading backup:", err);
+            triggerError("Failed to generate database backup.");
+        }
+    };
+
     const filteredUsers = users.filter(user => 
         (user.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
         (user.email || '').toLowerCase().includes(searchTerm.toLowerCase())
@@ -141,9 +166,10 @@ function ManageUsers() {
     return (
         <div className="max-w-5xl mx-auto animate-fade-in">
             {/* Tab Switched Layout */}
-            <div className="flex gap-2 mb-6 border-b border-slate-200 dark:border-[#262235]">
-                <button
-                    onClick={() => setActiveTab('accounts')}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 border-b border-slate-200 dark:border-[#262235]">
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => setActiveTab('accounts')}
                     className={`pb-3 px-4 text-sm font-bold border-b-2 transition duration-200 ${
                         activeTab === 'accounts'
                             ? 'border-indigo-600 text-indigo-600 dark:border-violet-400 dark:text-violet-400'
@@ -161,6 +187,16 @@ function ManageUsers() {
                     }`}
                 >
                     Login History Logs
+                </button>
+                </div>
+                <button
+                    onClick={handleDownloadBackup}
+                    className="mb-2 bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2 px-3.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 text-xs"
+                >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Download DB Backup
                 </button>
             </div>
 
