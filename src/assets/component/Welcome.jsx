@@ -315,7 +315,7 @@ function WelcomePage() {
               </div>
               <div className="mt-3 flex flex-col">
                 <h3 className="text-xl font-black text-slate-900 dark:text-white leading-none truncate">
-                  ₹{adminStats.grossBilling.toLocaleString('en-IN')}
+                  ₹{(adminStats.grossBilling || 0).toLocaleString('en-IN')}
                 </h3>
                 <span className="text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-wider">All Invoices</span>
               </div>
@@ -416,7 +416,7 @@ function WelcomePage() {
                           ))}
                         </Pie>
                         <RechartsTooltip 
-                          formatter={(value) => [`₹${value.toLocaleString('en-IN')}`, 'Billing']}
+                          formatter={(value) => [`₹${(value || 0).toLocaleString('en-IN')}`, 'Billing']}
                           contentStyle={{ borderRadius: '12px', fontSize: '11px', fontWeight: 'bold' }}
                         />
                       </PieChart>
@@ -424,7 +424,7 @@ function WelcomePage() {
                     <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                       <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Gross</span>
                       <span className="text-sm font-black text-slate-800 dark:text-white mt-0.5">
-                        ₹{adminStats.grossBilling > 100000 ? `${(adminStats.grossBilling / 100000).toFixed(1)}L` : adminStats.grossBilling.toLocaleString('en-IN')}
+                        ₹{adminStats.grossBilling > 100000 ? `${(adminStats.grossBilling / 100000).toFixed(1)}L` : (adminStats.grossBilling || 0).toLocaleString('en-IN')}
                       </span>
                     </div>
                   </div>
@@ -574,7 +574,7 @@ function WelcomePage() {
                           <tr key={slip._id} className="hover:bg-slate-50/50 dark:hover:bg-[#201d2c]/20 transition">
                             <td className="py-3 text-xs font-bold text-slate-800 dark:text-slate-200">{slip.monthOfSalary}</td>
                             <td className="py-3 text-xs font-semibold text-slate-500 dark:text-gray-400">{slip.paidDays} Days</td>
-                            <td className="py-3 text-xs font-extrabold text-slate-800 dark:text-slate-200">₹{slip.netSalary.toLocaleString('en-IN')}</td>
+                            <td className="py-3 text-xs font-extrabold text-slate-800 dark:text-slate-200">₹{(slip.netSalary || 0).toLocaleString('en-IN')}</td>
                             <td className="py-3 text-right">
                               <button
                                 onClick={() => setActiveSlip(slip)}
@@ -694,7 +694,7 @@ function WelcomePage() {
                     <div className="p-3 space-y-2.5">
                       <div className="flex justify-between">
                         <span>Basic Salary:</span>
-                        <span className="font-bold">₹{(activeSlip.netSalary - (activeSlip.overtimeAmount || 0)).toLocaleString('en-IN')}</span>
+                        <span className="font-bold">₹{((activeSlip.netSalary || 0) - (activeSlip.overtimeAmount || 0)).toLocaleString('en-IN')}</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Overtime (OT) Pay:</span>
@@ -702,7 +702,7 @@ function WelcomePage() {
                       </div>
                       <div className="flex justify-between font-black border-t border-slate-100 dark:border-[#262235]/40 pt-2 print:border-black">
                         <span>Gross Salary:</span>
-                        <span>₹{activeSlip.netSalary.toLocaleString('en-IN')}</span>
+                        <span>₹{(activeSlip.netSalary || 0).toLocaleString('en-IN')}</span>
                       </div>
                     </div>
                   </div>
@@ -721,7 +721,7 @@ function WelcomePage() {
                       </div>
                       <div className="flex justify-between">
                         <span>Calculated Daily Rate:</span>
-                        <span className="font-bold">₹{activeDailyRate.toLocaleString('en-IN')}</span>
+                        <span className="font-bold">₹{(activeDailyRate || 0).toLocaleString('en-IN')}</span>
                       </div>
                       <div className="flex justify-between border-t border-slate-100 dark:border-[#262235]/40 pt-2 print:border-black">
                         <span>Overtime (OT) Logged:</span>
@@ -735,10 +735,10 @@ function WelcomePage() {
                 <div className="p-4 bg-slate-50 dark:bg-[#181622] text-xs space-y-2 border-b border-black print:bg-transparent print:text-black">
                   <div className="flex justify-between items-center text-sm font-black text-indigo-700 dark:text-violet-400 print:text-black">
                     <span className="uppercase">Net Take-Home Salary:</span>
-                    <span className="text-lg">₹{activeSlip.netSalary.toLocaleString('en-IN')}/-</span>
+                    <span className="text-lg">₹{(activeSlip.netSalary || 0).toLocaleString('en-IN')}/-</span>
                   </div>
                   <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 leading-normal uppercase print:text-black mt-1">
-                    In Words: {convertNumberToWords(activeSlip.netSalary)} Only
+                    In Words: {convertNumberToWords(activeSlip.netSalary || 0)} Only
                   </p>
                 </div>
 
