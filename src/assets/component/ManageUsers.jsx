@@ -14,6 +14,12 @@ function ManageUsers() {
     const [logSearchTerm, setLogSearchTerm] = useState('');
     const [logsLoading, setLogsLoading] = useState(true);
 
+    // Backup system states
+    const [backupEmail, setBackupEmail] = useState('');
+    const [autoBackupEnabled, setAutoBackupEnabled] = useState(true);
+    const [settingsSaving, setSettingsSaving] = useState(false);
+    const [emailTriggering, setEmailTriggering] = useState(false);
+
     const triggerSuccess = (msg) => {
         setSuccessMessage(msg);
         setError('');
@@ -26,9 +32,69 @@ function ManageUsers() {
         setTimeout(() => setError(''), 3000);
     };
 
+    const fetchBackupSettings = async () => {
+        try {
+            const response = await axios.get(`${API_BASE_URL}/api/admin/backup-settings`);
+            if (response.data && response.data.success) {
+                setBackupEmail(response.data.data.backup_email || '');
+                setAutoBackupEnabled(response.data.data.auto_backup_enabled === true);
+            }
+        } catch (err) {
+            console.error("Error fetching backup settings:", err);
+            triggerError("Failed to load database backup settings.");
+        }
+    };
+
+    const handleSaveSettings = async (e) => {
+        e.preventDefault();
+        setSettingsSaving(true);
+        setError('');
+        setSuccessMessage('');
+        try {
+            const response = await axios.post(`${API_BASE_URL}/api/admin/backup-settings`, {
+                backup_email: backupEmail,
+                auto_backup_enabled: autoBackupEnabled
+            });
+            if (response.data && response.data.success) {
+                triggerSuccess("Database backup settings saved successfully!");
+            } else {
+                triggerError("Failed to save backup settings.");
+            }
+        } catch (err) {
+            console.error("Error saving backup settings:", err);
+            triggerError("Failed to save backup settings.");
+        } finally {
+            setSettingsSaving(false);
+        }
+    };
+
+    const handleSendBackupEmailNow = async () => {
+        setEmailTriggering(true);
+        setError('');
+        setSuccessMessage('');
+        try {
+            triggerSuccess("Generating backup and sending email. Please wait...");
+            const response = await axios.post(`${API_BASE_URL}/api/admin/email-backup`, {
+                email: backupEmail
+            });
+            if (response.data && response.data.success) {
+                triggerSuccess(response.data.message || "Database backup emailed successfully!");
+            } else {
+                triggerError("Failed to send backup email.");
+            }
+        } catch (err) {
+            console.error("Error sending backup email:", err);
+            triggerError("Failed to send database backup email via SMTP.");
+        } finally {
+            setEmailTriggering(false);
+        }
+    };
+
     useEffect(() => {
         if (activeTab === 'logs') {
             fetchLoginLogs();
+        } else if (activeTab === 'backup') {
+            fetchBackupSettings();
         }
     }, [activeTab]);
 
@@ -170,37 +236,38 @@ function ManageUsers() {
                 <div className="flex gap-2">
                     <button
                         onClick={() => setActiveTab('accounts')}
-                    className={`pb-3 px-4 text-sm font-bold border-b-2 transition duration-200 ${
-                        activeTab === 'accounts'
-                            ? 'border-indigo-600 text-indigo-600 dark:border-violet-400 dark:text-violet-400'
-                            : 'border-transparent text-slate-500 hover:text-slate-800 dark:text-gray-400 dark:hover:text-gray-200'
-                    }`}
-                >
-                    User Accounts
-                </button>
-                <button
-                    onClick={() => setActiveTab('logs')}
-                    className={`pb-3 px-4 text-sm font-bold border-b-2 transition duration-200 ${
-                        activeTab === 'logs'
-                            ? 'border-indigo-600 text-indigo-600 dark:border-violet-400 dark:text-violet-400'
-                            : 'border-transparent text-slate-500 hover:text-slate-800 dark:text-gray-400 dark:hover:text-gray-200'
-                    }`}
-                >
-                    Login History Logs
-                </button>
+                        className={`pb-3 px-4 text-sm font-bold border-b-2 transition duration-200 ${
+                            activeTab === 'accounts'
+                                ? 'border-indigo-600 text-indigo-600 dark:border-violet-400 dark:text-violet-400'
+                                : 'border-transparent text-slate-500 hover:text-slate-800 dark:text-gray-400 dark:hover:text-gray-200'
+                        }`}
+                    >
+                        User Accounts
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('logs')}
+                        className={`pb-3 px-4 text-sm font-bold border-b-2 transition duration-200 ${
+                            activeTab === 'logs'
+                                ? 'border-indigo-600 text-indigo-600 dark:border-violet-400 dark:text-violet-400'
+                                : 'border-transparent text-slate-500 hover:text-slate-800 dark:text-gray-400 dark:hover:text-gray-200'
+                        }`}
+                    >
+                        Login History Logs
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('backup')}
+                        className={`pb-3 px-4 text-sm font-bold border-b-2 transition duration-200 ${
+                            activeTab === 'backup'
+                                ? 'border-indigo-600 text-indigo-600 dark:border-violet-400 dark:text-violet-400'
+                                : 'border-transparent text-slate-500 hover:text-slate-800 dark:text-gray-400 dark:hover:text-gray-200'
+                        }`}
+                    >
+                        Database Backups
+                    </button>
                 </div>
-                <button
-                    onClick={handleDownloadBackup}
-                    className="mb-2 bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2 px-3.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 text-xs"
-                >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                    </svg>
-                    Download DB Backup
-                </button>
             </div>
 
-            {activeTab === 'accounts' ? (
+            {activeTab === 'accounts' && (
                 <>
                     {/* Search / Action Box */}
                     <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl p-6 mb-8 transition-colors duration-300">
@@ -287,7 +354,9 @@ function ManageUsers() {
                         </div>
                     )}
                 </>
-            ) : (
+            )}
+
+            {activeTab === 'logs' && (
                 <>
                     {/* Search Logs Box */}
                     <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl p-6 mb-8 transition-colors duration-300">
@@ -363,6 +432,134 @@ function ManageUsers() {
                         </div>
                     )}
                 </>
+            )}
+
+            {activeTab === 'backup' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
+                    {/* Settings Form Card */}
+                    <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-6 transition-colors duration-300">
+                        <div className="flex items-center gap-3 mb-5">
+                            <div className="p-2.5 bg-indigo-50 dark:bg-violet-950/30 text-indigo-600 dark:text-violet-400 rounded-lg">
+                                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 className="text-base font-black text-slate-900 dark:text-white">Backup Settings</h3>
+                                <p className="text-xs text-slate-500 dark:text-gray-400">Configure email delivery and monthly schedulers</p>
+                            </div>
+                        </div>
+
+                        <form onSubmit={handleSaveSettings} className="space-y-5">
+                            <div>
+                                <label htmlFor="backupEmailInput" className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+                                    Recipient Email Address
+                                </label>
+                                <input
+                                    id="backupEmailInput"
+                                    type="email"
+                                    required
+                                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                    placeholder="e.g. admin@sakshienterprises.com"
+                                    value={backupEmail}
+                                    onChange={(e) => setBackupEmail(e.target.value)}
+                                />
+                                <p className="text-[11px] text-slate-400 mt-1">
+                                    Automated backups will be sent to this email address.
+                                </p>
+                            </div>
+
+                            <div className="flex items-start gap-3 p-3 bg-slate-50 dark:bg-[#201d2c] border border-slate-100 dark:border-[#2b273d] rounded-lg">
+                                <div className="flex items-center h-5 mt-0.5">
+                                    <input
+                                        id="autoBackupToggle"
+                                        type="checkbox"
+                                        className="h-4.5 w-4.5 text-indigo-600 focus:ring-indigo-500 border-slate-300 dark:border-[#37314e] rounded"
+                                        checked={autoBackupEnabled}
+                                        onChange={(e) => setAutoBackupEnabled(e.target.checked)}
+                                    />
+                                </div>
+                                <div className="text-sm">
+                                    <label htmlFor="autoBackupToggle" className="font-bold text-slate-900 dark:text-white text-xs uppercase tracking-wide">
+                                        Enable Monthly Backups
+                                    </label>
+                                    <p className="text-xs text-slate-500 dark:text-gray-400 mt-0.5">
+                                        Automatically compile database and email it on the 1st of every month at 12:00 AM (Asia/Kolkata timezone).
+                                    </p>
+                                </div>
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={settingsSaving}
+                                className="w-full bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg disabled:opacity-50 transition duration-200 text-sm flex justify-center items-center gap-2"
+                            >
+                                {settingsSaving ? 'Saving...' : 'Save Settings'}
+                            </button>
+                        </form>
+                    </div>
+
+                    {/* Quick Trigger Card */}
+                    <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-6 transition-colors duration-300 flex flex-col justify-between">
+                        <div>
+                            <div className="flex items-center gap-3 mb-5">
+                                <div className="p-2.5 bg-indigo-50 dark:bg-violet-950/30 text-indigo-600 dark:text-violet-400 rounded-lg">
+                                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 className="text-base font-black text-slate-900 dark:text-white">On-Demand Actions</h3>
+                                    <p className="text-xs text-slate-500 dark:text-gray-400">Instantly trigger off-site or local backups</p>
+                                </div>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div className="p-4 border border-indigo-100 dark:border-violet-950/40 bg-indigo-50/20 dark:bg-violet-950/10 rounded-xl">
+                                    <h4 className="text-xs font-black text-indigo-900 dark:text-violet-300 uppercase tracking-wider mb-1">
+                                        SMTP Email Backup
+                                    </h4>
+                                    <p className="text-xs text-slate-600 dark:text-gray-400 mb-3">
+                                        Generates a database backup JSON file and emails it directly to the configured recipient address. Perfect for secure, off-site storage.
+                                    </p>
+                                    <button
+                                        onClick={handleSendBackupEmailNow}
+                                        disabled={emailTriggering || !backupEmail}
+                                        className="w-full py-2 px-3 bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold rounded-lg shadow transition duration-200 text-xs flex justify-center items-center gap-2"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                        </svg>
+                                        {emailTriggering ? 'Sending Email...' : 'Email Database Backup Now'}
+                                    </button>
+                                </div>
+
+                                <div className="p-4 border border-slate-200 dark:border-[#37314e] bg-slate-50/40 dark:bg-[#201d2c]/20 rounded-xl">
+                                    <h4 className="text-xs font-black text-slate-700 dark:text-gray-300 uppercase tracking-wider mb-1">
+                                        Local File Download
+                                    </h4>
+                                    <p className="text-xs text-slate-600 dark:text-gray-400 mb-3">
+                                        Generates a database backup JSON file and downloads it instantly through your browser.
+                                    </p>
+                                    <button
+                                        onClick={handleDownloadBackup}
+                                        className="w-full py-2 px-3 bg-slate-700 hover:bg-slate-800 dark:bg-[#2d283e] dark:hover:bg-[#39334f] text-white font-bold rounded-lg shadow transition duration-200 text-xs flex justify-center items-center gap-2 border border-transparent dark:border-[#4d4469]"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                        </svg>
+                                        Download JSON Backup File
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="mt-5 text-[11px] text-slate-400 dark:text-gray-500 bg-slate-50 dark:bg-[#1f1b2c] p-3 rounded-lg border border-slate-100 dark:border-[#2a243b] text-center">
+                            <strong>Security Note:</strong> All backups exclude password hashes for safety.
+                        </div>
+                    </div>
+                </div>
             )}
 
             {/* Centered Premium Overlay Modal for Notifications */}
