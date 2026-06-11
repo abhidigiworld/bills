@@ -576,16 +576,33 @@ function AttendanceRegister() {
                     if (log) {
                         const status = log.status;
                         if (status === 'Present') {
-                            const ot = log.overtimeHours || 0;
-                            const ns = log.nightShiftHours || 0;
+                            const workedDay = !!log.checkIn;
+                            const workedNight = !!log.nightCheckIn || (log.isNightShift && log.nightShiftHours > 0);
+                            
+                            const checkInStr = formatTimeFromDate(log.checkIn, '');
+                            const checkOutStr = formatTimeFromDate(log.checkOut, '');
+                            const nightCheckInStr = formatTimeFromDate(log.nightCheckIn, '');
+                            const nightCheckOutStr = formatTimeFromDate(log.nightCheckOut, '');
+                            
                             let details = 'Present';
-                            if (ot > 0 || ns > 0) {
-                                details += ` (`;
-                                if (ot > 0) details += `OT: ${ot}h`;
-                                if (ot > 0 && ns > 0) details += `, `;
-                                if (ns > 0) details += `NS: ${ns}h`;
-                                details += `)`;
+                            const shifts = [];
+                            
+                            if (workedDay && checkInStr && checkOutStr) {
+                                shifts.push(`Day: ${checkInStr}-${checkOutStr}`);
                             }
+                            if (workedNight && nightCheckInStr && nightCheckOutStr) {
+                                shifts.push(`Night: ${nightCheckInStr}-${nightCheckOutStr}`);
+                            }
+                            
+                            if (shifts.length > 0) {
+                                details += ` [${shifts.join(', ')}]`;
+                            }
+                            
+                            const ot = log.overtimeHours || 0;
+                            if (ot > 0) {
+                                details += ` (OT: ${ot}h)`;
+                            }
+                            
                             return details;
                         }
                         return status;
