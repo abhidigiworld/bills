@@ -456,17 +456,23 @@ function ManageUsers() {
                                 <label htmlFor="backupEmailInput" className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">
                                     Recipient Email Address
                                 </label>
-                                <input
+                                <select
                                     id="backupEmailInput"
-                                    type="email"
                                     required
-                                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
-                                    placeholder="e.g. admin@sakshienterprises.com"
+                                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                                     value={backupEmail}
                                     onChange={(e) => setBackupEmail(e.target.value)}
-                                />
+                                >
+                                    <option value="" disabled>Select an administrator email</option>
+                                    {users.filter(u => u.role === 'admin').map(admin => (
+                                        <option key={admin._id} value={admin.email}>{admin.name} ({admin.email})</option>
+                                    ))}
+                                    {backupEmail && !users.some(u => u.email === backupEmail && u.role === 'admin') && (
+                                        <option value={backupEmail}>{backupEmail} (Invalid/Inactive Admin)</option>
+                                    )}
+                                </select>
                                 <p className="text-[11px] text-slate-400 mt-1">
-                                    Automated backups will be sent to this email address.
+                                    Automated backups will be sent to the selected administrator's email.
                                 </p>
                             </div>
 
