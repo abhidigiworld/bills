@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import InvoiceComponent from './InvoiceComponent';
 import './printStyles.css';
 import { API_BASE_URL } from '../../config';
@@ -21,8 +22,8 @@ function InvoiceForm() {
   // Function to fetch last invoice number from backend
   const fetchLastInvoiceNumber = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/invoices`);
-      const data = await response.json();
+      const response = await axios.get(`${API_BASE_URL}/api/invoices`);
+      const data = response.data;
       if (data && data.length > 0) {
         let maxInvoiceNumber = 0;
         data.forEach((invoice) => {
