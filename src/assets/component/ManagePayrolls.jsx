@@ -624,11 +624,11 @@ function ManagePayrolls() {
                 const activeDailyRate = Math.floor(activeGrossSalary / activeCalendarDays);
                 const activeHourlyRate = Math.floor(activeDailyRate / (activeSlip.shiftHours || 8));
                 return (
-                    <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4 print:static print:bg-transparent print:p-0 print:overflow-visible">
-                        <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] w-full max-w-2xl rounded-xl p-6 shadow-2xl relative transition-colors duration-300 animate-slide-down print:p-0 print:border-none print:shadow-none print:bg-white print:text-black">
+                    <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4 print:static print:bg-transparent print:backdrop-blur-none print:block print:p-0 print:overflow-visible">
+                        <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] w-full max-w-2xl rounded-xl p-6 shadow-2xl relative transition-colors duration-300 animate-slide-down mx-auto print:mx-auto print:static print:max-h-none print:overflow-visible print:p-0 print:border-none print:shadow-none print:bg-transparent print:text-black">
 
                             {/* Slip Printable Block */}
-                            <div className="printdata font-mono text-slate-800 dark:text-gray-200 print:text-black w-full border border-black rounded-lg overflow-hidden bg-white dark:bg-[#181622] print:bg-white">
+                            <div className="printdata font-mono text-slate-800 dark:text-gray-200 print:text-black w-full border border-black rounded-lg overflow-hidden bg-white dark:bg-[#181622] print:bg-white mx-auto print:mx-auto">
                                 {/* Header (styled like Tax Invoice) */}
                                 <div className="bg-gradient-to-r from-indigo-500 to-violet-500 text-white p-4 invoice-print-header border-b border-black">
                                     <p className="text-xl font-bold text-center uppercase tracking-wide">Salary Statement</p>
