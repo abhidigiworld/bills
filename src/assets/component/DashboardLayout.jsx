@@ -694,7 +694,8 @@ function DashboardLayout() {
                     name="email"
                     value={profileForm.email}
                     onChange={handleProfileInputChange}
-                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                    disabled={currentUser?.role !== 'admin'}
+                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition disabled:opacity-60 disabled:cursor-not-allowed"
                     required
                   />
                 </div>
