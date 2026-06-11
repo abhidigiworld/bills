@@ -565,6 +565,78 @@ function AttendanceRegister() {
         }
     };
 
+    const downloadAttendanceCSV = () => {
+        try {
+            const headers = ["Sl", "Name", "Designation", "Location", ...daysArray.map(d => `Day ${d}`), "Work Days", "OT Hours", "NS Hours"];
+            
+            const rows = employees.map((emp, index) => {
+                const summary = getEmployeeSummary(emp._id);
+                const dailyStatuses = daysArray.map(day => {
+                    const log = getLogForDay(emp._id, day);
+                    if (log) {
+                        const status = log.status;
+                        if (status === 'Present') {
+                            const ot = log.overtimeHours || 0;
+                            const ns = log.nightShiftHours || 0;
+                            let details = 'Present';
+                            if (ot > 0 || ns > 0) {
+                                details += ` (`;
+                                if (ot > 0) details += `OT: ${ot}h`;
+                                if (ot > 0 && ns > 0) details += `, `;
+                                if (ns > 0) details += `NS: ${ns}h`;
+                                details += `)`;
+                            }
+                            return details;
+                        }
+                        return status;
+                    }
+                    const cellDate = new Date(selectedYear, selectedMonth - 1, day);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    if (cellDate > today) return '-';
+                    return 'Absent';
+                });
+                
+                return [
+                    index + 1,
+                    emp.name,
+                    emp.designation || '',
+                    emp.location || '',
+                    ...dailyStatuses,
+                    summary.presentDays,
+                    summary.totalOtHours,
+                    summary.totalNsHours
+                ];
+            });
+            
+            const csvContent = [
+                headers.join(','),
+                ...rows.map(row => row.map(val => {
+                    const strVal = String(val === null || val === undefined ? '' : val);
+                    if (strVal.includes(',') || strVal.includes('"') || strVal.includes('\n')) {
+                        return `"${strVal.replace(/"/g, '""')}"`;
+                    }
+                    return strVal;
+                }).join(','))
+            ].join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Attendance_Report_${monthName}_${selectedYear}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            triggerSuccess(`Attendance CSV report downloaded successfully!`);
+        } catch (error) {
+            console.error("Error generating CSV:", error);
+            triggerError("Failed to export attendance data to CSV.");
+        }
+    };
+
     return (
         <>
             <div className="max-w-7xl mx-auto animate-fade-in">
@@ -636,6 +708,16 @@ function AttendanceRegister() {
                                 </svg>
                                 Blanket Mark
                             </button>
+                            <button
+                                onClick={downloadAttendanceCSV}
+                                className="px-4 py-2 bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 text-white font-bold rounded-lg text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition duration-200 flex items-center gap-2"
+                            >
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                </svg>
+                                Download CSV
+                            </button>
+
                             <div className="text-right text-xs print:hidden">
                                 <span className="text-[10px] font-bold text-slate-400 dark:text-gray-500 block uppercase tracking-wider">Currently Showing</span>
                                 <span className="text-sm font-extrabold text-indigo-700 dark:text-violet-400">{monthName} {selectedYear}</span>
