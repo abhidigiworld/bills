@@ -233,14 +233,14 @@ function DashboardLayout() {
       <Link
         to={to}
         title={!isSidebarHovered ? label : ""}
-        className={`flex items-center rounded-xl transition-all duration-300 ease-in-out h-12 ${
+        className={`flex items-center rounded-xl border transition-colors duration-200 ease-in-out h-12 ${
           isSidebarHovered 
             ? 'px-4 w-full justify-start gap-3' 
             : 'w-12 mx-auto justify-center px-0 gap-0'
         } ${
           isActive
-            ? 'bg-indigo-50 dark:bg-[#201d2c] text-indigo-600 dark:text-violet-400 shadow-sm border border-indigo-100/10'
-            : 'text-slate-500 hover:text-slate-800 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-slate-50 dark:hover:bg-[#201d2c]/50'
+            ? 'bg-indigo-50 dark:bg-[#201d2c] text-indigo-600 dark:text-violet-400 shadow-sm border-indigo-100/10'
+            : 'border-transparent text-slate-500 hover:text-slate-800 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-slate-50 dark:hover:bg-[#201d2c]/50'
         }`}
       >
         <span className="shrink-0">{iconSvg}</span>
