@@ -1,8 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_BASE_URL } from '../../config';
+import { useSettings } from '../../context/SettingsContext';
+
+// Helper to resize/compress image to keep base64 sizes minimal (<30KB)
+const compressAndConvertToBase64 = (file, callback) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
+
+            const maxDim = 300;
+            if (width > maxDim || height > maxDim) {
+                if (width > height) {
+                    height = Math.round((height * maxDim) / width);
+                    width = maxDim;
+                } else {
+                    width = Math.round((width * maxDim) / height);
+                    height = maxDim;
+                }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Output compressed JPG base64
+            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+            callback(compressedBase64);
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+};
 
 function ManageUsers() {
+    const { settings, refreshSettings } = useSettings();
     const [users, setUsers] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(true);
@@ -19,6 +57,76 @@ function ManageUsers() {
     const [autoBackupEnabled, setAutoBackupEnabled] = useState(true);
     const [settingsSaving, setSettingsSaving] = useState(false);
     const [emailTriggering, setEmailTriggering] = useState(false);
+
+    // Branding state
+    const [brandingForm, setBrandingForm] = useState({
+        company_name: '',
+        company_subtitle: '',
+        company_gstin: '',
+        company_phone: '',
+        company_email: '',
+        company_address: '',
+        company_logo: '',
+        company_signature: '',
+        company_stamp: ''
+    });
+    const [brandingSaving, setBrandingSaving] = useState(false);
+
+    useEffect(() => {
+        if (settings) {
+            setBrandingForm({
+                company_name: settings.company_name || '',
+                company_subtitle: settings.company_subtitle || '',
+                company_gstin: settings.company_gstin || '',
+                company_phone: settings.company_phone || '',
+                company_email: settings.company_email || '',
+                company_address: settings.company_address || '',
+                company_logo: settings.company_logo || '',
+                company_signature: settings.company_signature || '',
+                company_stamp: settings.company_stamp || ''
+            });
+        }
+    }, [settings]);
+
+    const handleBrandingFormChange = (e) => {
+        setBrandingForm({
+            ...brandingForm,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const handleFileChange = (e, field) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        compressAndConvertToBase64(file, (base64) => {
+            setBrandingForm(prev => ({
+                ...prev,
+                [field]: base64
+            }));
+        });
+    };
+
+    const handleSaveBranding = async (e) => {
+        e.preventDefault();
+        setBrandingSaving(true);
+        setError('');
+        setSuccessMessage('');
+        try {
+            const response = await axios.put(`${API_BASE_URL}/api/admin/system-settings`, brandingForm);
+            if (response.data && response.data.success) {
+                triggerSuccess("Company branding settings updated successfully!");
+                refreshSettings();
+            } else {
+                triggerError("Failed to update branding settings.");
+            }
+        } catch (err) {
+            console.error("Error saving branding settings:", err);
+            triggerError("Failed to save branding settings.");
+        } finally {
+            setBrandingSaving(false);
+        }
+    };
 
     const triggerSuccess = (msg) => {
         setSuccessMessage(msg);
@@ -277,6 +385,16 @@ function ManageUsers() {
                         }`}
                     >
                         Database Backups
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('branding')}
+                        className={`pb-3 px-4 text-sm font-bold border-b-2 transition duration-200 ${
+                            activeTab === 'branding'
+                                ? 'border-indigo-600 text-indigo-600 dark:border-violet-400 dark:text-violet-400'
+                                : 'border-transparent text-slate-500 hover:text-slate-800 dark:text-gray-400 dark:hover:text-gray-200'
+                        }`}
+                    >
+                        Company Branding
                     </button>
                 </div>
                 {/* Manual Refresh Button */}
@@ -596,6 +714,182 @@ function ManageUsers() {
                             <strong>Security Note:</strong> All backups exclude password hashes for safety.
                         </div>
                     </div>
+                </div>
+            )}
+
+            {activeTab === 'branding' && (
+                <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-6 transition-colors duration-300">
+                    <div className="flex items-center gap-3 mb-6 border-b border-slate-100 dark:border-[#262235] pb-3">
+                        <div className="p-2.5 bg-indigo-50 dark:bg-violet-950/30 text-indigo-600 dark:text-violet-400 rounded-lg">
+                            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 className="text-base font-black text-slate-900 dark:text-white">Company Branding & Profiles</h3>
+                            <p className="text-xs text-slate-500 dark:text-gray-400">Configure global business titles, invoice metadata, and security stamps</p>
+                        </div>
+                    </div>
+
+                    <form onSubmit={handleSaveBranding} className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">Company Name</label>
+                                <input
+                                    type="text"
+                                    name="company_name"
+                                    value={brandingForm.company_name}
+                                    onChange={handleBrandingFormChange}
+                                    required
+                                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">Brand Subtitle</label>
+                                <input
+                                    type="text"
+                                    name="company_subtitle"
+                                    value={brandingForm.company_subtitle}
+                                    onChange={handleBrandingFormChange}
+                                    required
+                                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">GSTIN Code</label>
+                                <input
+                                    type="text"
+                                    name="company_gstin"
+                                    value={brandingForm.company_gstin}
+                                    onChange={handleBrandingFormChange}
+                                    required
+                                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">Telephone / Contact No.</label>
+                                <input
+                                    type="text"
+                                    name="company_phone"
+                                    value={brandingForm.company_phone}
+                                    onChange={handleBrandingFormChange}
+                                    required
+                                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">Support Email Address</label>
+                                <input
+                                    type="email"
+                                    name="company_email"
+                                    value={brandingForm.company_email}
+                                    onChange={handleBrandingFormChange}
+                                    required
+                                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">Postal Office Address</label>
+                            <textarea
+                                name="company_address"
+                                value={brandingForm.company_address}
+                                onChange={handleBrandingFormChange}
+                                required
+                                rows="2"
+                                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-slate-100 dark:border-[#262235]">
+                            {/* Logo Upload */}
+                            <div className="flex flex-col items-center p-4 bg-slate-50 dark:bg-[#201d2c]/30 rounded-xl border border-slate-100 dark:border-[#2a243b]">
+                                <span className="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-3">Company Logo</span>
+                                <div className="w-24 h-24 rounded-lg bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] flex items-center justify-center overflow-hidden mb-3 relative group">
+                                    {brandingForm.company_logo ? (
+                                        <img src={brandingForm.company_logo} alt="Logo Preview" className="max-w-full max-h-full object-contain" />
+                                    ) : (
+                                        <span className="text-[10px] text-slate-400 uppercase">Default Logo</span>
+                                    )}
+                                </div>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    id="companyLogoUpload"
+                                    className="hidden"
+                                    onChange={(e) => handleFileChange(e, 'company_logo')}
+                                />
+                                <label
+                                    htmlFor="companyLogoUpload"
+                                    className="cursor-pointer bg-slate-200 hover:bg-slate-300 dark:bg-[#262235] dark:hover:bg-[#342f49] px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-700 dark:text-gray-300 transition"
+                                >
+                                    {brandingForm.company_logo ? 'Change Image' : 'Upload Image'}
+                                </label>
+                            </div>
+
+                            {/* Signature Upload */}
+                            <div className="flex flex-col items-center p-4 bg-slate-50 dark:bg-[#201d2c]/30 rounded-xl border border-slate-100 dark:border-[#2a243b]">
+                                <span className="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-3">Authorized Signature</span>
+                                <div className="w-24 h-24 rounded-lg bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] flex items-center justify-center overflow-hidden mb-3 relative group">
+                                    {brandingForm.company_signature ? (
+                                        <img src={brandingForm.company_signature} alt="Signature Preview" className="max-w-full max-h-full object-contain" />
+                                    ) : (
+                                        <span className="text-[10px] text-slate-400 uppercase">Default Sign</span>
+                                    )}
+                                </div>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    id="companySignatureUpload"
+                                    className="hidden"
+                                    onChange={(e) => handleFileChange(e, 'company_signature')}
+                                />
+                                <label
+                                    htmlFor="companySignatureUpload"
+                                    className="cursor-pointer bg-slate-200 hover:bg-slate-300 dark:bg-[#262235] dark:hover:bg-[#342f49] px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-700 dark:text-gray-300 transition"
+                                >
+                                    {brandingForm.company_signature ? 'Change Image' : 'Upload Image'}
+                                </label>
+                            </div>
+
+                            {/* Stamp Upload */}
+                            <div className="flex flex-col items-center p-4 bg-slate-50 dark:bg-[#201d2c]/30 rounded-xl border border-slate-100 dark:border-[#2a243b]">
+                                <span className="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-3">Official Seal / Stamp</span>
+                                <div className="w-24 h-24 rounded-lg bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] flex items-center justify-center overflow-hidden mb-3 relative group">
+                                    {brandingForm.company_stamp ? (
+                                        <img src={brandingForm.company_stamp} alt="Stamp Preview" className="max-w-full max-h-full object-contain" />
+                                    ) : (
+                                        <span className="text-[10px] text-slate-400 uppercase">Default Seal</span>
+                                    )}
+                                </div>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    id="companyStampUpload"
+                                    className="hidden"
+                                    onChange={(e) => handleFileChange(e, 'company_stamp')}
+                                />
+                                <label
+                                    htmlFor="companyStampUpload"
+                                    className="cursor-pointer bg-slate-200 hover:bg-slate-305 dark:bg-[#262235] dark:hover:bg-[#342f49] px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-700 dark:text-gray-300 transition"
+                                >
+                                    {brandingForm.company_stamp ? 'Change Image' : 'Upload Image'}
+                                </label>
+                            </div>
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={brandingSaving}
+                            className="w-full bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg disabled:opacity-50 transition duration-200 text-sm flex justify-center items-center gap-2"
+                        >
+                            {brandingSaving ? 'Saving Changes...' : 'Save Branding Details'}
+                        </button>
+                    </form>
                 </div>
             )}
 

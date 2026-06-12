@@ -3,8 +3,10 @@ import { Link, useNavigate, useLocation, Outlet } from 'react-router-dom';
 import axios from 'axios';
 import { API_BASE_URL } from '../../config';
 import logo from '../images/LOGO1.jpeg';
+import { useSettings } from '../../context/SettingsContext';
 
 function DashboardLayout() {
+  const { settings } = useSettings();
   const navigate = useNavigate();
   const location = useLocation();
   const [currentUser, setCurrentUser] = useState(null);
@@ -219,8 +221,8 @@ function DashboardLayout() {
         };
       default:
         return {
-          title: "Sakshi Enterprises",
-          subtitle: "Enterprise management and payroll portal"
+          title: settings.company_name,
+          subtitle: settings.company_subtitle
         };
     }
   };
@@ -265,10 +267,14 @@ function DashboardLayout() {
         <div className="flex items-center gap-4">
           {/* Brand Logo & Name */}
           <div className="flex items-center gap-2.5">
-            <img src={logo} alt="Sakshi Enterprises Logo" className="h-9 w-auto rounded-md shadow-md border border-slate-200 dark:border-[#3e3857]" />
+            <img src={settings.company_logo || logo} alt="Company Logo" className="h-9 w-auto rounded-md shadow-md border border-slate-200 dark:border-[#3e3857]" />
             <div className="flex flex-col justify-center leading-[1.05]">
-              <span className="text-[13px] font-black tracking-wider text-slate-800 dark:text-white uppercase">SAKSHI</span>
-              <span className="text-[8px] font-bold tracking-[0.22em] text-slate-400 dark:text-slate-500 uppercase mt-0.5">ENTERPRISES</span>
+              <span className="text-[13px] font-black tracking-wider text-slate-800 dark:text-white uppercase">
+                {settings.company_name.split(' ')[0] || ''}
+              </span>
+              <span className="text-[8px] font-bold tracking-[0.22em] text-slate-400 dark:text-slate-500 uppercase mt-0.5">
+                {settings.company_name.split(' ').slice(1).join(' ') || ''}
+              </span>
             </div>
           </div>
           

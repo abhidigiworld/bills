@@ -6,9 +6,14 @@ import { API_BASE_URL } from '../../config';
 import './printStyles.css';
 import logo from '../images/LOGO1.jpeg';
 import signature from '../images/sign.png';
+import { useSettings } from '../../context/SettingsContext';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip } from 'recharts';
 
 function WelcomePage() {
+  const { settings } = useSettings();
+  const logoSrc = settings.company_logo || logo;
+  const signatureSrc = settings.company_signature || signature;
+
   const navigate = useNavigate();
   const location = useLocation();
   const [currentUser, setCurrentUser] = useState(null);
@@ -666,12 +671,12 @@ function WelcomePage() {
                   <p className="text-xl font-bold text-center uppercase tracking-wide">Salary Statement</p>
                   <div className="flex justify-between items-center relative mt-2">
                     <div className="absolute" style={{ top: '-10px', left: '-10px' }}>
-                      <img src={logo} alt="Your Company Logo" className="w-24 h-auto rounded-md" />
+                      <img src={logoSrc} alt="Your Company Logo" className="w-24 h-auto rounded-md" />
                     </div>
                     <div className="flex-1 text-center pt-2" style={{ marginLeft: '120px' }}>
-                      <p className="text-2xl font-bold uppercase tracking-wider">Sakshi Enterprises</p>
-                      <p className="text-xs">Address: Plot No 12, Sector 4, Rohini, Delhi, 110085</p>
-                      <p className="text-xs">Email: contact@sakshienterprises.com | Tel: +91-9876543210</p>
+                      <p className="text-2xl font-bold uppercase tracking-wider">{settings.company_name}</p>
+                      <p className="text-xs">Address: {settings.company_address}</p>
+                      <p className="text-xs">Email: {settings.company_email} | Tel: +91-{settings.company_phone}</p>
                     </div>
                   </div>
                 </div>
@@ -750,7 +755,7 @@ function WelcomePage() {
                       <div className="h-8 border-b border-dashed border-slate-300 w-32 mt-2" />
                     </div>
                     <div className="text-right">
-                      <img src={signature} alt="Authorized Signatory" className="h-10 w-auto object-contain ml-auto" />
+                      <img src={signatureSrc} alt="Authorized Signatory" className="h-10 w-auto object-contain ml-auto" />
                       <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-2">Authorized Signatory</p>
                     </div>
                   </div>

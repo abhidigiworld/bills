@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { API_BASE_URL } from '../../config';
 import axios from 'axios';
+import { useSettings } from '../../context/SettingsContext';
 
 const UpdateInvoice = ({ invoice, onClose }) => {
+    const { settings } = useSettings();
     const [companyName, setCompanyName] = useState(invoice.companyName);
     const [gstin, setGstin] = useState(invoice.gstin);
     const [state, setState] = useState(invoice.state);
@@ -257,7 +259,7 @@ const UpdateInvoice = ({ invoice, onClose }) => {
                     <p className="text-2xl font-bold text-center">Update Invoice Details</p>
                     <div className="flex justify-between items-center relative">
                         <div className="flex-1 text-center pt-2" >
-                            <p className="text-3xl font-custom fugaz-one-regular">Sakshi Enterprises</p>
+                            <p className="text-3xl font-custom fugaz-one-regular">{settings.company_name}</p>
                         </div>
                     </div>
                 </div>

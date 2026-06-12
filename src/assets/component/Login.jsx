@@ -4,8 +4,10 @@ import logo from '../images/LOGO1.jpeg';
 import dunesBg from '../images/dark_dunes_bg.png';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { API_BASE_URL } from '../../config';
+import { useSettings } from '../../context/SettingsContext';
 
 function Login() {
+  const { settings } = useSettings();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -83,13 +85,13 @@ function Login() {
           {/* Top Row: Logo */}
           <div className="relative z-10 flex items-center w-full">
             <div className="flex items-center gap-2">
-              <img src={logo} alt="Sakshi Logo" className="h-9 w-auto rounded-md shadow-md border border-[#3e3857]" />
+              <img src={settings.company_logo || logo} alt="Company Logo" className="h-9 w-auto rounded-md shadow-md border border-[#3e3857]" />
               <div className="flex flex-col justify-center leading-[1.05]">
-                <span className="company-name-light text-[13px] tracking-wider block">
-                  SAKSHI
+                <span className="company-name-light text-[13px] tracking-wider block uppercase">
+                  {settings.company_name.split(' ')[0] || ''}
                 </span>
-                <span className="company-name-light text-[8px] tracking-[0.22em] block opacity-90">
-                  ENTERPRISES
+                <span className="company-name-light text-[8px] tracking-[0.22em] block opacity-90 uppercase">
+                  {settings.company_name.split(' ').slice(1).join(' ') || ''}
                 </span>
               </div>
             </div>
@@ -132,15 +134,14 @@ function Login() {
             )}
           </button>
 
-          {/* Logo overlay on Mobile screens */}
           <div className="flex md:hidden items-center gap-2 mb-6">
-            <img src={logo} alt="Sakshi Logo" className="h-9 w-auto rounded-md" />
+            <img src={settings.company_logo || logo} alt="Company Logo" className="h-9 w-auto rounded-md" />
             <div className="flex flex-col justify-center leading-[1.05]">
-              <span className="company-name text-[13px] tracking-wider block">
-                Sakshi
+              <span className="company-name text-[13px] tracking-wider block uppercase">
+                {settings.company_name.split(' ')[0] || ''}
               </span>
-              <span className="company-name text-[8px] tracking-[0.22em] block opacity-90">
-                Enterprises
+              <span className="company-name text-[8px] tracking-[0.22em] block opacity-90 uppercase">
+                {settings.company_name.split(' ').slice(1).join(' ') || ''}
               </span>
             </div>
           </div>

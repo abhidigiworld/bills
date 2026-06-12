@@ -5,8 +5,14 @@ import logo from '../images/LOGO.png';
 import signature from '../images/sign.png';
 import stamp from '../images/stamp.png';
 import { API_BASE_URL } from '../../config';
+import { useSettings } from '../../context/SettingsContext';
 
 function InvoiceDetails({ invoiceId, onClose }) {
+    const { settings } = useSettings();
+    const logoSrc = settings.company_logo || logo;
+    const signatureSrc = settings.company_signature || signature;
+    const stampSrc = settings.company_stamp || stamp;
+
     const [invoiceDetails, setInvoiceDetails] = useState({});
     const [items, setItems] = useState([]);
     const [total, setTotal] = useState(0);
@@ -166,19 +172,19 @@ function InvoiceDetails({ invoiceId, onClose }) {
                         <p className="text-2xl font-bold text-center">Tax Invoice</p>
                         <div className="flex justify-between items-center relative">
                             <div className="absolute" style={{ top: '0px', left: '-10px' }}>
-                                <img src={logo} alt="Your Company Logo" className="w-32 h-auto" />
+                                <img src={logoSrc} alt="Your Company Logo" className="w-32 h-auto" />
                             </div>
                             <div className="flex-1 text-center pt-2" style={{ marginLeft: '155px' }}>
-                                <p className="text-3xl font-custom fugaz-one-regular">Sakshi Enterprises</p>
+                                <p className="text-3xl font-custom fugaz-one-regular">{settings.company_name}</p>
                             </div>
                             <div className="text-right">
-                                <p className="text-sm font-bold">GSTIN: 07OURPS6573P1ZY</p>
-                                <p className="text-sm">M.: 9650650297</p>
+                                <p className="text-sm font-bold">GSTIN: {settings.company_gstin}</p>
+                                <p className="text-sm">M.: {settings.company_phone}</p>
                             </div>
                         </div>
                         <div className="flex flex-col content-center mt-4">
-                            <p className="text-sm text-center">D-435, Gali No.-59,Mahavir Enclave,Part-3,West Delhi-110059</p>
-                            <p className="text-sm text-center">E-mail id: manojsharma.2016m@gmail.com</p>
+                            <p className="text-sm text-center">{settings.company_address}</p>
+                            <p className="text-sm text-center">E-mail id: {settings.company_email}</p>
                         </div>
                     </div>
 
@@ -286,13 +292,13 @@ function InvoiceDetails({ invoiceId, onClose }) {
                             </ul>
                         </div>
                         <div className="text-right flex flex-col justify-between h-20 min-w-[200px] relative print:h-20">
-                            <p className="text-[12px] font-bold text-gray-750">For Sakshi Enterprises</p>
+                            <p className="text-[12px] font-bold text-gray-750">For {settings.company_name}</p>
                             <div className="relative h-8 w-full flex items-end justify-end">
                                 {showSignature && (
-                                    <img src={signature} alt="Signature" className="absolute bottom-[-20px] right-2 max-h-16 w-auto object-contain z-20 pointer-events-none" />
+                                    <img src={signatureSrc} alt="Signature" className="absolute bottom-[-20px] right-2 max-h-16 w-auto object-contain z-20 pointer-events-none" />
                                 )}
                                 {showStamp && (
-                                    <img src={stamp} alt="stamp" className="absolute bottom-[-35px] max-h-22 w-auto object-contain z-10 opacity-85 pointer-events-none" />
+                                    <img src={stampSrc} alt="stamp" className="absolute bottom-[-35px] max-h-22 w-auto object-contain z-10 opacity-85 pointer-events-none" />
                                 )}
                             </div>
                             <p className="text-[12px] font-bold text-gray-750 relative z-0">Authorised Signatory</p>

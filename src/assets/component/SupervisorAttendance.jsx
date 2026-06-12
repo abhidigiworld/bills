@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_BASE_URL } from '../../config';
+import { useSettings } from '../../context/SettingsContext';
 
 function SupervisorAttendance() {
+    const { settings } = useSettings();
     const [token, setToken] = useState('');
     const [tokenValid, setTokenValid] = useState(false);
     const [tokenChecking, setTokenChecking] = useState(true);
@@ -317,7 +319,7 @@ function SupervisorAttendance() {
                 {/* Heading Card */}
                 <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-2xl p-6 mb-6 text-center">
                     <span className="text-[10px] font-black tracking-widest text-indigo-600 dark:text-violet-400 uppercase">Supervisor Attendance Entry</span>
-                    <h1 className="text-2xl font-black text-slate-900 dark:text-white mt-1 mb-2">Sakshi Enterprises</h1>
+                    <h1 className="text-2xl font-black text-slate-900 dark:text-white mt-1 mb-2">{settings.company_name}</h1>
                     <div className="inline-block px-4 py-1.5 bg-indigo-50 dark:bg-violet-950/20 text-indigo-700 dark:text-violet-300 rounded-full text-xs font-extrabold border border-indigo-100/30">
                         Date: {formatDisplayDate(date)}
                     </div>

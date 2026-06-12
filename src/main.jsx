@@ -20,6 +20,7 @@ import AICopilot from './assets/component/AICopilot.jsx'
 import DashboardLayout from './assets/component/DashboardLayout.jsx'
 import SupervisorAttendance from './assets/component/SupervisorAttendance.jsx'
 import axios from 'axios'
+import { SettingsProvider } from './context/SettingsContext'
 
 // Setup Axios Interceptors
 axios.interceptors.request.use(
@@ -136,6 +137,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <RouterProvider router={router}/>
+    <SettingsProvider>
+      <RouterProvider router={router}/>
+    </SettingsProvider>
   </React.StrictMode>,
 )
