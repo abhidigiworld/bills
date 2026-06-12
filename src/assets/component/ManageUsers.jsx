@@ -57,6 +57,8 @@ function ManageUsers() {
     const [autoBackupEnabled, setAutoBackupEnabled] = useState(true);
     const [settingsSaving, setSettingsSaving] = useState(false);
     const [emailTriggering, setEmailTriggering] = useState(false);
+    const [dbStorageSize, setDbStorageSize] = useState(0);
+    const [dbStorageLimit, setDbStorageLimit] = useState(512 * 1024 * 1024);
 
     // Branding state
     const [brandingForm, setBrandingForm] = useState({
@@ -146,6 +148,12 @@ function ManageUsers() {
             if (response.data && response.data.success) {
                 setBackupEmail(response.data.data.backup_email || '');
                 setAutoBackupEnabled(response.data.data.auto_backup_enabled === true);
+                if (response.data.data.storageSize !== undefined) {
+                    setDbStorageSize(response.data.data.storageSize);
+                }
+                if (response.data.data.storageLimit !== undefined) {
+                    setDbStorageLimit(response.data.data.storageLimit);
+                }
             }
         } catch (err) {
             console.error("Error fetching backup settings:", err);
@@ -585,6 +593,35 @@ function ManageUsers() {
 
             {activeTab === 'backup' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
+                    {/* Database Space Usage Status Bar */}
+                    <div className="col-span-1 md:col-span-2 bg-white dark:bg-[#181622] border border-slate-200/50 dark:border-[#262235]/65 shadow-xl rounded-xl p-6 transition-colors duration-300">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 rounded-lg">
+                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 className="text-sm font-black text-slate-900 dark:text-white">Database Space Capacity</h4>
+                                    <p className="text-xs text-slate-500 dark:text-gray-400">MongoDB free-tier storage size allocation</p>
+                                </div>
+                            </div>
+                            <span className="text-xs font-black text-indigo-650 dark:text-violet-400">
+                                {((dbStorageSize / (1024 * 1024)) || 0).toFixed(2)} MB / {((dbStorageLimit / (1024 * 1024)) || 512).toFixed(0)} MB ({((dbStorageSize / dbStorageLimit) * 100).toFixed(2)}%)
+                            </span>
+                        </div>
+                        <div className="w-full bg-slate-100 dark:bg-[#201d2c] rounded-full h-3.5 overflow-hidden border border-slate-200/50 dark:border-[#2a243b]">
+                            <div 
+                                className="bg-gradient-to-r from-indigo-500 to-emerald-500 h-full rounded-full transition-all duration-500" 
+                                style={{ width: `${Math.min(100, Math.max(0.5, (dbStorageSize / dbStorageLimit) * 100))}%` }}
+                            />
+                        </div>
+                        <p className="text-[11px] text-slate-400 dark:text-gray-500 mt-2.5 leading-relaxed">
+                            Our automatic image compression keeps file uploads extremely lightweight (under 30 KB per asset). At the current storage efficiency, this database can securely hold hundreds of thousands of additional invoices and salary records.
+                        </p>
+                    </div>
+
                     {/* Settings Form Card */}
                     <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-6 transition-colors duration-300">
                         <div className="flex items-center gap-3 mb-5">
@@ -813,7 +850,7 @@ function ManageUsers() {
                                     {brandingForm.company_logo ? (
                                         <img src={brandingForm.company_logo} alt="Logo Preview" className="max-w-full max-h-full object-contain" />
                                     ) : (
-                                        <span className="text-[10px] text-slate-400 uppercase">Default Logo</span>
+                                        <span className="text-[10px] text-slate-400 uppercase text-center font-bold">Default Logo</span>
                                     )}
                                 </div>
                                 <input
@@ -823,12 +860,23 @@ function ManageUsers() {
                                     className="hidden"
                                     onChange={(e) => handleFileChange(e, 'company_logo')}
                                 />
-                                <label
-                                    htmlFor="companyLogoUpload"
-                                    className="cursor-pointer bg-slate-200 hover:bg-slate-300 dark:bg-[#262235] dark:hover:bg-[#342f49] px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-700 dark:text-gray-300 transition"
-                                >
-                                    {brandingForm.company_logo ? 'Change Image' : 'Upload Image'}
-                                </label>
+                                <div className="flex flex-col items-center gap-1.5 w-full">
+                                    <label
+                                        htmlFor="companyLogoUpload"
+                                        className="cursor-pointer text-center bg-slate-200 hover:bg-slate-300 dark:bg-[#262235] dark:hover:bg-[#342f49] px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-700 dark:text-gray-300 transition w-full"
+                                    >
+                                        {brandingForm.company_logo ? 'Change Image' : 'Upload Image'}
+                                    </label>
+                                    {brandingForm.company_logo && (
+                                        <button
+                                            type="button"
+                                            onClick={() => setBrandingForm(prev => ({ ...prev, company_logo: '' }))}
+                                            className="text-[10px] text-red-500 hover:text-red-650 dark:text-red-400 dark:hover:text-red-300 font-bold transition hover:underline"
+                                        >
+                                            Revert to Default
+                                        </button>
+                                    )}
+                                </div>
                             </div>
 
                             {/* Signature Upload */}
@@ -838,7 +886,7 @@ function ManageUsers() {
                                     {brandingForm.company_signature ? (
                                         <img src={brandingForm.company_signature} alt="Signature Preview" className="max-w-full max-h-full object-contain" />
                                     ) : (
-                                        <span className="text-[10px] text-slate-400 uppercase">Default Sign</span>
+                                        <span className="text-[10px] text-slate-400 uppercase text-center font-bold">Default Sign</span>
                                     )}
                                 </div>
                                 <input
@@ -848,12 +896,23 @@ function ManageUsers() {
                                     className="hidden"
                                     onChange={(e) => handleFileChange(e, 'company_signature')}
                                 />
-                                <label
-                                    htmlFor="companySignatureUpload"
-                                    className="cursor-pointer bg-slate-200 hover:bg-slate-300 dark:bg-[#262235] dark:hover:bg-[#342f49] px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-700 dark:text-gray-300 transition"
-                                >
-                                    {brandingForm.company_signature ? 'Change Image' : 'Upload Image'}
-                                </label>
+                                <div className="flex flex-col items-center gap-1.5 w-full">
+                                    <label
+                                        htmlFor="companySignatureUpload"
+                                        className="cursor-pointer text-center bg-slate-200 hover:bg-slate-300 dark:bg-[#262235] dark:hover:bg-[#342f49] px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-700 dark:text-gray-300 transition w-full"
+                                    >
+                                        {brandingForm.company_signature ? 'Change Image' : 'Upload Image'}
+                                    </label>
+                                    {brandingForm.company_signature && (
+                                        <button
+                                            type="button"
+                                            onClick={() => setBrandingForm(prev => ({ ...prev, company_signature: '' }))}
+                                            className="text-[10px] text-red-500 hover:text-red-650 dark:text-red-400 dark:hover:text-red-300 font-bold transition hover:underline"
+                                        >
+                                            Revert to Default
+                                        </button>
+                                    )}
+                                </div>
                             </div>
 
                             {/* Stamp Upload */}
@@ -863,7 +922,7 @@ function ManageUsers() {
                                     {brandingForm.company_stamp ? (
                                         <img src={brandingForm.company_stamp} alt="Stamp Preview" className="max-w-full max-h-full object-contain" />
                                     ) : (
-                                        <span className="text-[10px] text-slate-400 uppercase">Default Seal</span>
+                                        <span className="text-[10px] text-slate-400 uppercase text-center font-bold">Default Seal</span>
                                     )}
                                 </div>
                                 <input
@@ -873,12 +932,23 @@ function ManageUsers() {
                                     className="hidden"
                                     onChange={(e) => handleFileChange(e, 'company_stamp')}
                                 />
-                                <label
-                                    htmlFor="companyStampUpload"
-                                    className="cursor-pointer bg-slate-200 hover:bg-slate-305 dark:bg-[#262235] dark:hover:bg-[#342f49] px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-700 dark:text-gray-300 transition"
-                                >
-                                    {brandingForm.company_stamp ? 'Change Image' : 'Upload Image'}
-                                </label>
+                                <div className="flex flex-col items-center gap-1.5 w-full">
+                                    <label
+                                        htmlFor="companyStampUpload"
+                                        className="cursor-pointer text-center bg-slate-200 hover:bg-slate-300 dark:bg-[#262235] dark:hover:bg-[#342f49] px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-700 dark:text-gray-300 transition w-full"
+                                    >
+                                        {brandingForm.company_stamp ? 'Change Image' : 'Upload Image'}
+                                    </label>
+                                    {brandingForm.company_stamp && (
+                                        <button
+                                            type="button"
+                                            onClick={() => setBrandingForm(prev => ({ ...prev, company_stamp: '' }))}
+                                            className="text-[10px] text-red-500 hover:text-red-655 dark:text-red-400 dark:hover:text-red-300 font-bold transition hover:underline"
+                                        >
+                                            Revert to Default
+                                        </button>
+                                    )}
+                                </div>
                             </div>
                         </div>
 

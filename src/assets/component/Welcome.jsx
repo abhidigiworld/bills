@@ -53,6 +53,7 @@ function WelcomePage() {
     invoiceCount: 0,
     grossBilling: 0,
     slipsCount: 0,
+    pendingApprovalsCount: 0
   });
   const [customerStats, setCustomerStats] = useState([]);
 
@@ -76,10 +77,21 @@ function WelcomePage() {
   const fetchAdminStats = async () => {
     setLoading(true);
     try {
-      const [empRes, invRes, slipRes] = await Promise.all([
+      const fetchApprovals = async () => {
+        try {
+          const res = await axios.get(`${API_BASE_URL}/api/attendance/pending-approvals?status=pending`);
+          return (res.data && res.data.data) ? res.data.data.length : 0;
+        } catch (err) {
+          console.error("Failed to load pending approvals stats:", err);
+          return 0;
+        }
+      };
+
+      const [empRes, invRes, slipRes, pendingApprovalsCount] = await Promise.all([
         axios.get(`${API_BASE_URL}/api/employees`),
         axios.get(`${API_BASE_URL}/api/invoices`),
-        axios.get(`${API_BASE_URL}/api/salary-slips`)
+        axios.get(`${API_BASE_URL}/api/salary-slips`),
+        fetchApprovals()
       ]);
 
       const staffCount = empRes.data.length || 0;
@@ -92,6 +104,7 @@ function WelcomePage() {
         invoiceCount,
         grossBilling,
         slipsCount,
+        pendingApprovalsCount
       });
 
       // Group invoices by customer company for charts and widgets
@@ -342,10 +355,10 @@ function WelcomePage() {
               </div>
             </div>
 
-            {/* Stat 4: Attendance Rate */}
+            {/* Stat 4: Pending Approvals */}
             <div className="bg-white dark:bg-[#181622] border border-slate-200/50 dark:border-[#262235]/65 rounded-3xl p-5 shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between min-h-[120px]">
               <div className="flex justify-between items-center">
-                <span className="text-[10px] text-slate-400 dark:text-gray-500 font-extrabold uppercase tracking-widest">Today Check-Ins</span>
+                <span className="text-[10px] text-slate-400 dark:text-gray-500 font-extrabold uppercase tracking-widest">Pending Approvals</span>
                 <span className="p-2 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-violet-400 rounded-xl">
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
@@ -354,9 +367,11 @@ function WelcomePage() {
               </div>
               <div className="mt-3 flex items-baseline justify-between">
                 <h3 className="text-2xl font-black text-slate-900 dark:text-white leading-none">
-                  {adminStats.staffCount > 0 ? Math.round((adminStats.slipsCount / adminStats.staffCount) * 100) : 0}%
+                  {adminStats.pendingApprovalsCount}
                 </h3>
-                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Slip Count</span>
+                <Link to="/attendance-register" className="text-[10px] font-black px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/35 dark:hover:bg-amber-900/40 text-amber-600 dark:text-amber-400 border border-amber-200/20 transition uppercase tracking-wider">
+                  Review
+                </Link>
               </div>
             </div>
 
