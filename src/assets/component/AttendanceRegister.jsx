@@ -64,6 +64,19 @@ function AttendanceRegister() {
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
+    // Supervisor approvals & requests states
+    const [activeTab, setActiveTab] = useState('register'); // 'register' or 'approvals'
+    const [pendingApprovals, setPendingApprovals] = useState([]);
+    const [requestLogs, setRequestLogs] = useState([]);
+    const [supervisors, setSupervisors] = useState([]);
+    const [manualRequestForm, setManualRequestForm] = useState({
+        date: new Date().toISOString().split('T')[0],
+        supervisorId: ''
+    });
+    const [approvalsLoading, setApprovalsLoading] = useState(false);
+    const [submittingApprovalGroup, setSubmittingApprovalGroup] = useState(null);
+    const [sendingRequest, setSendingRequest] = useState(false);
+
     const triggerSuccess = (msg) => {
         setSuccessMessage(msg);
         setErrorMessage('');
@@ -91,6 +104,12 @@ function AttendanceRegister() {
         fetchData();
     }, [selectedYear, selectedMonth]);
 
+    useEffect(() => {
+        if (activeTab === 'approvals') {
+            fetchApprovalsData();
+        }
+    }, [activeTab]);
+
     const fetchData = async () => {
         setLoading(true);
         try {
@@ -104,6 +123,193 @@ function AttendanceRegister() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const fetchApprovalsData = async () => {
+        setApprovalsLoading(true);
+        try {
+            const [pendingRes, logsRes, usersRes] = await Promise.all([
+                axios.get(`${API_BASE_URL}/api/attendance/pending-approvals`),
+                axios.get(`${API_BASE_URL}/api/attendance/request-logs`),
+                axios.get(`${API_BASE_URL}/api/users`)
+            ]);
+
+            if (pendingRes.data && pendingRes.data.success) {
+                setPendingApprovals(pendingRes.data.data);
+            }
+            if (logsRes.data && logsRes.data.success) {
+                setRequestLogs(logsRes.data.data);
+            }
+            if (Array.isArray(usersRes.data)) {
+                const sups = usersRes.data.filter(u => u.role === 'supervisor');
+                setSupervisors(sups);
+                if (sups.length > 0 && !manualRequestForm.supervisorId) {
+                    setManualRequestForm(prev => ({ ...prev, supervisorId: sups[0]._id }));
+                }
+            }
+        } catch (err) {
+            console.error("Error fetching approvals data:", err);
+            triggerError("Failed to load pending approvals and logs.");
+        } finally {
+            setApprovalsLoading(false);
+        }
+    };
+
+    const handleSendRequest = async (e) => {
+        e.preventDefault();
+        if (!manualRequestForm.supervisorId || !manualRequestForm.date) {
+            triggerError("Please select both a supervisor and a date.");
+            return;
+        }
+        setSendingRequest(true);
+        try {
+            const res = await axios.post(`${API_BASE_URL}/api/attendance/send-request`, {
+                date: manualRequestForm.date,
+                supervisorId: manualRequestForm.supervisorId
+            });
+            if (res.data && res.data.success) {
+                triggerSuccess(res.data.message || "Manual request link sent successfully!");
+                fetchApprovalsData();
+            } else {
+                triggerError(res.data.message || "Failed to send request.");
+            }
+        } catch (err) {
+            console.error("Error sending manual request:", err);
+            triggerError(err.response?.data?.message || "Failed to send attendance request.");
+        } finally {
+            setSendingRequest(false);
+        }
+    };
+
+    const handlePendingFieldChange = (recordId, updatedFields) => {
+        setPendingApprovals(prev => prev.map(rec => {
+            if (rec._id === recordId) {
+                let nextRec = { ...rec, ...updatedFields };
+                
+                if (nextRec.status === 'Present') {
+                    const hasDay = nextRec.workedDay;
+                    const hasNight = nextRec.workedNight;
+                    
+                    const dayCheckInStr = formatTimeFromDate(nextRec.checkIn, '');
+                    const dayCheckOutStr = formatTimeFromDate(nextRec.checkOut, '');
+                    const nightCheckInStr = formatTimeFromDate(nextRec.nightCheckIn, '');
+                    const nightCheckOutStr = formatTimeFromDate(nextRec.nightCheckOut, '');
+
+                    if (hasDay) {
+                        nextRec.overtimeHours = calculateOvertime(dayCheckInStr, dayCheckOutStr, false);
+                    } else {
+                        nextRec.overtimeHours = 0;
+                    }
+
+                    if (hasNight) {
+                        nextRec.nightShiftHours = calculateTotalHours(nightCheckInStr, nightCheckOutStr, true);
+                        nextRec.isNightShift = true;
+                    } else {
+                        nextRec.nightShiftHours = 0;
+                        nextRec.isNightShift = false;
+                    }
+                } else {
+                    nextRec.workedDay = false;
+                    nextRec.workedNight = false;
+                    nextRec.overtimeHours = 0;
+                    nextRec.nightShiftHours = 0;
+                    nextRec.isNightShift = false;
+                }
+                return nextRec;
+            }
+            return rec;
+        }));
+    };
+
+    const handleTimeFieldChange = (recordId, field, timeVal, dateStr) => {
+        let dateObjString = null;
+        if (timeVal) {
+            const tzOffset = '+05:30'; // Asia/Kolkata
+            dateObjString = `${dateStr}T${timeVal}:00.000${tzOffset}`;
+        }
+        handlePendingFieldChange(recordId, { [field]: dateObjString });
+    };
+
+    const handleApproveGroup = async (groupKey, groupRecords) => {
+        setSubmittingApprovalGroup(groupKey);
+        try {
+            const recordsToSend = groupRecords.map(rec => ({
+                _id: rec._id,
+                status: rec.status,
+                workedDay: rec.status === 'Present' ? !!rec.workedDay : false,
+                workedNight: rec.status === 'Present' ? !!rec.workedNight : false,
+                checkIn: rec.status === 'Present' && rec.workedDay ? rec.checkIn : null,
+                checkOut: rec.status === 'Present' && rec.workedDay ? rec.checkOut : null,
+                nightCheckIn: rec.status === 'Present' && rec.workedNight ? rec.nightCheckIn : null,
+                nightCheckOut: rec.status === 'Present' && rec.workedNight ? rec.nightCheckOut : null,
+                overtimeHours: rec.status === 'Present' ? Number(rec.overtimeHours) || 0 : 0,
+                isNightShift: rec.status === 'Present' ? !!rec.isNightShift : false,
+                nightShiftHours: rec.status === 'Present' ? Number(rec.nightShiftHours) || 0 : 0
+            }));
+
+            const res = await axios.post(`${API_BASE_URL}/api/attendance/approve`, {
+                records: recordsToSend
+            });
+
+            if (res.data && res.data.success) {
+                triggerSuccess(res.data.message || "Group attendance approved successfully!");
+                fetchApprovalsData();
+                fetchData();
+            } else {
+                triggerError(res.data.message || "Failed to approve group attendance.");
+            }
+        } catch (err) {
+            console.error("Error approving group:", err);
+            triggerError(err.response?.data?.message || "Failed to approve attendance.");
+        } finally {
+            setSubmittingApprovalGroup(null);
+        }
+    };
+
+    const handleRejectGroup = async (groupKey, groupRecords) => {
+        if (!window.confirm("Are you sure you want to discard this supervisor submission? All pending changes in this group will be marked as rejected.")) {
+            return;
+        }
+        setSubmittingApprovalGroup(groupKey);
+        try {
+            const ids = groupRecords.map(rec => rec._id);
+            const res = await axios.post(`${API_BASE_URL}/api/attendance/reject`, { ids });
+
+            if (res.data && res.data.success) {
+                triggerSuccess("Group submission discarded successfully.");
+                fetchApprovalsData();
+            } else {
+                triggerError(res.data.message || "Failed to reject group.");
+            }
+        } catch (err) {
+            console.error("Error rejecting group:", err);
+            triggerError(err.response?.data?.message || "Failed to reject group.");
+        } finally {
+            setSubmittingApprovalGroup(null);
+        }
+    };
+
+    const getGroupedApprovals = () => {
+        const groups = {};
+        pendingApprovals.forEach(rec => {
+            const dateKey = rec.date;
+            const supervisorId = rec.supervisorId?._id || 'unknown';
+            const supervisorName = rec.supervisorId?.name || 'Unknown Supervisor';
+            const supervisorEmail = rec.supervisorId?.email || '';
+            const groupKey = `${dateKey}_${supervisorId}`;
+            
+            if (!groups[groupKey]) {
+                groups[groupKey] = {
+                    date: dateKey,
+                    supervisorId,
+                    supervisorName,
+                    supervisorEmail,
+                    records: []
+                };
+            }
+            groups[groupKey].records.push(rec);
+        });
+        return Object.values(groups).sort((a, b) => b.date.localeCompare(a.date));
     };
 
     // Calculate days in the selected month
@@ -654,299 +860,776 @@ function AttendanceRegister() {
         }
     };
 
+    const groupedApprovals = getGroupedApprovals();
+
+    const formatDateTime = (dateStr) => {
+        if (!dateStr) return '';
+        try {
+            return new Date(dateStr).toLocaleString('en-IN', {
+                dateStyle: 'medium',
+                timeStyle: 'short',
+                timeZone: 'Asia/Kolkata'
+            });
+        } catch (e) {
+            return dateStr;
+        }
+    };
+
+    const getTriggerBadge = (type) => {
+        if (type === 'automatic') {
+            return (
+                <span className="px-2 py-0.5 bg-violet-50 dark:bg-violet-950/30 text-violet-750 dark:text-violet-400 border border-violet-100/35 rounded-full text-[10px] font-black uppercase tracking-wider">
+                    Auto
+                </span>
+            );
+        }
+        return (
+            <span className="px-2 py-0.5 bg-sky-50 dark:bg-sky-950/30 text-sky-750 dark:text-sky-450 border border-sky-100/35 rounded-full text-[10px] font-black uppercase tracking-wider">
+                Manual
+            </span>
+        );
+    };
+
+    const getLogStatusBadge = (log) => {
+        if (log.isSubmitted) {
+            return (
+                <span className="px-2.5 py-0.5 bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 border border-green-200/20 rounded-full text-[10px] font-extrabold">
+                    ✓ Submitted
+                </span>
+            );
+        }
+        const isExpired = new Date() > new Date(log.expiresAt);
+        if (isExpired) {
+            return (
+                <span className="px-2.5 py-0.5 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 border border-red-200/20 rounded-full text-[10px] font-extrabold">
+                    ✕ Expired
+                </span>
+            );
+        }
+        return (
+            <span className="px-2.5 py-0.5 bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-450 border border-amber-200/20 rounded-full text-[10px] font-extrabold animate-pulse">
+                ● Pending
+            </span>
+        );
+    };
+
+    const formatDisplayDate = (dStr) => {
+        if (!dStr) return '';
+        try {
+            return new Date(dStr).toLocaleDateString('en-IN', {
+                dateStyle: 'long',
+                timeZone: 'Asia/Kolkata'
+            });
+        } catch (e) {
+            return dStr;
+        }
+    };
+
     return (
         <>
             <div className="max-w-7xl mx-auto animate-fade-in">
+                {/* Premium Tab Navigation Bar */}
+                <div className="flex border-b border-slate-200 dark:border-[#262235] mb-8 gap-8 justify-start print-hidden">
+                    <button
+                        onClick={() => setActiveTab('register')}
+                        className={`pb-3 text-sm font-bold uppercase tracking-wider transition-all duration-200 border-b-2 flex items-center gap-2 ${
+                            activeTab === 'register'
+                                ? 'text-indigo-600 dark:text-violet-400 border-indigo-600 dark:border-violet-400 font-black'
+                                : 'text-slate-400 dark:text-gray-500 border-transparent hover:text-slate-650 dark:hover:text-gray-300 font-bold'
+                        }`}
+                    >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                        Attendance Register
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('approvals')}
+                        className={`pb-3 text-sm font-bold uppercase tracking-wider transition-all duration-200 border-b-2 flex items-center gap-2 ${
+                            activeTab === 'approvals'
+                                ? 'text-indigo-600 dark:text-violet-400 border-indigo-600 dark:border-violet-400 font-black'
+                                : 'text-slate-400 dark:text-gray-500 border-transparent hover:text-slate-650 dark:hover:text-gray-300 font-bold'
+                        }`}
+                    >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                        Pending Approvals
+                        {pendingApprovals.length > 0 && (
+                            <span className="ml-1 px-2 py-0.5 bg-red-100 dark:bg-red-950 text-red-650 dark:text-red-400 rounded-full text-[10px] font-black animate-pulse">
+                                {pendingApprovals.length}
+                            </span>
+                        )}
+                    </button>
+                </div>
 
-                    {/* Filter Bar */}
-                    <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl p-6 mb-8 flex flex-wrap gap-6 items-center justify-between transition-colors duration-300">
-                        <div className="flex flex-wrap gap-4 items-center">
-                            <div>
-                                <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Month</label>
-                                <select
-                                    value={selectedMonth}
-                                    onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
-                                    className="px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
-                                >
-                                    {[
-                                        { v: 1, n: 'January' }, { v: 2, n: 'February' }, { v: 3, n: 'March' }, { v: 4, n: 'April' },
-                                        { v: 5, n: 'May' }, { v: 6, n: 'June' }, { v: 7, n: 'July' }, { v: 8, n: 'August' },
-                                        { v: 9, n: 'September' }, { v: 10, n: 'October' }, { v: 11, n: 'November' }, { v: 12, n: 'December' }
-                                    ].map(m => (
-                                        <option key={m.v} value={m.v}>{m.n}</option>
-                                    ))}
-                                </select>
+                {activeTab === 'register' ? (
+                    <>
+                        {/* Filter Bar */}
+                        <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl p-6 mb-8 flex flex-wrap gap-6 items-center justify-between transition-colors duration-300">
+                            <div className="flex flex-wrap gap-4 items-center">
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Month</label>
+                                    <select
+                                        value={selectedMonth}
+                                        onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
+                                        className="px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                    >
+                                        {[
+                                            { v: 1, n: 'January' }, { v: 2, n: 'February' }, { v: 3, n: 'March' }, { v: 4, n: 'April' },
+                                            { v: 5, n: 'May' }, { v: 6, n: 'June' }, { v: 7, n: 'July' }, { v: 8, n: 'August' },
+                                            { v: 9, n: 'September' }, { v: 10, n: 'October' }, { v: 11, n: 'November' }, { v: 12, n: 'December' }
+                                        ].map(m => (
+                                            <option key={m.v} value={m.v}>{m.n}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Year</label>
+                                    <select
+                                        value={selectedYear}
+                                        onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+                                        className="px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                    >
+                                        {Array.from({ length: new Date().getFullYear() + 5 - 2024 + 1 }, (_, i) => 2024 + i).map(y => (
+                                            <option key={y} value={y}>{y}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Shift Hours</label>
+                                    <input
+                                        type="number"
+                                        min="4"
+                                        max="16"
+                                        value={shiftHours}
+                                        onChange={(e) => setShiftHours(parseInt(e.target.value) || 8)}
+                                        className="w-24 px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition text-center"
+                                    />
+                                </div>
                             </div>
 
-                            <div>
-                                <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Year</label>
-                                <select
-                                    value={selectedYear}
-                                    onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-                                    className="px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
-                                >
-                                    {Array.from({ length: new Date().getFullYear() + 5 - 2024 + 1 }, (_, i) => 2024 + i).map(y => (
-                                        <option key={y} value={y}>{y}</option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div>
-                                <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Shift Hours</label>
-                                <input
-                                    type="number"
-                                    min="4"
-                                    max="16"
-                                    value={shiftHours}
-                                    onChange={(e) => setShiftHours(parseInt(e.target.value) || 8)}
-                                    className="w-24 px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition text-center"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="flex gap-4 items-center">
-                            {selectedEmployeeIds.length > 0 && (
+                            <div className="flex gap-4 items-center">
+                                {selectedEmployeeIds.length > 0 && (
+                                    <button
+                                        onClick={() => setIsBulkModalOpen(true)}
+                                        className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-750 hover:to-teal-750 text-white font-bold rounded-lg text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition duration-200 flex items-center gap-2 animate-fade-in"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                        </svg>
+                                        Bulk Mark ({selectedEmployeeIds.length})
+                                    </button>
+                                )}
                                 <button
-                                    onClick={() => setIsBulkModalOpen(true)}
-                                    className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-750 hover:to-teal-750 text-white font-bold rounded-lg text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition duration-200 flex items-center gap-2 animate-fade-in"
+                                    onClick={() => setIsBlanketModalOpen(true)}
+                                    className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-750 hover:to-violet-750 text-white font-bold rounded-lg text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition duration-200 flex items-center gap-2"
                                 >
                                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                                     </svg>
-                                    Bulk Mark ({selectedEmployeeIds.length})
+                                    Blanket Mark
                                 </button>
-                            )}
-                            <button
-                                onClick={() => setIsBlanketModalOpen(true)}
-                                className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-750 hover:to-violet-750 text-white font-bold rounded-lg text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition duration-200 flex items-center gap-2"
-                            >
-                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                                </svg>
-                                Blanket Mark
-                            </button>
-                            <button
-                                onClick={downloadAttendanceCSV}
-                                className="px-4 py-2 bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 text-white font-bold rounded-lg text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition duration-200 flex items-center gap-2"
-                            >
-                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                </svg>
-                                Download CSV
-                            </button>
+                                <button
+                                    onClick={downloadAttendanceCSV}
+                                    className="px-4 py-2 bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 text-white font-bold rounded-lg text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition duration-200 flex items-center gap-2"
+                                >
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                    </svg>
+                                    Download CSV
+                                </button>
 
-                            <div className="text-right text-xs print:hidden">
-                                <span className="text-[10px] font-bold text-slate-400 dark:text-gray-500 block uppercase tracking-wider">Currently Showing</span>
-                                <span className="text-sm font-extrabold text-indigo-700 dark:text-violet-400">{monthName} {selectedYear}</span>
+                                <div className="text-right text-xs print:hidden">
+                                    <span className="text-[10px] font-bold text-slate-400 dark:text-gray-500 block uppercase tracking-wider">Currently Showing</span>
+                                    <span className="text-sm font-extrabold text-indigo-700 dark:text-violet-400">{monthName} {selectedYear}</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    {loading ? (
-                        <div className="text-center py-10">
-                            <div className="text-indigo-600 dark:text-violet-400 text-xl font-bold animate-pulse">Loading Attendance Records...</div>
+                        {loading ? (
+                            <div className="text-center py-10">
+                                <div className="text-indigo-600 dark:text-violet-400 text-xl font-bold animate-pulse">Loading Attendance Records...</div>
+                            </div>
+                        ) : (
+                            <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-6 transition-colors duration-300">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-xs text-left border-collapse">
+                                        <thead>
+                                            <tr className="border-b border-slate-200 dark:border-[#262235] text-slate-500 dark:text-gray-400 font-bold uppercase">
+                                                <th className="px-2 py-3 text-center border-r border-slate-100 dark:border-[#262235]">Sl</th>
+                                                <th className="px-2 py-3 text-center border-r border-slate-100 dark:border-[#262235] print-hidden">
+                                                    <input 
+                                                        type="checkbox" 
+                                                        checked={selectedEmployeeIds.length === employees.length && employees.length > 0} 
+                                                        onChange={handleSelectAllEmployees} 
+                                                        className="rounded text-violet-600 focus:ring-violet-500 bg-slate-100 dark:bg-[#201d2c] border-slate-300 dark:border-[#37314e] h-4 w-4 cursor-pointer"
+                                                    />
+                                                </th>
+                                                <th className="px-3 py-3 min-w-[140px] border-r border-slate-100 dark:border-[#262235]">Name</th>
+                                                <th className="px-3 py-3 min-w-[100px] border-r border-slate-100 dark:border-[#262235]">Designation</th>
+                                                <th className="px-3 py-3 min-w-[100px] border-r border-slate-100 dark:border-[#262235]">Location</th>
+                                                
+                                                {/* Render day columns */}
+                                                {daysArray.map(day => (
+                                                    <th key={day} className="px-1.5 py-3 text-center min-w-[26px] border-r border-slate-100 dark:border-[#262235] last:border-r-0">
+                                                        {day}
+                                                    </th>
+                                                ))}
+                                                
+                                                <th className="px-3 py-3 text-center min-w-[60px] border-l border-slate-100 dark:border-[#262235]">Work Days</th>
+                                                <th className="px-3 py-3 text-center min-w-[60px] border-r border-slate-100 dark:border-[#262235]">OT Hrs</th>
+                                                <th className="px-3 py-3 text-center min-w-[60px]">NS Hrs</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {employees.length > 0 ? (
+                                                employees.map((emp, index) => {
+                                                    const summary = getEmployeeSummary(emp._id);
+                                                    return (
+                                                        <tr key={emp._id} className="border-b border-slate-100 dark:border-[#262235] hover:bg-slate-50 dark:hover:bg-[#201d2c]/50 transition duration-150">
+                                                            <td className="px-2 py-3 text-center font-bold text-slate-400 border-r border-slate-100 dark:border-[#262235]">{index + 1}</td>
+                                                            <td className="px-2 py-3 text-center border-r border-slate-100 dark:border-[#262235] print-hidden">
+                                                                <input 
+                                                                    type="checkbox" 
+                                                                    checked={selectedEmployeeIds.includes(emp._id)} 
+                                                                    onChange={() => handleSelectEmployee(emp._id)}
+                                                                    className="rounded text-violet-650 focus:ring-violet-500 bg-slate-100 dark:bg-[#201d2c] border-slate-300 dark:border-[#37314e] h-4 w-4 cursor-pointer"
+                                                                />
+                                                            </td>
+                                                            <td className="px-3 py-3 font-semibold text-slate-900 dark:text-white border-r border-slate-100 dark:border-[#262235]">{emp.name}</td>
+                                                            <td className="px-3 py-3 text-slate-650 dark:text-gray-300 border-r border-slate-100 dark:border-[#262235]">{emp.designation || '-'}</td>
+                                                            <td className="px-3 py-3 text-slate-650 dark:text-gray-300 border-r border-slate-100 dark:border-[#262235]">{emp.location || '-'}</td>
+                                                            
+                                                            {/* Render status for each day */}
+                                                            {daysArray.map(day => {
+                                                                    const cellInfo = getCellDisplayInfo(emp._id, day);
+                                                                    return (
+                                                                        <td 
+                                                                            key={day} 
+                                                                            className={`px-1.5 py-3 text-center font-bold border-r border-slate-100 dark:border-[#262235] last:border-r-0 cursor-pointer hover:bg-indigo-100/30 dark:hover:bg-[#201d2c] transition duration-150 ${cellInfo.colorClass}`}
+                                                                            onClick={() => handleCellClick(emp, day)}
+                                                                            onMouseEnter={(e) => {
+                                                                                const log = getLogForDay(emp._id, day);
+                                                                                if (log) {
+                                                                                    const rect = e.currentTarget.getBoundingClientRect();
+                                                                                    setHoveredCell({
+                                                                                        employeeName: emp.name,
+                                                                                        date: `${day} ${monthName} ${selectedYear}`,
+                                                                                        status: log.status,
+                                                                                        checkIn: formatTimeFromDate(log.checkIn, null),
+                                                                                        checkOut: formatTimeFromDate(log.checkOut, null),
+                                                                                        nightCheckIn: formatTimeFromDate(log.nightCheckIn, null),
+                                                                                        nightCheckOut: formatTimeFromDate(log.nightCheckOut, null),
+                                                                                        isNightShift: log.isNightShift,
+                                                                                        nightShiftHours: log.nightShiftHours || 0,
+                                                                                        overtimeHours: log.overtimeHours,
+                                                                                        x: rect.left,
+                                                                                        y: rect.bottom + 5
+                                                                                    });
+                                                                                }
+                                                                            }}
+                                                                            onMouseLeave={() => setHoveredCell(null)}
+                                                                        >
+                                                                            {cellInfo.display}
+                                                                        </td>
+                                                                    );
+                                                            })}
+                                                            
+                                                            <td className="px-3 py-3 text-center font-bold text-green-600 dark:text-green-400 border-l border-slate-100 dark:border-[#262235]">
+                                                                {summary.presentDays}
+                                                            </td>
+                                                            <td className="px-3 py-3 text-center font-bold text-indigo-600 dark:text-violet-400 border-r border-slate-100 dark:border-[#262235]">
+                                                                {summary.totalOtHours}
+                                                            </td>
+                                                            <td className="px-3 py-3 text-center font-bold text-amber-600 dark:text-amber-400">
+                                                                {summary.totalNsHours}
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                })
+                                            ) : (
+                                                <tr>
+                                                    <td colSpan={daysInMonth + 7} className="text-center py-6 font-medium text-gray-500">
+                                                        No employees registered in the system.
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Legend Section */}
+                        <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl p-6 mt-8 transition-colors duration-300 print-hidden">
+                            <h4 className="text-sm font-bold text-slate-900 dark:text-white mb-4 uppercase tracking-wider">Attendance Status Legend & Guide</h4>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-10 gap-4 text-xs">
+                                <div className="flex items-center gap-2">
+                                    <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-green-50 dark:bg-green-950/20 text-green-600 dark:text-green-400 border border-green-200 dark:border-green-900/30">P</span>
+                                    <div>
+                                        <p className="font-semibold text-slate-800 dark:text-white">Present</p>
+                                        <p className="text-[10px] text-slate-400">Regular Shift</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-green-50 dark:bg-green-950/20 text-emerald-600 dark:text-emerald-400 border border-green-200 dark:border-green-900/30">P⁺</span>
+                                    <div>
+                                        <p className="font-semibold text-slate-800 dark:text-white">Present + OT</p>
+                                        <p className="text-[10px] text-slate-400">Overtime Hours</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-cyan-50 dark:bg-cyan-950/20 text-cyan-600 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-900/30">P🌙</span>
+                                    <div>
+                                        <p className="font-semibold text-slate-800 dark:text-white">Night Shift</p>
+                                        <p className="text-[10px] text-slate-400">Night Hours</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-violet-400 border border-indigo-200 dark:border-indigo-900/30">P🌙⁺</span>
+                                    <div>
+                                        <p className="font-semibold text-slate-800 dark:text-white">Night + OT</p>
+                                        <p className="text-[10px] text-slate-400">Overnight + OT</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-violet-50 dark:bg-violet-950/20 text-violet-600 dark:text-violet-400 border border-violet-200 dark:border-violet-900/30">P☀️🌙</span>
+                                    <div>
+                                        <p className="font-semibold text-slate-800 dark:text-white">Both Shifts</p>
+                                        <p className="text-[10px] text-slate-400">Day & Night</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-violet-100 dark:bg-violet-950/40 text-violet-750 dark:text-violet-350 border border-violet-300 dark:border-violet-900/40">P☀️🌙⁺</span>
+                                    <div>
+                                        <p className="font-semibold text-slate-800 dark:text-white">Both + OT</p>
+                                        <p className="text-[10px] text-slate-400">Day/Night + OT</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-red-50 dark:bg-red-950/20 text-red-500 dark:text-red-400/80 border border-red-200 dark:border-red-900/30">A</span>
+                                    <div>
+                                        <p className="font-semibold text-slate-800 dark:text-white">Absent</p>
+                                        <p className="text-[10px] text-slate-400">No work log</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-amber-50 dark:bg-amber-950/20 text-amber-500 dark:text-amber-400 border border-amber-200 dark:border-amber-900/30">L</span>
+                                    <div>
+                                        <p className="font-semibold text-slate-800 dark:text-white">Leave</p>
+                                        <p className="text-[10px] text-slate-400 font-normal">Approved leave</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-violet-50 dark:bg-violet-950/20 text-violet-500 dark:text-violet-400 border border-violet-200 dark:border-violet-900/30">H</span>
+                                    <div>
+                                        <p className="font-semibold text-slate-800 dark:text-white">Holiday</p>
+                                        <p className="text-[10px] text-slate-400 font-normal">Public holiday</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="w-8 h-8 flex items-center justify-center font-normal rounded bg-slate-50 dark:bg-slate-900 text-slate-400 dark:text-gray-500 border border-slate-200 dark:border-[#262235]">-</span>
+                                    <div>
+                                        <p className="font-semibold text-slate-800 dark:text-white">Unmarked</p>
+                                        <p className="text-[10px] text-slate-400 font-normal">Future date</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="mt-4 pt-4 border-t border-slate-100 dark:border-[#262235] text-[11px] text-slate-550 dark:text-gray-405 flex flex-wrap gap-4">
+                                <span className="flex items-center gap-1.5">
+                                    <svg className="w-4 h-4 text-violet-600 dark:text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <strong>Interactive Tooltips:</strong> Hover over any daily cell to inspect detailed check-in, check-out, night shift status, and overtime hours instantly.
+                                </span>
+                                <span className="flex items-center gap-1.5">
+                                    <svg className="w-4 h-4 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                    </svg>
+                                    <strong>Quick Edit:</strong> Click on any daily cell to manually override status, adjust time logs, or designate overtime hours.
+                                </span>
+                            </div>
                         </div>
-                    ) : (
-                        <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-6 transition-colors duration-300">
+                    </>
+                ) : (
+                    <div className="space-y-8 print-hidden">
+                        {/* Manual Request Panel & Summary */}
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            {/* manual form */}
+                            <div className="lg:col-span-1 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl p-6 transition-colors duration-300">
+                                <h3 className="text-sm font-black text-slate-905 dark:text-white mb-4 uppercase tracking-wider flex items-center gap-2">
+                                    <svg className="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                    </svg>
+                                    Trigger Attendance Request
+                                </h3>
+                                <p className="text-xs text-slate-500 dark:text-gray-400 mb-4 leading-relaxed font-semibold">
+                                    Manually generate and email a secure, one-time attendance marking link to a supervisor. The link expires automatically in 24 hours.
+                                </p>
+                                <form onSubmit={handleSendRequest} className="space-y-4">
+                                    <div>
+                                        <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Supervisor</label>
+                                        <select
+                                            value={manualRequestForm.supervisorId}
+                                            onChange={(e) => setManualRequestForm({ ...manualRequestForm, supervisorId: e.target.value })}
+                                            className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-900 dark:text-white font-bold"
+                                        >
+                                            {supervisors.length === 0 ? (
+                                                <option value="">No supervisors registered</option>
+                                            ) : (
+                                                supervisors.map(s => (
+                                                    <option key={s._id} value={s._id}>{s.name} ({s.email})</option>
+                                                ))
+                                            )}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Target Date</label>
+                                        <input
+                                            type="date"
+                                            required
+                                            value={manualRequestForm.date}
+                                            onChange={(e) => setManualRequestForm({ ...manualRequestForm, date: e.target.value })}
+                                            className="w-full px-3 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-900 dark:text-white font-bold text-center"
+                                        />
+                                    </div>
+                                    <button
+                                        type="submit"
+                                        disabled={sendingRequest || supervisors.length === 0}
+                                        className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-750 hover:to-violet-750 text-white font-bold py-2.5 px-4 rounded-lg text-xs uppercase tracking-wider shadow shadow-indigo-650/30 hover:shadow-lg transition flex items-center justify-center gap-1.5"
+                                    >
+                                        {sendingRequest ? (
+                                            <>
+                                                <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                                Sending...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                                </svg>
+                                                Send Email Request
+                                            </>
+                                        )}
+                                    </button>
+                                </form>
+                            </div>
+
+                            {/* Summary / Instructions Panel */}
+                            <div className="lg:col-span-2 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl p-6 transition-colors duration-300">
+                                <h3 className="text-sm font-black text-slate-905 dark:text-white mb-4 uppercase tracking-wider flex items-center gap-2">
+                                    <svg className="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                    </svg>
+                                    Supervisor Approval Workflow Guide
+                                </h3>
+                                <div className="space-y-4 text-xs text-slate-650 dark:text-gray-400 font-semibold leading-relaxed">
+                                    <div className="flex gap-2">
+                                        <span className="w-5 h-5 bg-indigo-50 dark:bg-violet-950/40 text-indigo-650 dark:text-violet-400 rounded-full flex items-center justify-center font-extrabold flex-shrink-0 text-[10px]">1</span>
+                                        <p>
+                                            <strong>Daily Auto Trigger:</strong> The system automatically sends verification links daily at <strong>6:00 PM IST</strong> to all users saved under the <strong>supervisor</strong> role.
+                                        </p>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <span className="w-5 h-5 bg-indigo-50 dark:bg-violet-950/40 text-indigo-655 dark:text-violet-400 rounded-full flex items-center justify-center font-extrabold flex-shrink-0 text-[10px]">2</span>
+                                        <p>
+                                            <strong>Submission & Lock:</strong> Once the supervisor marks attendance, they are locked out. Their logs appear in the pending list below.
+                                        </p>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <span className="w-5 h-5 bg-indigo-50 dark:bg-violet-950/40 text-indigo-655 dark:text-violet-400 rounded-full flex items-center justify-center font-extrabold flex-shrink-0 text-[10px]">3</span>
+                                        <p>
+                                            <strong>Admin Review & Publishing:</strong> You can edit any employee logs (status, hours, OT) directly inside the pending groups. Clicking <strong>Approve Sheet</strong> writes them to the main register.
+                                        </p>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <span className="w-5 h-5 bg-indigo-50 dark:bg-violet-950/40 text-indigo-655 dark:text-violet-400 rounded-full flex items-center justify-center font-extrabold flex-shrink-0 text-[10px]">4</span>
+                                        <p>
+                                            <strong>Discarding:</strong> If a mistake was made, clicking <strong>Discard</strong> rejects all logs in that group. The supervisor can then be manually re-requested for that date.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Pending Approvals List */}
+                        <div className="space-y-6">
+                            <h2 className="text-base font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                                <svg className="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Pending Supervisor Submissions ({groupedApprovals.length})
+                            </h2>
+
+                            {approvalsLoading ? (
+                                <div className="text-center py-12 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow rounded-xl">
+                                    <div className="w-10 h-10 border-4 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                                    <p className="text-slate-500 dark:text-gray-400 font-bold animate-pulse text-xs uppercase tracking-wider">Loading Submissions & Logs...</p>
+                                </div>
+                            ) : groupedApprovals.length === 0 ? (
+                                <div className="text-center py-12 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow rounded-xl text-slate-500 dark:text-gray-400 transition-colors duration-300">
+                                    <div className="w-16 h-16 bg-slate-100 dark:bg-[#201d2c] rounded-full flex items-center justify-center mx-auto text-slate-400 mb-4 border border-slate-200/30">
+                                        <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                        </svg>
+                                    </div>
+                                    <p className="font-extrabold text-sm mb-1">No pending supervisor submissions</p>
+                                    <p className="text-xs text-slate-400 max-w-xs mx-auto leading-relaxed">
+                                        All supervisor daily attendance records have been approved, or none have been submitted yet.
+                                    </p>
+                                </div>
+                            ) : (
+                                groupedApprovals.map(group => {
+                                    const groupKey = `${group.date}_${group.supervisorId}`;
+                                    const isSubmitting = submittingApprovalGroup === groupKey;
+
+                                    return (
+                                        <div
+                                            key={groupKey}
+                                            className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl overflow-hidden transition-all duration-300 hover:shadow-2xl"
+                                        >
+                                            {/* Group Card Header */}
+                                            <div className="bg-slate-50 dark:bg-[#201d2c] px-6 py-4 border-b border-slate-200 dark:border-[#262235] flex flex-wrap items-center justify-between gap-4">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-10 h-10 bg-indigo-100 dark:bg-violet-950/40 text-indigo-650 dark:text-violet-400 rounded-full flex items-center justify-center font-bold">
+                                                        {group.supervisorName.charAt(0).toUpperCase()}
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="text-sm font-black text-slate-900 dark:text-white">
+                                                            {group.supervisorName}
+                                                        </h4>
+                                                        <p className="text-[10px] text-slate-500 dark:text-gray-500 font-semibold">
+                                                            {group.supervisorEmail || 'No Email'}
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex items-center gap-3.5 flex-wrap">
+                                                    <span className="px-3.5 py-1.5 bg-indigo-50 dark:bg-violet-950/20 text-indigo-750 dark:text-violet-300 rounded-full text-xs font-black border border-indigo-100/30">
+                                                        Sheet Date: {formatDisplayDate(group.date)}
+                                                    </span>
+                                                    
+                                                    <div className="flex gap-2.5">
+                                                        <button
+                                                            onClick={() => handleApproveGroup(groupKey, group.records)}
+                                                            disabled={isSubmitting}
+                                                            className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-black uppercase tracking-wider flex items-center gap-1 shadow-md transition"
+                                                        >
+                                                            {isSubmitting ? 'Processing...' : 'Approve Sheet'}
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleRejectGroup(groupKey, group.records)}
+                                                            disabled={isSubmitting}
+                                                            className="px-3.5 py-1.5 bg-red-650 hover:bg-red-750 text-white rounded-lg text-xs font-black uppercase tracking-wider flex items-center gap-1 shadow-md transition"
+                                                        >
+                                                            {isSubmitting ? 'Discarding...' : 'Discard'}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Table of group employees */}
+                                            <div className="overflow-x-auto">
+                                                <table className="w-full text-xs text-left border-collapse">
+                                                    <thead>
+                                                        <tr className="border-b border-slate-200 dark:border-[#262235] text-slate-500 dark:text-gray-400 font-extrabold uppercase bg-slate-50/50 dark:bg-[#181622]/30">
+                                                            <th className="px-3 py-3 border-r border-slate-100 dark:border-[#262235]">Employee</th>
+                                                            <th className="px-3 py-3 border-r border-slate-100 dark:border-[#262235] w-28">Status</th>
+                                                            <th className="px-3 py-3 border-r border-slate-100 dark:border-[#262235] w-36">Shift Select</th>
+                                                            <th className="px-3 py-3 border-r border-slate-100 dark:border-[#262235] min-w-[170px]">☀️ Day Shift Times</th>
+                                                            <th className="px-3 py-3 border-r border-slate-100 dark:border-[#262235] min-w-[170px]">🌙 Night Shift Times</th>
+                                                            <th className="px-3 py-3 border-r border-slate-100 dark:border-[#262235] text-center w-20">OT (Hrs)</th>
+                                                            <th className="px-3 py-3 text-center w-20">NS (Hrs)</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {group.records.map(rec => {
+                                                            return (
+                                                                <tr key={rec._id} className="border-b border-slate-100 dark:border-[#262235] hover:bg-slate-50/50 dark:hover:bg-[#201d2c]/20 transition duration-150">
+                                                                    <td className="px-3 py-3.5 font-bold text-slate-900 dark:text-white border-r border-slate-100 dark:border-[#262235]">
+                                                                        <div>{rec.employeeId?.name || 'Unknown Employee'}</div>
+                                                                        <div className="text-[10px] text-slate-400 font-semibold">{rec.employeeId?.designation || '-'} • {rec.employeeId?.location || '-'}</div>
+                                                                    </td>
+                                                                    <td className="px-3 py-3.5 border-r border-slate-100 dark:border-[#262235]">
+                                                                        <select
+                                                                            value={rec.status}
+                                                                            onChange={(e) => handlePendingFieldChange(rec._id, { status: e.target.value })}
+                                                                            className="px-2 py-1 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-900 dark:text-white font-bold"
+                                                                        >
+                                                                            <option value="Present">Present</option>
+                                                                            <option value="Absent">Absent</option>
+                                                                            <option value="Leave">Leave</option>
+                                                                            <option value="Holiday">Holiday</option>
+                                                                        </select>
+                                                                    </td>
+                                                                    <td className="px-3 py-3.5 border-r border-slate-100 dark:border-[#262235]">
+                                                                        {rec.status === 'Present' ? (
+                                                                            <div className="flex gap-4">
+                                                                                <label className="flex items-center gap-1.5 cursor-pointer font-bold text-xs text-slate-700 dark:text-gray-300">
+                                                                                    <input
+                                                                                        type="checkbox"
+                                                                                        checked={!!rec.workedDay}
+                                                                                        onChange={(e) => handlePendingFieldChange(rec._id, { workedDay: e.target.checked })}
+                                                                                        className="rounded text-violet-600 border-slate-300 h-4.5 w-4.5 cursor-pointer"
+                                                                                    />
+                                                                                    Day
+                                                                                </label>
+                                                                                <label className="flex items-center gap-1.5 cursor-pointer font-bold text-xs text-slate-700 dark:text-gray-300">
+                                                                                    <input
+                                                                                        type="checkbox"
+                                                                                        checked={!!rec.workedNight}
+                                                                                        onChange={(e) => handlePendingFieldChange(rec._id, { workedNight: e.target.checked })}
+                                                                                        className="rounded text-violet-600 border-slate-300 h-4.5 w-4.5 cursor-pointer"
+                                                                                    />
+                                                                                    Night
+                                                                                </label>
+                                                                            </div>
+                                                                        ) : (
+                                                                            <span className="text-slate-400 dark:text-gray-500 font-semibold">-</span>
+                                                                        )}
+                                                                    </td>
+                                                                    <td className="px-3 py-3.5 border-r border-slate-100 dark:border-[#262235]">
+                                                                        {rec.status === 'Present' && rec.workedDay ? (
+                                                                            <div className="flex items-center gap-1.5">
+                                                                                <input
+                                                                                    type="time"
+                                                                                    value={formatTimeFromDate(rec.checkIn, '09:30')}
+                                                                                    onChange={(e) => handleTimeFieldChange(rec._id, 'checkIn', e.target.value, rec.date)}
+                                                                                    className="px-2 py-1 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-800 dark:text-white text-center"
+                                                                                />
+                                                                                <span className="text-slate-400 text-[10px]">-</span>
+                                                                                <input
+                                                                                    type="time"
+                                                                                    value={formatTimeFromDate(rec.checkOut, '17:30')}
+                                                                                    onChange={(e) => handleTimeFieldChange(rec._id, 'checkOut', e.target.value, rec.date)}
+                                                                                    className="px-2 py-1 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-800 dark:text-white text-center"
+                                                                                />
+                                                                            </div>
+                                                                        ) : (
+                                                                            <span className="text-slate-400 dark:text-gray-500 font-semibold">-</span>
+                                                                        )}
+                                                                    </td>
+                                                                    <td className="px-3 py-3.5 border-r border-slate-100 dark:border-[#262235]">
+                                                                        {rec.status === 'Present' && rec.workedNight ? (
+                                                                            <div className="flex items-center gap-1.5">
+                                                                                <input
+                                                                                    type="time"
+                                                                                    value={formatTimeFromDate(rec.nightCheckIn, '20:00')}
+                                                                                    onChange={(e) => handleTimeFieldChange(rec._id, 'nightCheckIn', e.target.value, rec.date)}
+                                                                                    className="px-2 py-1 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-800 dark:text-white text-center"
+                                                                                />
+                                                                                <span className="text-slate-400 text-[10px]">-</span>
+                                                                                <input
+                                                                                    type="time"
+                                                                                    value={formatTimeFromDate(rec.nightCheckOut, '04:00')}
+                                                                                    onChange={(e) => handleTimeFieldChange(rec._id, 'nightCheckOut', e.target.value, rec.date)}
+                                                                                    className="px-2 py-1 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-slate-800 dark:text-white text-center"
+                                                                                />
+                                                                            </div>
+                                                                        ) : (
+                                                                            <span className="text-slate-400 dark:text-gray-500 font-semibold">-</span>
+                                                                        )}
+                                                                    </td>
+                                                                    <td className="px-3 py-3.5 border-r border-slate-100 dark:border-[#262235] text-center">
+                                                                        {rec.status === 'Present' && rec.workedDay ? (
+                                                                            <input
+                                                                                type="number"
+                                                                                step="0.5"
+                                                                                min="0"
+                                                                                max="8"
+                                                                                value={rec.overtimeHours || 0}
+                                                                                onChange={(e) => handlePendingFieldChange(rec._id, { overtimeHours: parseFloat(e.target.value) || 0 })}
+                                                                                className="w-14 px-1.5 py-1 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-center font-bold text-indigo-650 dark:text-violet-400"
+                                                                            />
+                                                                        ) : (
+                                                                            <span className="text-slate-400 dark:text-gray-500 font-semibold">-</span>
+                                                                        )}
+                                                                    </td>
+                                                                    <td className="px-3 py-3.5 text-center">
+                                                                        {rec.status === 'Present' && rec.workedNight ? (
+                                                                            <input
+                                                                                type="number"
+                                                                                step="0.5"
+                                                                                min="0"
+                                                                                max="16"
+                                                                                value={rec.nightShiftHours || 0}
+                                                                                onChange={(e) => handlePendingFieldChange(rec._id, { nightShiftHours: parseFloat(e.target.value) || 0 })}
+                                                                                className="w-14 px-1.5 py-1 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded-lg text-xs text-center font-bold text-amber-600 dark:text-amber-450"
+                                                                            />
+                                                                        ) : (
+                                                                            <span className="text-slate-400 dark:text-gray-500 font-semibold">-</span>
+                                                                        )}
+                                                                    </td>
+                                                                </tr>
+                                                            );
+                                                        })}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            )}
+                        </div>
+
+                        {/* Request Logs Panel */}
+                        <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl p-6 transition-colors duration-300">
+                            <h3 className="text-sm font-black text-slate-905 dark:text-white mb-4 uppercase tracking-wider flex items-center gap-2">
+                                <svg className="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                </svg>
+                                Generated Request History & Logs
+                            </h3>
                             <div className="overflow-x-auto">
                                 <table className="w-full text-xs text-left border-collapse">
                                     <thead>
-                                        <tr className="border-b border-slate-200 dark:border-[#262235] text-slate-500 dark:text-gray-400 font-bold uppercase">
-                                            <th className="px-2 py-3 text-center border-r border-slate-100 dark:border-[#262235]">Sl</th>
-                                            <th className="px-2 py-3 text-center border-r border-slate-100 dark:border-[#262235] print-hidden">
-                                                <input 
-                                                    type="checkbox" 
-                                                    checked={selectedEmployeeIds.length === employees.length && employees.length > 0} 
-                                                    onChange={handleSelectAllEmployees} 
-                                                    className="rounded text-violet-600 focus:ring-violet-500 bg-slate-100 dark:bg-[#201d2c] border-slate-300 dark:border-[#37314e] h-4 w-4 cursor-pointer"
-                                                />
-                                            </th>
-                                            <th className="px-3 py-3 min-w-[140px] border-r border-slate-100 dark:border-[#262235]">Name</th>
-                                            <th className="px-3 py-3 min-w-[100px] border-r border-slate-100 dark:border-[#262235]">Designation</th>
-                                            <th className="px-3 py-3 min-w-[100px] border-r border-slate-100 dark:border-[#262235]">Location</th>
-                                            
-                                            {/* Render day columns */}
-                                            {daysArray.map(day => (
-                                                <th key={day} className="px-1.5 py-3 text-center min-w-[26px] border-r border-slate-100 dark:border-[#262235] last:border-r-0">
-                                                    {day}
-                                                </th>
-                                            ))}
-                                            
-                                            <th className="px-3 py-3 text-center min-w-[60px] border-l border-slate-100 dark:border-[#262235]">Work Days</th>
-                                            <th className="px-3 py-3 text-center min-w-[60px] border-r border-slate-100 dark:border-[#262235]">OT Hrs</th>
-                                            <th className="px-3 py-3 text-center min-w-[60px]">NS Hrs</th>
+                                        <tr className="border-b border-slate-200 dark:border-[#262235] text-slate-500 dark:text-gray-400 font-extrabold uppercase bg-slate-50/50 dark:bg-[#181622]/30">
+                                            <th className="px-3 py-3 w-36">Target Date</th>
+                                            <th className="px-3 py-3">Supervisor</th>
+                                            <th className="px-3 py-3 w-32">Trigger Type</th>
+                                            <th className="px-3 py-3 w-48">Sent Time</th>
+                                            <th className="px-3 py-3 w-36">Link Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {employees.length > 0 ? (
-                                            employees.map((emp, index) => {
-                                                const summary = getEmployeeSummary(emp._id);
-                                                return (
-                                                    <tr key={emp._id} className="border-b border-slate-100 dark:border-[#262235] hover:bg-slate-50 dark:hover:bg-[#201d2c]/50 transition duration-150">
-                                                        <td className="px-2 py-3 text-center font-bold text-slate-400 border-r border-slate-100 dark:border-[#262235]">{index + 1}</td>
-                                                        <td className="px-2 py-3 text-center border-r border-slate-100 dark:border-[#262235] print-hidden">
-                                                            <input 
-                                                                type="checkbox" 
-                                                                checked={selectedEmployeeIds.includes(emp._id)} 
-                                                                onChange={() => handleSelectEmployee(emp._id)}
-                                                                className="rounded text-violet-600 focus:ring-violet-500 bg-slate-100 dark:bg-[#201d2c] border-slate-300 dark:border-[#37314e] h-4 w-4 cursor-pointer"
-                                                            />
-                                                        </td>
-                                                        <td className="px-3 py-3 font-semibold text-slate-900 dark:text-white border-r border-slate-100 dark:border-[#262235]">{emp.name}</td>
-                                                        <td className="px-3 py-3 text-slate-600 dark:text-gray-300 border-r border-slate-100 dark:border-[#262235]">{emp.designation || '-'}</td>
-                                                        <td className="px-3 py-3 text-slate-600 dark:text-gray-300 border-r border-slate-100 dark:border-[#262235]">{emp.location || '-'}</td>
-                                                        
-                                                        {/* Render status for each day */}
-                                                        {daysArray.map(day => {
-                                                                const cellInfo = getCellDisplayInfo(emp._id, day);
-                                                                return (
-                                                                    <td 
-                                                                        key={day} 
-                                                                        className={`px-1.5 py-3 text-center font-bold border-r border-slate-100 dark:border-[#262235] last:border-r-0 cursor-pointer hover:bg-indigo-100/30 dark:hover:bg-[#201d2c] transition duration-150 ${cellInfo.colorClass}`}
-                                                                        onClick={() => handleCellClick(emp, day)}
-                                                                        onMouseEnter={(e) => {
-                                                                            const log = getLogForDay(emp._id, day);
-                                                                            if (log) {
-                                                                                const rect = e.currentTarget.getBoundingClientRect();
-                                                                                setHoveredCell({
-                                                                                    employeeName: emp.name,
-                                                                                    date: `${day} ${monthName} ${selectedYear}`,
-                                                                                    status: log.status,
-                                                                                    checkIn: formatTimeFromDate(log.checkIn, null),
-                                                                                    checkOut: formatTimeFromDate(log.checkOut, null),
-                                                                                    nightCheckIn: formatTimeFromDate(log.nightCheckIn, null),
-                                                                                    nightCheckOut: formatTimeFromDate(log.nightCheckOut, null),
-                                                                                    isNightShift: log.isNightShift,
-                                                                                    nightShiftHours: log.nightShiftHours || 0,
-                                                                                    overtimeHours: log.overtimeHours,
-                                                                                    x: rect.left,
-                                                                                    y: rect.bottom + 5
-                                                                                });
-                                                                            }
-                                                                        }}
-                                                                        onMouseLeave={() => setHoveredCell(null)}
-                                                                    >
-                                                                        {cellInfo.display}
-                                                                    </td>
-                                                                );
-                                                        })}
-                                                        
-                                                        <td className="px-3 py-3 text-center font-bold text-green-600 dark:text-green-400 border-l border-slate-100 dark:border-[#262235]">
-                                                            {summary.presentDays}
-                                                        </td>
-                                                        <td className="px-3 py-3 text-center font-bold text-indigo-600 dark:text-violet-400 border-r border-slate-100 dark:border-[#262235]">
-                                                            {summary.totalOtHours}
-                                                        </td>
-                                                        <td className="px-3 py-3 text-center font-bold text-amber-600 dark:text-amber-400">
-                                                            {summary.totalNsHours}
-                                                        </td>
-                                                    </tr>
-                                                );
-                                            })
-                                        ) : (
+                                        {requestLogs.length === 0 ? (
                                             <tr>
-                                                <td colSpan={daysInMonth + 7} className="text-center py-6 font-medium text-gray-500">
-                                                    No employees registered in the system.
+                                                <td colSpan={5} className="text-center py-6 text-slate-400 dark:text-gray-500 font-semibold">
+                                                    No request links have been generated yet.
                                                 </td>
                                             </tr>
+                                        ) : (
+                                            requestLogs.map(log => (
+                                                <tr key={log._id} className="border-b border-slate-100 dark:border-[#262235] hover:bg-slate-50/30 dark:hover:bg-[#201d2c]/15">
+                                                    <td className="px-3 py-3 font-bold text-slate-800 dark:text-white">
+                                                        {formatDisplayDate(log.date)}
+                                                    </td>
+                                                    <td className="px-3 py-3">
+                                                        <div className="font-bold text-slate-900 dark:text-white">{log.supervisorId?.name || 'Unknown'}</div>
+                                                        <div className="text-[10px] text-slate-400 font-semibold">{log.email}</div>
+                                                    </td>
+                                                    <td className="px-3 py-3">
+                                                        {getTriggerBadge(log.triggerType)}
+                                                    </td>
+                                                    <td className="px-3 py-3 text-slate-550 dark:text-gray-400 font-bold">
+                                                        {formatDateTime(log.createdAt)}
+                                                    </td>
+                                                    <td className="px-3 py-3">
+                                                        {getLogStatusBadge(log)}
+                                                    </td>
+                                                </tr>
+                                            ))
                                         )}
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-                    )}
-
-                    {/* Legend Section */}
-                    <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl p-6 mt-8 transition-colors duration-300 print-hidden">
-                        <h4 className="text-sm font-bold text-slate-900 dark:text-white mb-4 uppercase tracking-wider">Attendance Status Legend & Guide</h4>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-10 gap-4 text-xs">
-                            <div className="flex items-center gap-2">
-                                <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-green-50 dark:bg-green-950/20 text-green-600 dark:text-green-400 border border-green-200 dark:border-green-900/30">P</span>
-                                <div>
-                                    <p className="font-semibold text-slate-800 dark:text-white">Present</p>
-                                    <p className="text-[10px] text-slate-400">Regular Shift</p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-green-50 dark:bg-green-950/20 text-emerald-600 dark:text-emerald-400 border border-green-200 dark:border-green-900/30">P⁺</span>
-                                <div>
-                                    <p className="font-semibold text-slate-800 dark:text-white">Present + OT</p>
-                                    <p className="text-[10px] text-slate-400">Overtime Hours</p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-cyan-50 dark:bg-cyan-950/20 text-cyan-600 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-900/30">P🌙</span>
-                                <div>
-                                    <p className="font-semibold text-slate-800 dark:text-white">Night Shift</p>
-                                    <p className="text-[10px] text-slate-400">Night Hours</p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-violet-400 border border-indigo-200 dark:border-indigo-900/30">P🌙⁺</span>
-                                <div>
-                                    <p className="font-semibold text-slate-800 dark:text-white">Night + OT</p>
-                                    <p className="text-[10px] text-slate-400">Overnight + OT</p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-violet-50 dark:bg-violet-950/20 text-violet-600 dark:text-violet-400 border border-violet-200 dark:border-violet-900/30">P☀️🌙</span>
-                                <div>
-                                    <p className="font-semibold text-slate-800 dark:text-white">Both Shifts</p>
-                                    <p className="text-[10px] text-slate-400">Day & Night</p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-violet-100 dark:bg-violet-950/40 text-violet-750 dark:text-violet-350 border border-violet-300 dark:border-violet-900/40">P☀️🌙⁺</span>
-                                <div>
-                                    <p className="font-semibold text-slate-800 dark:text-white">Both + OT</p>
-                                    <p className="text-[10px] text-slate-400">Day/Night + OT</p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-red-50 dark:bg-red-950/20 text-red-500 dark:text-red-400/80 border border-red-200 dark:border-red-900/30">A</span>
-                                <div>
-                                    <p className="font-semibold text-slate-800 dark:text-white">Absent</p>
-                                    <p className="text-[10px] text-slate-400">No work log</p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-amber-50 dark:bg-amber-950/20 text-amber-500 dark:text-amber-400 border border-amber-200 dark:border-amber-900/30">L</span>
-                                <div>
-                                    <p className="font-semibold text-slate-800 dark:text-white">Leave</p>
-                                    <p className="text-[10px] text-slate-400 font-normal">Approved leave</p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span className="w-8 h-8 flex items-center justify-center font-bold rounded bg-violet-50 dark:bg-violet-950/20 text-violet-500 dark:text-violet-400 border border-violet-200 dark:border-violet-900/30">H</span>
-                                <div>
-                                    <p className="font-semibold text-slate-800 dark:text-white">Holiday</p>
-                                    <p className="text-[10px] text-slate-400 font-normal">Public holiday</p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span className="w-8 h-8 flex items-center justify-center font-normal rounded bg-slate-50 dark:bg-slate-900 text-slate-400 dark:text-gray-500 border border-slate-200 dark:border-[#262235]">-</span>
-                                <div>
-                                    <p className="font-semibold text-slate-800 dark:text-white">Unmarked</p>
-                                    <p className="text-[10px] text-slate-400 font-normal">Future date</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="mt-4 pt-4 border-t border-slate-100 dark:border-[#262235] text-[11px] text-slate-500 dark:text-gray-400 flex flex-wrap gap-4">
-                            <span className="flex items-center gap-1.5">
-                                <svg className="w-4 h-4 text-violet-600 dark:text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <strong>Interactive Tooltips:</strong> Hover over any daily cell to inspect detailed check-in, check-out, night shift status, and overtime hours instantly.
-                            </span>
-                            <span className="flex items-center gap-1.5">
-                                <svg className="w-4 h-4 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                </svg>
-                                <strong>Quick Edit:</strong> Click on any daily cell to manually override status, adjust time logs, or designate overtime hours.
-                            </span>
-                        </div>
                     </div>
-                </div>
+                )}
+            </div>
 
 
             {/* Attendance Override Modal */}

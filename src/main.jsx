@@ -18,6 +18,7 @@ import BulkUpload from './assets/component/BulkUpload.jsx'
 import ManageUsers from './assets/component/ManageUsers.jsx'
 import AICopilot from './assets/component/AICopilot.jsx'
 import DashboardLayout from './assets/component/DashboardLayout.jsx'
+import SupervisorAttendance from './assets/component/SupervisorAttendance.jsx'
 import axios from 'axios'
 
 // Setup Axios Interceptors
@@ -122,6 +123,10 @@ const router = createBrowserRouter([
         element: <ProtectedRoute requireAdmin><BulkUpload /></ProtectedRoute>
       }
     ]
+  },
+  {
+    path: '/supervisor-attendance',
+    element: <SupervisorAttendance />
   },
   {
     path: '*',

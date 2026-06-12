@@ -316,6 +316,7 @@ function ManageUsers() {
                                                             className="px-2.5 py-1.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-md text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition font-medium"
                                                         >
                                                             <option value="user">User</option>
+                                                            <option value="supervisor">Supervisor</option>
                                                             <option value="admin">Admin</option>
                                                         </select>
                                                     </td>
