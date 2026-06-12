@@ -129,7 +129,7 @@ function AttendanceRegister() {
         setApprovalsLoading(true);
         try {
             const [pendingRes, logsRes, usersRes] = await Promise.all([
-                axios.get(`${API_BASE_URL}/api/attendance/pending-approvals`),
+                axios.get(`${API_BASE_URL}/api/attendance/pending-approvals?status=all`),
                 axios.get(`${API_BASE_URL}/api/attendance/request-logs`),
                 axios.get(`${API_BASE_URL}/api/users`)
             ]);
@@ -289,27 +289,60 @@ function AttendanceRegister() {
         }
     };
 
-    const getGroupedApprovals = () => {
+    const getGroupedPendingApprovals = () => {
         const groups = {};
-        pendingApprovals.forEach(rec => {
-            const dateKey = rec.date;
-            const supervisorId = rec.supervisorId?._id || 'unknown';
-            const supervisorName = rec.supervisorId?.name || 'Unknown Supervisor';
-            const supervisorEmail = rec.supervisorId?.email || '';
-            const groupKey = `${dateKey}_${supervisorId}`;
-            
-            if (!groups[groupKey]) {
-                groups[groupKey] = {
-                    date: dateKey,
-                    supervisorId,
-                    supervisorName,
-                    supervisorEmail,
-                    records: []
-                };
-            }
-            groups[groupKey].records.push(rec);
-        });
+        pendingApprovals
+            .filter(rec => rec.approvalStatus === 'pending')
+            .forEach(rec => {
+                const dateKey = rec.date;
+                const supervisorId = rec.supervisorId?._id || 'unknown';
+                const supervisorName = rec.supervisorId?.name || 'Unknown Supervisor';
+                const supervisorEmail = rec.supervisorId?.email || '';
+                const groupKey = `${dateKey}_${supervisorId}`;
+                
+                if (!groups[groupKey]) {
+                    groups[groupKey] = {
+                        date: dateKey,
+                        supervisorId,
+                        supervisorName,
+                        supervisorEmail,
+                        records: []
+                    };
+                }
+                groups[groupKey].records.push(rec);
+            });
         return Object.values(groups).sort((a, b) => b.date.localeCompare(a.date));
+    };
+
+    const getGroupedProcessedApprovals = () => {
+        const groups = {};
+        pendingApprovals
+            .filter(rec => rec.approvalStatus !== 'pending')
+            .forEach(rec => {
+                const dateKey = rec.date;
+                const supervisorId = rec.supervisorId?._id || 'unknown';
+                const supervisorName = rec.supervisorId?.name || 'Unknown Supervisor';
+                const supervisorEmail = rec.supervisorId?.email || '';
+                const groupKey = `${dateKey}_${supervisorId}`;
+                
+                if (!groups[groupKey]) {
+                    groups[groupKey] = {
+                        date: dateKey,
+                        supervisorId,
+                        supervisorName,
+                        supervisorEmail,
+                        approvalStatus: rec.approvalStatus,
+                        updatedAt: rec.updatedAt,
+                        records: []
+                    };
+                }
+                groups[groupKey].records.push(rec);
+                if (new Date(rec.updatedAt) > new Date(groups[groupKey].updatedAt)) {
+                    groups[groupKey].updatedAt = rec.updatedAt;
+                    groups[groupKey].approvalStatus = rec.approvalStatus;
+                }
+            });
+        return Object.values(groups).sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
     };
 
     // Calculate days in the selected month
@@ -860,7 +893,8 @@ function AttendanceRegister() {
         }
     };
 
-    const groupedApprovals = getGroupedApprovals();
+    const groupedPending = getGroupedPendingApprovals();
+    const groupedProcessed = getGroupedProcessedApprovals();
 
     const formatDateTime = (dateStr) => {
         if (!dateStr) return '';
