@@ -286,11 +286,11 @@ function ManageUsers() {
                         else if (activeTab === 'logs') fetchLoginLogs();
                         else if (activeTab === 'backup') fetchBackupSettings();
                     }}
-                    className={`p-2 mb-3 bg-white hover:bg-slate-50 dark:bg-[#181622] dark:hover:bg-[#201d2c] text-slate-650 dark:text-gray-300 rounded-lg border border-slate-200 dark:border-[#262235] transition shadow-md ${(activeTab === 'accounts' ? loading : activeTab === 'logs' ? logsLoading : false) ? 'animate-spin' : ''}`}
+                    className="p-2 mb-3 bg-white hover:bg-slate-50 dark:bg-[#181622] dark:hover:bg-[#201d2c] text-slate-650 dark:text-gray-300 rounded-lg border border-slate-200 dark:border-[#262235] transition shadow-md"
                     title="Refresh Data"
                     disabled={activeTab === 'accounts' ? loading : activeTab === 'logs' ? logsLoading : false}
                 >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <svg className={`w-4 h-4 ${(activeTab === 'accounts' ? loading : activeTab === 'logs' ? logsLoading : false) ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.258 8H18.2" />
                     </svg>
                 </button>

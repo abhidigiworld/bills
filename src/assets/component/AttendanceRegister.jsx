@@ -1101,11 +1101,11 @@ function AttendanceRegister() {
                                 </button>
                                 <button
                                     onClick={() => fetchData()}
-                                    className={`p-2 bg-slate-50 hover:bg-slate-100 dark:bg-[#201d2c] dark:hover:bg-[#2c273e] text-slate-650 dark:text-gray-300 rounded-lg border border-slate-200 dark:border-[#37314e] transition ${loading ? 'animate-spin' : ''}`}
+                                    className="p-2 bg-slate-50 hover:bg-slate-100 dark:bg-[#201d2c] dark:hover:bg-[#2c273e] text-slate-650 dark:text-gray-300 rounded-lg border border-slate-200 dark:border-[#37314e] transition"
                                     title="Refresh Register"
                                     disabled={loading}
                                 >
-                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                    <svg className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.258 8H18.2" />
                                     </svg>
                                 </button>
@@ -1434,11 +1434,11 @@ function AttendanceRegister() {
                                 </h2>
                                 <button
                                     onClick={() => fetchApprovalsData()}
-                                    className={`p-2 bg-slate-50 hover:bg-slate-100 dark:bg-[#201d2c] dark:hover:bg-[#2c273e] text-slate-655 dark:text-gray-300 rounded-lg border border-slate-200 dark:border-[#37314e] transition ${approvalsLoading ? 'animate-spin' : ''}`}
+                                    className="p-2 bg-slate-50 hover:bg-slate-100 dark:bg-[#201d2c] dark:hover:bg-[#2c273e] text-slate-655 dark:text-gray-300 rounded-lg border border-slate-200 dark:border-[#37314e] transition"
                                     title="Refresh Submissions"
                                     disabled={approvalsLoading}
                                 >
-                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                    <svg className={`w-4 h-4 ${approvalsLoading ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.258 8H18.2" />
                                     </svg>
                                 </button>
