@@ -76,6 +76,7 @@ function AttendanceRegister() {
     const [approvalsLoading, setApprovalsLoading] = useState(false);
     const [submittingApprovalGroup, setSubmittingApprovalGroup] = useState(null);
     const [sendingRequest, setSendingRequest] = useState(false);
+    const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
     const triggerSuccess = (msg) => {
         setSuccessMessage(msg);
@@ -895,6 +896,7 @@ function AttendanceRegister() {
 
     const groupedPending = getGroupedPendingApprovals();
     const groupedProcessed = getGroupedProcessedApprovals();
+    const actualPendingCount = pendingApprovals.filter(rec => rec.approvalStatus === 'pending').length;
 
     const formatDateTime = (dateStr) => {
         if (!dateStr) return '';
@@ -989,9 +991,9 @@ function AttendanceRegister() {
                             <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                         </svg>
                         Pending Approvals
-                        {pendingApprovals.length > 0 && (
+                        {actualPendingCount > 0 && (
                             <span className="ml-1 px-2 py-0.5 bg-red-100 dark:bg-red-950 text-red-650 dark:text-red-400 rounded-full text-[10px] font-black animate-pulse">
-                                {pendingApprovals.length}
+                                {actualPendingCount}
                             </span>
                         )}
                     </button>
@@ -1395,7 +1397,7 @@ function AttendanceRegister() {
                                 <svg className="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                Pending Supervisor Submissions ({groupedApprovals.length})
+                                Pending Supervisor Submissions ({groupedPending.length})
                             </h2>
 
                             {approvalsLoading ? (
@@ -1403,7 +1405,7 @@ function AttendanceRegister() {
                                     <div className="w-10 h-10 border-4 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
                                     <p className="text-slate-500 dark:text-gray-400 font-bold animate-pulse text-xs uppercase tracking-wider">Loading Submissions & Logs...</p>
                                 </div>
-                            ) : groupedApprovals.length === 0 ? (
+                            ) : groupedPending.length === 0 ? (
                                 <div className="text-center py-12 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow rounded-xl text-slate-500 dark:text-gray-400 transition-colors duration-300">
                                     <div className="w-16 h-16 bg-slate-100 dark:bg-[#201d2c] rounded-full flex items-center justify-center mx-auto text-slate-400 mb-4 border border-slate-200/30">
                                         <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -1416,7 +1418,7 @@ function AttendanceRegister() {
                                     </p>
                                 </div>
                             ) : (
-                                groupedApprovals.map(group => {
+                                groupedPending.map(group => {
                                     const groupKey = `${group.date}_${group.supervisorId}`;
                                     const isSubmitting = submittingApprovalGroup === groupKey;
 
@@ -1606,6 +1608,176 @@ function AttendanceRegister() {
                                         </div>
                                     );
                                 })
+                            )}
+                        </div>
+
+                        {/* Processed Submissions History */}
+                        <div className="space-y-6">
+                            <div 
+                                className="flex items-center justify-between cursor-pointer bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-md rounded-xl p-4 transition duration-200 select-none"
+                                onClick={() => setIsHistoryOpen(!isHistoryOpen)}
+                            >
+                                <h2 className="text-base font-black text-slate-905 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                                    <svg className="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                    </svg>
+                                    Processed Submissions History ({groupedProcessed.length})
+                                </h2>
+                                <div className="text-slate-500 dark:text-gray-400 hover:text-slate-700 dark:hover:text-white transition">
+                                    {isHistoryOpen ? (
+                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
+                                        </svg>
+                                    ) : (
+                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    )}
+                                </div>
+                            </div>
+
+                            {isHistoryOpen && (
+                                <div className="space-y-6 animate-fade-in">
+                                    {approvalsLoading ? (
+                                        <div className="text-center py-12 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow rounded-xl">
+                                            <div className="w-10 h-10 border-4 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                                            <p className="text-slate-500 dark:text-gray-400 font-bold animate-pulse text-xs uppercase tracking-wider">Loading Processed Submissions...</p>
+                                        </div>
+                                    ) : groupedProcessed.length === 0 ? (
+                                        <div className="text-center py-12 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow rounded-xl text-slate-500 dark:text-gray-400 transition-colors duration-300">
+                                            <div className="w-16 h-16 bg-slate-100 dark:bg-[#201d2c] rounded-full flex items-center justify-center mx-auto text-slate-400 mb-4 border border-slate-200/30">
+                                                <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                                </svg>
+                                            </div>
+                                            <p className="font-extrabold text-sm mb-1">No processed submissions history</p>
+                                            <p className="text-xs text-slate-400 max-w-xs mx-auto leading-relaxed">
+                                                No daily supervisor attendance sheets have been approved or rejected yet.
+                                            </p>
+                                        </div>
+                                    ) : (
+                                        groupedProcessed.map(group => {
+                                            const groupKey = `processed_${group.date}_${group.supervisorId}`;
+                                            return (
+                                                <div
+                                                    key={groupKey}
+                                                    className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl opacity-90 hover:opacity-100"
+                                                >
+                                                    {/* Group Card Header */}
+                                                    <div className="bg-slate-50/70 dark:bg-[#201d2c]/70 px-6 py-4 border-b border-slate-200 dark:border-[#262235] flex flex-wrap items-center justify-between gap-4">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="w-10 h-10 bg-slate-100 dark:bg-[#201d2c] text-slate-650 dark:text-gray-300 rounded-full flex items-center justify-center font-bold">
+                                                                {group.supervisorName.charAt(0).toUpperCase()}
+                                                            </div>
+                                                            <div>
+                                                                <h4 className="text-sm font-black text-slate-800 dark:text-white">
+                                                                    {group.supervisorName}
+                                                                </h4>
+                                                                <p className="text-[10px] text-slate-550 dark:text-gray-500 font-semibold">
+                                                                    {group.supervisorEmail || 'No Email'}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="flex items-center gap-3 flex-wrap">
+                                                            <span className="px-3 py-1 bg-slate-100 dark:bg-[#201d2c] text-slate-700 dark:text-gray-300 rounded-full text-xs font-bold border border-slate-200/30">
+                                                                Sheet Date: {formatDisplayDate(group.date)}
+                                                            </span>
+                                                            
+                                                            {group.approvalStatus === 'approved' ? (
+                                                                <span className="px-3 py-1 bg-green-50 dark:bg-green-950/20 text-green-700 dark:text-green-400 border border-green-200/20 rounded-full text-xs font-black flex items-center gap-1">
+                                                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                                                    </svg>
+                                                                    Approved
+                                                                </span>
+                                                            ) : (
+                                                                <span className="px-3 py-1 bg-red-50 dark:bg-red-950/20 text-red-650 dark:text-red-400 border border-red-200/20 rounded-full text-xs font-black flex items-center gap-1">
+                                                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                                                    </svg>
+                                                                    Rejected / Discarded
+                                                                </span>
+                                                            )}
+                                                            
+                                                            <span className="text-[11px] text-slate-550 dark:text-gray-400 font-bold">
+                                                                Actioned: {formatDateTime(group.updatedAt)}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Table of group employees */}
+                                                    <div className="overflow-x-auto">
+                                                        <table className="w-full text-xs text-left border-collapse">
+                                                            <thead>
+                                                                <tr className="border-b border-slate-200 dark:border-[#262235] text-slate-500 dark:text-gray-400 font-extrabold uppercase bg-slate-50/30 dark:bg-[#181622]/20">
+                                                                    <th className="px-3 py-3 border-r border-slate-100 dark:border-[#262235]">Employee</th>
+                                                                    <th className="px-3 py-3 border-r border-slate-100 dark:border-[#262235] w-28">Status</th>
+                                                                    <th className="px-3 py-3 border-r border-slate-100 dark:border-[#262235] w-36">Shift Worked</th>
+                                                                    <th className="px-3 py-3 border-r border-slate-100 dark:border-[#262235] min-w-[170px]">☀️ Day Shift Times</th>
+                                                                    <th className="px-3 py-3 border-r border-slate-100 dark:border-[#262235] min-w-[170px]">🌙 Night Shift Times</th>
+                                                                    <th className="px-3 py-3 border-r border-slate-100 dark:border-[#262235] text-center w-20">OT (Hrs)</th>
+                                                                    <th className="px-3 py-3 text-center w-20">NS (Hrs)</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {group.records.map(rec => {
+                                                                    const shifts = [];
+                                                                    if (rec.status === 'Present') {
+                                                                        if (rec.workedDay) shifts.push('Day');
+                                                                        if (rec.workedNight) shifts.push('Night');
+                                                                    }
+                                                                    return (
+                                                                        <tr key={rec._id} className="border-b border-slate-100 dark:border-[#262235] hover:bg-slate-50/30 dark:hover:bg-[#201d2c]/10 transition duration-150">
+                                                                            <td className="px-3 py-3 font-semibold text-slate-800 dark:text-gray-200 border-r border-slate-100 dark:border-[#262235]">
+                                                                                <div>{rec.employeeId?.name || 'Unknown Employee'}</div>
+                                                                                <div className="text-[10px] text-slate-400 font-semibold">{rec.employeeId?.designation || '-'} • {rec.employeeId?.location || '-'}</div>
+                                                                            </td>
+                                                                            <td className="px-3 py-3 border-r border-slate-100 dark:border-[#262235] font-bold">
+                                                                                {rec.status === 'Present' ? (
+                                                                                    <span className="text-green-600 dark:text-green-400">Present</span>
+                                                                                ) : rec.status === 'Absent' ? (
+                                                                                    <span className="text-red-500 dark:text-red-400/80">Absent</span>
+                                                                                ) : rec.status === 'Leave' ? (
+                                                                                    <span className="text-amber-500 dark:text-amber-400">Leave</span>
+                                                                                ) : (
+                                                                                    <span className="text-violet-500 dark:text-violet-400">Holiday</span>
+                                                                                )}
+                                                                            </td>
+                                                                            <td className="px-3 py-3 border-r border-slate-100 dark:border-[#262235] text-slate-650 dark:text-gray-300 font-medium">
+                                                                                {rec.status === 'Present' && shifts.length > 0 ? shifts.join(' & ') : '-'}
+                                                                            </td>
+                                                                            <td className="px-3 py-3 border-r border-slate-100 dark:border-[#262235] text-slate-650 dark:text-gray-300 font-semibold">
+                                                                                {rec.status === 'Present' && rec.workedDay ? (
+                                                                                    <span>
+                                                                                        {formatTimeFromDate(rec.checkIn, '09:30')} - {formatTimeFromDate(rec.checkOut, '17:30')}
+                                                                                    </span>
+                                                                                ) : '-'}
+                                                                            </td>
+                                                                            <td className="px-3 py-3 border-r border-slate-100 dark:border-[#262235] text-slate-650 dark:text-gray-300 font-semibold">
+                                                                                {rec.status === 'Present' && rec.workedNight ? (
+                                                                                    <span>
+                                                                                        {formatTimeFromDate(rec.nightCheckIn, '20:00')} - {formatTimeFromDate(rec.nightCheckOut, '04:00')}
+                                                                                    </span>
+                                                                                ) : '-'}
+                                                                            </td>
+                                                                            <td className="px-3 py-3 border-r border-slate-100 dark:border-[#262235] text-center font-bold text-indigo-600 dark:text-violet-400">
+                                                                                {rec.status === 'Present' && rec.workedDay && rec.overtimeHours > 0 ? rec.overtimeHours : '-'}
+                                                                            </td>
+                                                                            <td className="px-3 py-3 text-center font-bold text-amber-600 dark:text-amber-400">
+                                                                                {rec.status === 'Present' && rec.workedNight && rec.nightShiftHours > 0 ? rec.nightShiftHours : '-'}
+                                                                            </td>
+                                                                        </tr>
+                                                                    );
+                                                                })}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })
+                                    )}
+                                </div>
                             )}
                         </div>
 
