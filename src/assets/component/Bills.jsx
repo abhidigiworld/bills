@@ -17,21 +17,31 @@ function Bills() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  useEffect(() => {
-    const fetchBills = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(`${API_BASE_URL}/api/invoices`);
-        setBills(response.data);
-      } catch (error) {
-        console.error('Error fetching bills:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchBills = async (silent = false) => {
+    if (!silent) setLoading(true);
+    try {
+      const response = await axios.get(`${API_BASE_URL}/api/invoices`);
+      setBills(response.data);
+    } catch (error) {
+      console.error('Error fetching bills:', error);
+    } finally {
+      if (!silent) setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchBills();
-  }, [invoiceToUpdate]);
+  }, []);
+
+  useEffect(() => {
+    const handleFocus = () => {
+      fetchBills(true);
+    };
+    window.addEventListener('focus', handleFocus);
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, []);
 
   const formatDate = (dateString) => {
     return dateString ? dateString.slice(0, 10) : '-';
@@ -67,9 +77,12 @@ function Bills() {
     setIsUpdating(true);
   };
 
-  const handleUpdateClose = () => {
+  const handleUpdateClose = (isUpdated) => {
     setIsUpdating(false);
     setInvoiceToUpdate(null);
+    if (isUpdated === true) {
+      fetchBills(true);
+    }
   };
 
   const filteredBills = bills.filter((bill) =>
@@ -174,6 +187,19 @@ function Bills() {
 
   return (
     <div className="max-w-6xl mx-auto animate-fade-in">
+      <div className={`flex justify-between items-center mb-6 ${selectedInvoice || isUpdating ? 'print-hidden' : ''}`}>
+        <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">Existing Bills & Invoices</h3>
+        <button
+          onClick={() => fetchBills()}
+          className={`p-2 bg-white hover:bg-slate-50 dark:bg-[#181622] dark:hover:bg-[#201d2c] text-slate-650 dark:text-gray-300 rounded-lg border border-slate-200 dark:border-[#262235] transition shadow-md ${loading ? 'animate-spin' : ''}`}
+          title="Refresh Bills"
+          disabled={loading}
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.258 8H18.2" />
+          </svg>
+        </button>
+      </div>
 
       {/* Search Box */}
       <div className={`bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl p-6 mb-8 transition-colors duration-300 ${selectedInvoice || isUpdating ? 'print-hidden' : ''}`}>

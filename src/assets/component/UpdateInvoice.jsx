@@ -143,7 +143,7 @@ const UpdateInvoice = ({ invoice, onClose }) => {
             };
 
             await axios.put(`${API_BASE_URL}/api/invoices/${invoice._id}`, updatedInvoice);
-            onClose();
+            onClose(true);
         } catch (error) {
             console.error('Error updating invoice:', error);
         }

@@ -103,7 +103,7 @@ function AttendanceRegister() {
 
     useEffect(() => {
         fetchData();
-    }, [selectedYear, selectedMonth]);
+    }, [selectedYear, selectedMonth, activeTab]);
 
     useEffect(() => {
         if (activeTab === 'approvals') {
@@ -111,8 +111,30 @@ function AttendanceRegister() {
         }
     }, [activeTab]);
 
-    const fetchData = async () => {
-        setLoading(true);
+    useEffect(() => {
+        const handleFocus = () => {
+            fetchData(true);
+            if (activeTab === 'approvals') {
+                fetchApprovalsData(true);
+            }
+        };
+        window.addEventListener('focus', handleFocus);
+
+        let intervalId = null;
+        if (activeTab === 'approvals') {
+            intervalId = setInterval(() => {
+                fetchApprovalsData(true);
+            }, 30000); // Poll every 30 seconds
+        }
+
+        return () => {
+            window.removeEventListener('focus', handleFocus);
+            if (intervalId) clearInterval(intervalId);
+        };
+    }, [activeTab]);
+
+    const fetchData = async (silent = false) => {
+        if (!silent) setLoading(true);
         try {
             const empRes = await axios.get(`${API_BASE_URL}/api/employees`);
             const attRes = await axios.get(`${API_BASE_URL}/api/attendance`);
@@ -122,12 +144,12 @@ function AttendanceRegister() {
         } catch (error) {
             console.error("Error fetching attendance register data:", error);
         } finally {
-            setLoading(false);
+            if (!silent) setLoading(false);
         }
     };
 
-    const fetchApprovalsData = async () => {
-        setApprovalsLoading(true);
+    const fetchApprovalsData = async (silent = false) => {
+        if (!silent) setApprovalsLoading(true);
         try {
             const [pendingRes, logsRes, usersRes] = await Promise.all([
                 axios.get(`${API_BASE_URL}/api/attendance/pending-approvals?status=all`),
@@ -150,9 +172,9 @@ function AttendanceRegister() {
             }
         } catch (err) {
             console.error("Error fetching approvals data:", err);
-            triggerError("Failed to load pending approvals and logs.");
+            if (!silent) triggerError("Failed to load pending approvals and logs.");
         } finally {
-            setApprovalsLoading(false);
+            if (!silent) setApprovalsLoading(false);
         }
     };
 
@@ -1077,6 +1099,16 @@ function AttendanceRegister() {
                                     </svg>
                                     Download CSV
                                 </button>
+                                <button
+                                    onClick={() => fetchData()}
+                                    className={`p-2 bg-slate-50 hover:bg-slate-100 dark:bg-[#201d2c] dark:hover:bg-[#2c273e] text-slate-650 dark:text-gray-300 rounded-lg border border-slate-200 dark:border-[#37314e] transition ${loading ? 'animate-spin' : ''}`}
+                                    title="Refresh Register"
+                                    disabled={loading}
+                                >
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.258 8H18.2" />
+                                    </svg>
+                                </button>
 
                                 <div className="text-right text-xs print:hidden">
                                     <span className="text-[10px] font-bold text-slate-400 dark:text-gray-500 block uppercase tracking-wider">Currently Showing</span>
@@ -1393,12 +1425,24 @@ function AttendanceRegister() {
 
                         {/* Pending Approvals List */}
                         <div className="space-y-6">
-                            <h2 className="text-base font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
-                                <svg className="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                Pending Supervisor Submissions ({groupedPending.length})
-                            </h2>
+                            <div className="flex justify-between items-center">
+                                <h2 className="text-base font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                                    <svg className="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Pending Supervisor Submissions ({groupedPending.length})
+                                </h2>
+                                <button
+                                    onClick={() => fetchApprovalsData()}
+                                    className={`p-2 bg-slate-50 hover:bg-slate-100 dark:bg-[#201d2c] dark:hover:bg-[#2c273e] text-slate-655 dark:text-gray-300 rounded-lg border border-slate-200 dark:border-[#37314e] transition ${approvalsLoading ? 'animate-spin' : ''}`}
+                                    title="Refresh Submissions"
+                                    disabled={approvalsLoading}
+                                >
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.258 8H18.2" />
+                                    </svg>
+                                </button>
+                            </div>
 
                             {approvalsLoading ? (
                                 <div className="text-center py-12 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow rounded-xl">

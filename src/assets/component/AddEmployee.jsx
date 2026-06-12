@@ -25,6 +25,16 @@ function AddEmployee() {
     }, []);
 
     useEffect(() => {
+        const handleFocus = () => {
+            fetchEmployees(true);
+        };
+        window.addEventListener('focus', handleFocus);
+        return () => {
+            window.removeEventListener('focus', handleFocus);
+        };
+    }, []);
+
+    useEffect(() => {
         const handleKeyDown = (e) => {
             if (e.key === 'Escape' && isOpen) {
                 setIsOpen(false);
@@ -35,8 +45,8 @@ function AddEmployee() {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [isOpen]);
 
-    const fetchEmployees = async () => {
-        setLoading(true);
+    const fetchEmployees = async (silent = false) => {
+        if (!silent) setLoading(true);
         try {
             const response = await axios.get(`${API_BASE_URL}/api/employees`);
             setEmployees(Array.isArray(response.data) ? response.data : []);
@@ -44,7 +54,7 @@ function AddEmployee() {
             console.error("Error fetching employees:", error);
             setEmployees([]);
         } finally {
-            setLoading(false);
+            if (!silent) setLoading(false);
         }
     };
 
@@ -121,30 +131,42 @@ function AddEmployee() {
             {/* Header row: Title on the left, Add button on the right */}
             <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">Registered Employees</h3>
-                <button
-                    onClick={() => {
-                        setEmployee({ 
-                            name: '', 
-                            email: '', 
-                            dateOfJoining: '', 
-                            grossSalary: 0, 
-                            hra: 0,
-                            designation: '',
-                            location: '',
-                            status: 'Active',
-                            defaultShift: 'Day (09:30 - 17:30)'
-                        });
-                        setError('');
-                        setIsEditing(false);
-                        setIsOpen(true);
-                    }}
-                    className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2.5 px-4 rounded-xl text-sm transition-all duration-200 shadow-md hover:scale-[1.02] active:scale-[0.98]"
-                >
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
-                    <span>Add Employee</span>
-                </button>
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => fetchEmployees()}
+                        className={`p-2 bg-white hover:bg-slate-50 dark:bg-[#181622] dark:hover:bg-[#201d2c] text-slate-650 dark:text-gray-300 rounded-lg border border-slate-200 dark:border-[#262235] transition shadow-md ${loading ? 'animate-spin' : ''}`}
+                        title="Refresh Employees"
+                        disabled={loading}
+                    >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.258 8H18.2" />
+                        </svg>
+                    </button>
+                    <button
+                        onClick={() => {
+                            setEmployee({ 
+                                name: '', 
+                                email: '', 
+                                dateOfJoining: '', 
+                                grossSalary: 0, 
+                                hra: 0,
+                                designation: '',
+                                location: '',
+                                status: 'Active',
+                                defaultShift: 'Day (09:30 - 17:30)'
+                            });
+                            setError('');
+                            setIsEditing(false);
+                            setIsOpen(true);
+                        }}
+                        className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2.5 px-4 rounded-xl text-sm transition-all duration-200 shadow-md hover:scale-[1.02] active:scale-[0.98]"
+                    >
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        <span>Add Employee</span>
+                    </button>
+                </div>
             </div>
 
             {/* Registered Employees Table */}

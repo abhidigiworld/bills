@@ -40,8 +40,18 @@ function ManagePayrolls() {
         fetchData();
     }, []);
 
-    const fetchData = async () => {
-        setLoading(true);
+    useEffect(() => {
+        const handleFocus = () => {
+            fetchData(true);
+        };
+        window.addEventListener('focus', handleFocus);
+        return () => {
+            window.removeEventListener('focus', handleFocus);
+        };
+    }, []);
+
+    const fetchData = async (silent = false) => {
+        if (!silent) setLoading(true);
         setError('');
         try {
             const slipsRes = await axios.get(`${API_BASE_URL}/api/salary-slips`);
@@ -52,7 +62,7 @@ function ManagePayrolls() {
             console.error("Error loading payroll data:", err);
             setError("Failed to load payroll details.");
         } finally {
-            setLoading(false);
+            if (!silent) setLoading(false);
         }
     };
 
@@ -284,6 +294,20 @@ function ManagePayrolls() {
     return (
         <>
             <div className={`max-w-7xl mx-auto animate-fade-in ${activeSlip ? 'print-hidden' : ''}`}>
+
+                    <div className="flex justify-between items-center mb-6">
+                        <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">Manage Payroll Slips</h3>
+                        <button
+                            onClick={() => fetchData()}
+                            className={`p-2 bg-white hover:bg-slate-50 dark:bg-[#181622] dark:hover:bg-[#201d2c] text-slate-650 dark:text-gray-300 rounded-lg border border-slate-200 dark:border-[#262235] transition shadow-md ${loading ? 'animate-spin' : ''}`}
+                            title="Refresh Payrolls"
+                            disabled={loading}
+                        >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.258 8H18.2" />
+                            </svg>
+                        </button>
+                    </div>
 
                     {error && (
                         <div className="max-w-md mx-auto mb-6 bg-red-100 dark:bg-red-950/40 border border-red-400 dark:border-red-900/50 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg text-center text-sm font-medium">
