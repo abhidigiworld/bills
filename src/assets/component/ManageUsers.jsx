@@ -58,6 +58,11 @@ function ManageUsers() {
     const [settingsSaving, setSettingsSaving] = useState(false);
     const [emailTriggering, setEmailTriggering] = useState(false);
     const [dbStorageSize, setDbStorageSize] = useState(0);
+
+    // Attendance automation states
+    const [attendanceTriggerTime, setAttendanceTriggerTime] = useState('18:00');
+    const [attendanceTriggerRecipients, setAttendanceTriggerRecipients] = useState([]);
+    const [attendanceSaving, setAttendanceSaving] = useState(false);
     const [dbStorageLimit, setDbStorageLimit] = useState(512 * 1024 * 1024);
 
     // Branding state
@@ -148,6 +153,8 @@ function ManageUsers() {
             if (response.data && response.data.success) {
                 setBackupEmail(response.data.data.backup_email || '');
                 setAutoBackupEnabled(response.data.data.auto_backup_enabled === true);
+                setAttendanceTriggerTime(response.data.data.attendance_trigger_time || '18:00');
+                setAttendanceTriggerRecipients(response.data.data.attendance_trigger_recipients || []);
                 if (response.data.data.storageSize !== undefined) {
                     setDbStorageSize(response.data.data.storageSize);
                 }
@@ -158,6 +165,29 @@ function ManageUsers() {
         } catch (err) {
             console.error("Error fetching backup settings:", err);
             triggerError("Failed to load database backup settings.");
+        }
+    };
+
+    const handleSaveAttendanceSettings = async (e) => {
+        e.preventDefault();
+        setAttendanceSaving(true);
+        setError('');
+        setSuccessMessage('');
+        try {
+            const response = await axios.post(`${API_BASE_URL}/api/admin/backup-settings`, {
+                attendance_trigger_time: attendanceTriggerTime,
+                attendance_trigger_recipients: attendanceTriggerRecipients
+            });
+            if (response.data && response.data.success) {
+                triggerSuccess("Attendance auto-trigger settings saved successfully!");
+            } else {
+                triggerError("Failed to save auto-trigger settings.");
+            }
+        } catch (err) {
+            console.error("Error saving auto-trigger settings:", err);
+            triggerError("Failed to save auto-trigger settings.");
+        } finally {
+            setAttendanceSaving(false);
         }
     };
 
@@ -213,6 +243,7 @@ function ManageUsers() {
             fetchLoginLogs();
         } else if (activeTab === 'backup') {
             fetchBackupSettings();
+            fetchUsers();
         }
     }, [activeTab]);
 
@@ -224,6 +255,7 @@ function ManageUsers() {
                 fetchLoginLogs(true);
             } else if (activeTab === 'backup') {
                 fetchBackupSettings(true);
+                fetchUsers(true);
             }
         };
         window.addEventListener('focus', handleFocus);
@@ -658,7 +690,7 @@ function ManageUsers() {
                                     )}
                                 </select>
                                 <p className="text-[11px] text-slate-400 mt-1">
-                                    Automated backups will be sent to the selected administrator's email.
+                                    Automated backups will be sent to the selected administrator&apos;s email.
                                 </p>
                             </div>
 
@@ -688,6 +720,86 @@ function ManageUsers() {
                                 className="w-full bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg disabled:opacity-50 transition duration-200 text-sm flex justify-center items-center gap-2"
                             >
                                 {settingsSaving ? 'Saving...' : 'Save Settings'}
+                            </button>
+                        </form>
+                    </div>
+
+                    {/* Attendance Automation Settings Card */}
+                    <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-6 transition-colors duration-300">
+                        <div className="flex items-center gap-3 mb-5">
+                            <div className="p-2.5 bg-indigo-50 dark:bg-violet-950/30 text-indigo-600 dark:text-violet-400 rounded-lg">
+                                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 className="text-base font-black text-slate-900 dark:text-white">Attendance Auto-Trigger Settings</h3>
+                                <p className="text-xs text-slate-500 dark:text-gray-400">Configure daily trigger time (IST) and supervisors list</p>
+                            </div>
+                        </div>
+
+                        <form onSubmit={handleSaveAttendanceSettings} className="space-y-5">
+                            <div>
+                                <label htmlFor="attendanceTriggerTimeInput" className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+                                    Daily Trigger Time (Asia/Kolkata IST)
+                                </label>
+                                <input
+                                    id="attendanceTriggerTimeInput"
+                                    type="time"
+                                    required
+                                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                                    value={attendanceTriggerTime}
+                                    onChange={(e) => setAttendanceTriggerTime(e.target.value)}
+                                />
+                                <p className="text-[11px] text-slate-400 mt-1">
+                                    Automatic email will be sent at the chosen time daily (except holidays).
+                                </p>
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+                                    Select Supervisor Recipients
+                                </label>
+                                <div className="space-y-2 max-h-40 overflow-y-auto p-3 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg">
+                                    {users.filter(u => u.role === 'supervisor').length === 0 ? (
+                                        <p className="text-xs text-slate-400 py-1">No active supervisors registered.</p>
+                                    ) : (
+                                        users.filter(u => u.role === 'supervisor').map(supervisor => {
+                                            const isChecked = attendanceTriggerRecipients.includes(supervisor._id);
+                                            return (
+                                                <label key={supervisor._id} className="flex items-center gap-3 cursor-pointer text-sm text-slate-700 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white transition">
+                                                    <input
+                                                        type="checkbox"
+                                                        className="h-4.5 w-4.5 text-indigo-600 focus:ring-indigo-500 border-slate-300 dark:border-[#37314e] rounded"
+                                                        checked={isChecked}
+                                                        onChange={() => {
+                                                            if (isChecked) {
+                                                                setAttendanceTriggerRecipients(prev => prev.filter(id => id !== supervisor._id));
+                                                            } else {
+                                                                setAttendanceTriggerRecipients(prev => [...prev, supervisor._id]);
+                                                            }
+                                                        }}
+                                                    />
+                                                    <div className="truncate">
+                                                        <span className="font-semibold">{supervisor.name}</span>
+                                                        <span className="text-xs text-slate-400 dark:text-gray-500 ml-1">({supervisor.email})</span>
+                                                    </div>
+                                                </label>
+                                            );
+                                        })
+                                    )}
+                                </div>
+                                <p className="text-[11px] text-slate-400 mt-1.5 leading-relaxed">
+                                    If no supervisors are selected, emails will default to being sent to <strong>all</strong> active supervisors.
+                                </p>
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={attendanceSaving}
+                                className="w-full bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg disabled:opacity-50 transition duration-200 text-sm flex justify-center items-center gap-2"
+                            >
+                                {attendanceSaving ? 'Saving...' : 'Save Automation Settings'}
                             </button>
                         </form>
                     </div>
