@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import logo from '../images/LOGO1.jpeg';
 import dunesBg from '../images/dark_dunes_bg.png';
 import { API_BASE_URL } from '../../config';
@@ -42,6 +42,41 @@ function SignUp() {
   const [loading, setLoading] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.isOtpOnly && location.state?.email) {
+      const email = location.state.email;
+      setFormData(prev => ({ ...prev, email }));
+      setIsOtpSent(true);
+      
+      // Clear the location state to prevent running it again on re-renders
+      navigate(location.pathname, { replace: true, state: {} });
+
+      const sendInitialOtp = async () => {
+        setLoading(true);
+        setError('');
+        setInfoMessage('Sending a verification OTP code to your email...');
+        try {
+          const response = await axios.post(`${API_BASE_URL}/resend-otp`, { email });
+          if (response.data.success) {
+            setInfoMessage(response.data.message || 'A verification OTP code has been sent.');
+            if (response.data.otp) {
+              setLocalOtp(response.data.otp);
+            }
+          } else {
+            setError(response.data.message || 'Failed to send OTP');
+          }
+        } catch (err) {
+          console.error('Error sending verification OTP:', err);
+          setError(err.response?.data?.message || 'Error sending verification OTP');
+        } finally {
+          setLoading(false);
+        }
+      };
+      sendInitialOtp();
+    }
+  }, [location, navigate]);
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

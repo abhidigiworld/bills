@@ -14,6 +14,7 @@ function Login() {
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [loading, setLoading] = useState(false);
+  const [unverifiedEmail, setUnverifiedEmail] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -60,10 +61,19 @@ function Login() {
       }
     } catch (error) {
       console.error('Error logging in:', error);
-      setError(error.response?.data?.message || 'An error occurred while logging in');
+      const errMsg = error.response?.data?.message || 'An error occurred while logging in';
+      setError(errMsg);
+      if (errMsg.includes('verify your email') && error.response?.data?.email) {
+        setUnverifiedEmail(error.response.data.email);
+      }
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoToVerify = () => {
+    const emailToVerify = unverifiedEmail || (username.includes('@') ? username : '');
+    navigate('/signup', { state: { email: emailToVerify, isOtpOnly: true } });
   };
 
   return (
@@ -157,9 +167,18 @@ function Login() {
           </div>
 
           {error && (
-            <p className="text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/25 border border-red-200 dark:border-red-900/40 p-3 rounded-lg text-xs sm:text-sm mb-5 text-center font-medium animate-shake">
-              {error}
-            </p>
+            <div className="text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/25 border border-red-200 dark:border-red-900/40 p-3 rounded-lg text-xs sm:text-sm mb-5 text-center font-medium animate-shake flex flex-col items-center justify-center gap-1">
+              <span>{error}</span>
+              {error.includes('verify your email') && (
+                <button
+                  type="button"
+                  onClick={handleGoToVerify}
+                  className="text-indigo-600 dark:text-violet-400 hover:text-indigo-700 dark:hover:text-violet-300 underline font-bold mt-1 cursor-pointer focus:outline-none"
+                >
+                  Verify Now
+                </button>
+              )}
+            </div>
           )}
           {successMsg && (
             <p className="text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/25 border border-emerald-200 dark:border-emerald-900/40 p-3 rounded-lg text-xs sm:text-sm mb-5 text-center font-medium">
