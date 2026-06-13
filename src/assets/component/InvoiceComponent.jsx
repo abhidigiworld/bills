@@ -61,7 +61,22 @@ function InvoiceComponent({ invoiceDetails }) {
             // If no comma found, set the whole address in the first part
             setFirstPart(invoiceDetails.msInput);
         }
-    }, [invoiceDetails.msInput])
+        // Reset save/bill state when invoice details change (new invoice created from form)
+        setSaveSuccess(false);
+        setBillGenerated(false);
+        setItems([]);
+        setTotal(0);
+        setFreightCharges(0);
+        setCgst(0);
+        setSgst(0);
+        setIgst(0);
+        setGrandTotal(0);
+        setGrandTotalInWords('');
+        setfreight();
+        setcgstRate();
+        setsgstRate();
+        setigstRate();
+    }, [invoiceDetails])
 
     const addItem = () => {
         let finalTotal = parseFloat(totalValueInput) || 0;
@@ -182,6 +197,10 @@ function InvoiceComponent({ invoiceDetails }) {
 
 
     const handleSave = async () => {
+        if (saveSuccess) {
+            triggerError('This invoice has already been saved!');
+            return;
+        }
         try {
             const response = await axios.post(`${API_BASE_URL}/api/invoices`, {
                 companyName: invoiceDetails.msInput,
@@ -205,6 +224,7 @@ function InvoiceComponent({ invoiceDetails }) {
                 grandTotalInWords: grandTotalInWords
             });
             console.log('Invoice saved successfully', response.data);
+            setSaveSuccess(true);
             triggerSuccess('Invoice saved successfully!');
         } catch (error) {
             console.error('Error:', error);
@@ -244,7 +264,15 @@ function InvoiceComponent({ invoiceDetails }) {
     };
 
     const handlePrint = () => {
-        triggerError("Print the bill from view bills after saving");
+        if (!billGenerated) {
+            triggerError('Please calculate the bill first before printing.');
+            return;
+        }
+        if (!saveSuccess) {
+            triggerError('Please save the invoice first before printing.');
+            return;
+        }
+        window.print();
     };
 
     const handleInputChange = (event) => {
@@ -437,26 +465,29 @@ function InvoiceComponent({ invoiceDetails }) {
                         </div>
                     </div>
                     <div className='printdata w-full lg:flex-1 min-w-0'>
-                        <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-t-lg ">
-                            <p className="text-2xl font-bold text-center">Tax Invoice</p>
+                        {/* Mobile scroll wrapper for invoice preview - not applied during print */}
+                        <div className="overflow-x-auto print:overflow-visible">
+                        <div className="min-w-[520px] print:min-w-0">
+                        <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-3 sm:p-4 rounded-t-lg ">
+                            <p className="text-lg sm:text-2xl font-bold text-center">Tax Invoice</p>
                             <div className="flex justify-between items-center relative">
                                 <div className="absolute" style={{ top: '-20px', left: '-10px' }}>
-                                    <img src={logoSrc} alt="Your Company Logo" className="w-32 h-auto" />
+                                    <img src={logoSrc} alt="Your Company Logo" className="w-20 sm:w-32 h-auto" />
                                 </div>
-                                <div className="flex-1 text-center pt-2" style={{ marginLeft: '155px' }}>
-                                    <p className="text-3xl font-custom fugaz-one-regular">{settings.company_name}</p>
+                                <div className="flex-1 text-center pt-2 ml-[80px] sm:ml-[155px]">
+                                    <p className="text-xl sm:text-3xl font-custom fugaz-one-regular">{settings.company_name}</p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-sm font-bold">GSTIN: {settings.company_gstin}</p>
-                                    <p className="text-sm">M.: {settings.company_phone}</p>
+                                    <p className="text-[10px] sm:text-sm font-bold">GSTIN: {settings.company_gstin}</p>
+                                    <p className="text-[10px] sm:text-sm">M.: {settings.company_phone}</p>
                                 </div>
                             </div>
-                            <div className="flex flex-col content-center mt-4">
-                                <p className="text-sm text-center">{settings.company_address}</p>
-                                <p className="text-sm text-center">E-mail id: {settings.company_email}</p>
+                            <div className="flex flex-col content-center mt-3 sm:mt-4">
+                                <p className="text-[10px] sm:text-sm text-center">{settings.company_address}</p>
+                                <p className="text-[10px] sm:text-sm text-center">E-mail id: {settings.company_email}</p>
                             </div>
                         </div>
-                        <table className='bg-gray-0 w-full mb-2 mt-2 overflow-x-auto'>
+                        <table className='bg-gray-0 w-full mb-2 mt-2'>
                             <thead>
                                 <tr>
                                     <td colSpan="2" className="border border-black px-2 py-1">M/s:</td>
@@ -585,10 +616,23 @@ function InvoiceComponent({ invoiceDetails }) {
                             </div>
                         </div>
                     </div>
+                    </div>
+                    </div>
                 </div>
-                <div className="flex justify-end mt-4">
-                    <button onClick={handleSave} className="bg-green-500 text-white px-4 py-2 rounded-md mr-2 hover:bg-green-600 print-hidden">Save</button>
-                    <button onClick={handlePrint} className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 print-hidden">Print</button>
+                <div className="flex justify-end mt-4 gap-2">
+                    <button 
+                        onClick={handleSave} 
+                        disabled={saveSuccess}
+                        className={`px-4 py-2 rounded-md print-hidden font-semibold transition ${saveSuccess ? 'bg-gray-400 text-white cursor-not-allowed' : 'bg-green-500 text-white hover:bg-green-600'}`}
+                    >
+                        {saveSuccess ? 'Saved ✓' : 'Save'}
+                    </button>
+                    <button 
+                        onClick={handlePrint} 
+                        className={`px-4 py-2 rounded-md print-hidden font-semibold transition ${saveSuccess ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+                    >
+                        Print
+                    </button>
                 </div>
             </div>
             {/* Centered Premium Overlay Modal for Notifications */}
