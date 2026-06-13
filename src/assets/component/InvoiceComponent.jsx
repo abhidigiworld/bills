@@ -520,6 +520,7 @@ function InvoiceComponent({ invoiceDetails }) {
                                         <th className="border border-black py-1">Quantity</th>
                                         <th className="border border-black py-1">Rate</th>
                                         <th className="border border-black py-1">Total Value</th>
+                                        <th className="border border-black py-1 print-hidden w-10"></th>
                                     </tr>
                                 </thead>
 
@@ -566,6 +567,18 @@ function InvoiceComponent({ invoiceDetails }) {
                                                     onChange={(e) => handleTotalValueChange(e, item.id)}
                                                 // className="border border-black py-1"
                                                 />
+                                            </td>
+                                            <td className="border border-black py-1 print-hidden">
+                                                <button
+                                                    onClick={() => {
+                                                        const updated = items.filter(i => i.id !== item.id).map((i, idx) => ({ ...i, id: idx + 1 }));
+                                                        setItems(updated);
+                                                    }}
+                                                    className="text-red-500 hover:text-red-700 font-bold text-sm px-1.5 transition"
+                                                    title="Remove item"
+                                                >
+                                                    ✕
+                                                </button>
                                             </td>
                                         </tr>
                                     ))}
