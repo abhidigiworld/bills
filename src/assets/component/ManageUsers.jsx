@@ -51,6 +51,10 @@ function ManageUsers() {
     const [loginLogs, setLoginLogs] = useState([]);
     const [logSearchTerm, setLogSearchTerm] = useState('');
     const [logsLoading, setLogsLoading] = useState(true);
+    const [logPage, setLogPage] = useState(1);
+    const [logTotalPages, setLogTotalPages] = useState(1);
+    const [logTotalCount, setLogTotalCount] = useState(0);
+    const logLimit = 15;
 
     // Backup system states
     const [backupEmail, setBackupEmail] = useState('');
@@ -239,13 +243,17 @@ function ManageUsers() {
     useEffect(() => {
         if (activeTab === 'accounts') {
             fetchUsers();
-        } else if (activeTab === 'logs') {
-            fetchLoginLogs();
         } else if (activeTab === 'backup') {
             fetchBackupSettings();
             fetchUsers();
         }
     }, [activeTab]);
+
+    useEffect(() => {
+        if (activeTab === 'logs') {
+            fetchLoginLogs();
+        }
+    }, [activeTab, logPage, logSearchTerm]);
 
     useEffect(() => {
         const handleFocus = () => {
@@ -262,14 +270,22 @@ function ManageUsers() {
         return () => {
             window.removeEventListener('focus', handleFocus);
         };
-    }, [activeTab]);
+    }, [activeTab, logPage, logSearchTerm]);
 
     const fetchLoginLogs = async (silent = false) => {
         if (!silent) setLogsLoading(true);
         setError('');
         try {
-            const response = await axios.get(`${API_BASE_URL}/api/admin/login-logs`);
-            setLoginLogs(Array.isArray(response.data) ? response.data : []);
+            const response = await axios.get(`${API_BASE_URL}/api/admin/login-logs?page=${logPage}&limit=${logLimit}&search=${logSearchTerm}`);
+            if (response.data && response.data.success) {
+                setLoginLogs(Array.isArray(response.data.logs) ? response.data.logs : []);
+                setLogTotalPages(response.data.totalPages || 1);
+                setLogTotalCount(response.data.totalLogs || 0);
+            } else {
+                setLoginLogs(Array.isArray(response.data) ? response.data : []);
+                setLogTotalPages(1);
+                setLogTotalCount(Array.isArray(response.data) ? response.data.length : 0);
+            }
         } catch (err) {
             console.error("Error fetching login logs:", err);
             triggerError("Failed to load login history logs.");
@@ -386,10 +402,7 @@ function ManageUsers() {
         (user.email || '').toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const filteredLogs = loginLogs.filter(log => 
-        (log.name || '').toLowerCase().includes(logSearchTerm.toLowerCase()) ||
-        (log.email || '').toLowerCase().includes(logSearchTerm.toLowerCase())
-    );
+    const filteredLogs = loginLogs;
 
     return (
         <div className="max-w-5xl mx-auto animate-fade-in">
@@ -613,7 +626,10 @@ function ManageUsers() {
                             className="w-full px-4 py-3 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
                             placeholder="Search by name or email address..."
                             value={logSearchTerm}
-                            onChange={(e) => setLogSearchTerm(e.target.value)}
+                            onChange={(e) => {
+                                setLogSearchTerm(e.target.value);
+                                setLogPage(1);
+                            }}
                         />
                     </div>
 
@@ -641,7 +657,7 @@ function ManageUsers() {
                                         {filteredLogs.length > 0 ? (
                                             filteredLogs.map((log, index) => (
                                                 <tr key={log._id} className="border-b border-slate-100 dark:border-[#262235] hover:bg-slate-50 dark:hover:bg-[#201d2c]/50 transition duration-150">
-                                                    <td className="px-4 py-4 text-center font-bold text-slate-400">{index + 1}</td>
+                                                    <td className="px-4 py-4 text-center font-bold text-slate-400">{(logPage - 1) * logLimit + index + 1}</td>
                                                     <td className="px-4 py-4 font-semibold text-slate-900 dark:text-white">{log.name}</td>
                                                     <td className="px-4 py-4 text-slate-600 dark:text-gray-300 font-mono text-xs">{log.email}</td>
                                                     <td className="px-4 py-4 text-center">
@@ -682,7 +698,7 @@ function ManageUsers() {
                                         <div key={log._id} className="p-4 bg-slate-50 dark:bg-[#201d2c]/40 border border-slate-100 dark:border-[#2b273d] rounded-xl flex flex-col gap-2">
                                             <div className="flex justify-between items-center border-b border-slate-200/50 dark:border-[#37314e]/50 pb-2">
                                                 <div>
-                                                    <span className="text-[10px] font-bold text-slate-400">#{index + 1}</span>
+                                                    <span className="text-[10px] font-bold text-slate-400">#{(logPage - 1) * logLimit + index + 1}</span>
                                                     <h4 className="text-sm font-bold text-slate-900 dark:text-white mt-0.5">{log.name}</h4>
                                                     <p className="text-xs text-slate-500 dark:text-gray-400 font-mono mt-0.5 max-w-[180px] truncate">{log.email}</p>
                                                 </div>
@@ -720,6 +736,103 @@ function ManageUsers() {
                                     </div>
                                 )}
                             </div>
+
+                            {/* Pagination Controls */}
+                            {logTotalPages > 1 && (
+                                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-6 border-t border-slate-100 dark:border-[#262235]/60 animate-fade-in">
+                                    <div className="text-xs sm:text-sm text-slate-500 dark:text-gray-400 font-medium">
+                                        Showing <span className="font-bold text-slate-800 dark:text-white">{(logPage - 1) * logLimit + 1}</span> to{' '}
+                                        <span className="font-bold text-slate-800 dark:text-white">{Math.min(logPage * logLimit, logTotalCount)}</span> of{' '}
+                                        <span className="font-bold text-slate-800 dark:text-white">{logTotalCount}</span> login logs
+                                    </div>
+
+                                    <div className="flex items-center gap-1.5 flex-wrap">
+                                        {/* First Page */}
+                                        <button
+                                            onClick={() => setLogPage(1)}
+                                            disabled={logPage === 1}
+                                            className="p-2 bg-slate-50 hover:bg-slate-100 dark:bg-[#201d2c] dark:hover:bg-[#2c273f] text-slate-600 dark:text-gray-300 rounded-lg border border-slate-200 dark:border-[#37314e] transition duration-200 disabled:opacity-40 disabled:cursor-not-allowed hover:scale-105 active:scale-95 shadow-sm"
+                                            title="First Page"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                                            </svg>
+                                        </button>
+
+                                        {/* Prev Page */}
+                                        <button
+                                            onClick={() => setLogPage(prev => Math.max(prev - 1, 1))}
+                                            disabled={logPage === 1}
+                                            className="flex items-center gap-1 px-3 py-2 bg-slate-50 hover:bg-slate-100 dark:bg-[#201d2c] dark:hover:bg-[#2c273f] text-slate-600 dark:text-gray-300 text-xs font-bold rounded-lg border border-slate-200 dark:border-[#37314e] transition duration-200 disabled:opacity-40 disabled:cursor-not-allowed hover:scale-105 active:scale-95 shadow-sm"
+                                        >
+                                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                                            </svg>
+                                            <span className="hidden sm:inline">Prev</span>
+                                        </button>
+
+                                        {/* Page Numbers */}
+                                        {(() => {
+                                            const pages = [];
+                                            const delta = 1;
+                                            for (let i = 1; i <= logTotalPages; i++) {
+                                                if (i === 1 || i === logTotalPages || (i >= logPage - delta && i <= logPage + delta)) {
+                                                    pages.push(i);
+                                                } else if (pages[pages.length - 1] !== '...') {
+                                                    pages.push('...');
+                                                }
+                                            }
+                                            return pages.map((p, idx) => {
+                                                if (p === '...') {
+                                                    return (
+                                                        <span key={`ellipsis-${idx}`} className="px-2.5 py-1.5 text-slate-400 dark:text-gray-500 font-bold text-xs select-none">
+                                                            ...
+                                                        </span>
+                                                    );
+                                                }
+                                                const isActive = p === logPage;
+                                                return (
+                                                    <button
+                                                        key={`page-${p}`}
+                                                        onClick={() => setLogPage(p)}
+                                                        className={`px-3 py-1.5 text-xs font-bold rounded-lg transition duration-200 shadow-sm ${
+                                                            isActive
+                                                                ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white scale-105 ring-2 ring-indigo-500/20'
+                                                                : 'bg-white hover:bg-slate-50 dark:bg-[#181622] dark:hover:bg-[#201d2c] text-slate-655 dark:text-gray-300 hover:text-slate-800 dark:hover:text-white border border-slate-200 dark:border-[#37314e] hover:scale-105 active:scale-95'
+                                                        }`}
+                                                    >
+                                                        {p}
+                                                    </button>
+                                                );
+                                            });
+                                        })()}
+
+                                        {/* Next Page */}
+                                        <button
+                                            onClick={() => setLogPage(prev => Math.min(prev + 1, logTotalPages))}
+                                            disabled={logPage === logTotalPages}
+                                            className="flex items-center gap-1 px-3 py-2 bg-slate-50 hover:bg-slate-100 dark:bg-[#201d2c] dark:hover:bg-[#2c273f] text-slate-600 dark:text-gray-300 text-xs font-bold rounded-lg border border-slate-200 dark:border-[#37314e] transition duration-200 disabled:opacity-40 disabled:cursor-not-allowed hover:scale-105 active:scale-95 shadow-sm"
+                                        >
+                                            <span className="hidden sm:inline">Next</span>
+                                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                                            </svg>
+                                        </button>
+
+                                        {/* Last Page */}
+                                        <button
+                                            onClick={() => setLogPage(logTotalPages)}
+                                            disabled={logPage === logTotalPages}
+                                            className="p-2 bg-slate-50 hover:bg-slate-100 dark:bg-[#201d2c] dark:hover:bg-[#2c273f] text-slate-600 dark:text-gray-300 rounded-lg border border-slate-200 dark:border-[#37314e] transition duration-200 disabled:opacity-40 disabled:cursor-not-allowed hover:scale-105 active:scale-95 shadow-sm"
+                                            title="Last Page"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     )}
                 </>
