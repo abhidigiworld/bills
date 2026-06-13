@@ -5,6 +5,12 @@ import { API_BASE_URL } from '../../config';
 function AddEmployee() {
     const [employees, setEmployees] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalEmployees, setTotalEmployees] = useState(0);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [searchTerm, setSearchTerm] = useState('');
+
     const [employee, setEmployee] = useState({ 
         name: '', 
         email: '', 
@@ -20,9 +26,31 @@ function AddEmployee() {
     const [isOpen, setIsOpen] = useState(false);
     const [error, setError] = useState('');
 
+    const fetchEmployees = async (silent = false) => {
+        if (!silent) setLoading(true);
+        try {
+            const response = await axios.get(`${API_BASE_URL}/api/employees?page=${currentPage}&limit=${itemsPerPage}&search=${searchTerm}`);
+            if (response.data && response.data.success && response.data.pagination) {
+                setEmployees(response.data.data);
+                setTotalEmployees(response.data.pagination.totalItems);
+                setTotalPages(response.data.pagination.totalPages);
+            } else {
+                const data = Array.isArray(response.data) ? response.data : [];
+                setEmployees(data);
+                setTotalEmployees(data.length);
+                setTotalPages(Math.ceil(data.length / itemsPerPage) || 1);
+            }
+        } catch (error) {
+            console.error("Error fetching employees:", error);
+            setEmployees([]);
+        } finally {
+            if (!silent) setLoading(false);
+        }
+    };
+
     useEffect(() => {
         fetchEmployees();
-    }, []);
+    }, [currentPage, itemsPerPage, searchTerm]);
 
     useEffect(() => {
         const handleFocus = () => {
@@ -32,7 +60,7 @@ function AddEmployee() {
         return () => {
             window.removeEventListener('focus', handleFocus);
         };
-    }, []);
+    }, [currentPage, itemsPerPage, searchTerm]);
 
     useEffect(() => {
         const handleKeyDown = (e) => {
@@ -45,18 +73,7 @@ function AddEmployee() {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [isOpen]);
 
-    const fetchEmployees = async (silent = false) => {
-        if (!silent) setLoading(true);
-        try {
-            const response = await axios.get(`${API_BASE_URL}/api/employees`);
-            setEmployees(Array.isArray(response.data) ? response.data : []);
-        } catch (error) {
-            console.error("Error fetching employees:", error);
-            setEmployees([]);
-        } finally {
-            if (!silent) setLoading(false);
-        }
-    };
+
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -168,6 +185,24 @@ function AddEmployee() {
                         <span>Add Employee</span>
                     </button>
                 </div>
+            </div>
+
+            {/* Search Box */}
+            <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl p-6 mb-8 transition-colors duration-300">
+                <label htmlFor="searchEmployees" className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+                    Search by Employee Name or Designation
+                </label>
+                <input
+                    id="searchEmployees"
+                    type="text"
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                    placeholder="Enter name or designation..."
+                    value={searchTerm}
+                    onChange={(e) => {
+                        setSearchTerm(e.target.value);
+                        setCurrentPage(1);
+                    }}
+                />
             </div>
 
             {/* Registered Employees Table */}
@@ -311,6 +346,119 @@ function AddEmployee() {
                                 </div>
                             ))}
                         </div>
+
+                        {/* Pagination Controls */}
+                        {employees.length > 0 && (
+                            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-4 border-t border-slate-100 dark:border-[#262235]/65 text-slate-650 dark:text-gray-300 text-xs font-semibold select-none">
+                                {/* Left: Size Selector & Total count info */}
+                                <div className="flex items-center gap-4 flex-wrap">
+                                    <div className="flex items-center gap-2">
+                                        <span>Show</span>
+                                        <select
+                                            value={itemsPerPage}
+                                            onChange={(e) => {
+                                                setItemsPerPage(Number(e.target.value));
+                                                setCurrentPage(1);
+                                            }}
+                                            className="px-2.5 py-1 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-slate-800 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 cursor-pointer font-bold transition"
+                                        >
+                                            <option value={10}>10</option>
+                                            <option value={20}>20</option>
+                                            <option value={50}>50</option>
+                                        </select>
+                                        <span>employees per page</span>
+                                    </div>
+                                    <span className="text-slate-300 dark:text-slate-700">|</span>
+                                    <span>
+                                        Showing {totalEmployees === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, totalEmployees)} of {totalEmployees} employees
+                                    </span>
+                                </div>
+
+                                {/* Right: Next / Prev navigation buttons */}
+                                <div className="flex items-center gap-1">
+                                    <button
+                                        disabled={currentPage === 1}
+                                        onClick={() => setCurrentPage(1)}
+                                        className="p-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-[#201d2c] disabled:opacity-40 disabled:hover:bg-transparent transition cursor-pointer text-slate-500 hover:text-indigo-600 dark:hover:text-violet-400"
+                                        title="First Page"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
+                                        </svg>
+                                    </button>
+                                    
+                                    <button
+                                        disabled={currentPage === 1}
+                                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-[#201d2c] disabled:opacity-40 disabled:hover:bg-transparent transition cursor-pointer text-slate-500 hover:text-indigo-600 dark:hover:text-violet-400"
+                                    >
+                                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                                        </svg>
+                                        <span>Prev</span>
+                                    </button>
+
+                                    <div className="flex items-center gap-1 mx-1.5">
+                                        {Array.from({ length: totalPages }).map((_, index) => {
+                                            const pageNum = index + 1;
+                                            if (
+                                                totalPages <= 5 ||
+                                                pageNum === 1 ||
+                                                pageNum === totalPages ||
+                                                Math.abs(pageNum - currentPage) <= 1
+                                            ) {
+                                                return (
+                                                    <button
+                                                        key={pageNum}
+                                                        onClick={() => setCurrentPage(pageNum)}
+                                                        className={`w-7 h-7 flex items-center justify-center rounded-lg text-xs font-bold transition ${
+                                                            currentPage === pageNum
+                                                                ? 'bg-indigo-600 dark:bg-violet-600 text-white shadow-sm'
+                                                                : 'hover:bg-slate-50 dark:hover:bg-[#201d2c] text-slate-650 dark:text-gray-300'
+                                                        }`}
+                                                    >
+                                                        {pageNum}
+                                                    </button>
+                                                );
+                                            }
+                                            if (
+                                                (pageNum === 2 && currentPage > 3) ||
+                                                (pageNum === totalPages - 1 && currentPage < totalPages - 2)
+                                            ) {
+                                                return (
+                                                    <span key={pageNum} className="text-slate-450 px-0.5 select-none font-bold">
+                                                        ...
+                                                    </span>
+                                                );
+                                            }
+                                            return null;
+                                        })}
+                                    </div>
+
+                                    <button
+                                        disabled={currentPage === totalPages}
+                                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-[#201d2c] disabled:opacity-40 disabled:hover:bg-transparent transition cursor-pointer text-slate-500 hover:text-indigo-600 dark:hover:text-violet-400"
+                                    >
+                                        <span>Next</span>
+                                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                        </svg>
+                                    </button>
+
+                                    <button
+                                        disabled={currentPage === totalPages}
+                                        onClick={() => setCurrentPage(totalPages)}
+                                        className="p-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-[#201d2c] disabled:opacity-40 disabled:hover:bg-transparent transition cursor-pointer text-slate-500 hover:text-indigo-600 dark:hover:text-violet-400"
+                                        title="Last Page"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </>
                 ) : (
                     <div className="text-center py-10 text-slate-500 dark:text-gray-400 text-sm font-medium">

@@ -91,6 +91,10 @@ function AttendanceRegister() {
     const [activeTab, setActiveTab] = useState('register'); // 'register' or 'approvals'
     const [pendingApprovals, setPendingApprovals] = useState([]);
     const [requestLogs, setRequestLogs] = useState([]);
+    const [logPage, setLogPage] = useState(1);
+    const [logLimit, setLogLimit] = useState(10);
+    const [logTotalPages, setLogTotalPages] = useState(1);
+    const [logTotalCount, setLogTotalCount] = useState(0);
     const [supervisors, setSupervisors] = useState([]);
     const [manualRequestForm, setManualRequestForm] = useState({
         date: new Date().toISOString().split('T')[0],
@@ -132,7 +136,7 @@ function AttendanceRegister() {
         if (activeTab === 'approvals') {
             fetchApprovalsData();
         }
-    }, [activeTab]);
+    }, [activeTab, logPage, logLimit]);
 
     useEffect(() => {
         const handleFocus = () => {
@@ -154,7 +158,7 @@ function AttendanceRegister() {
             window.removeEventListener('focus', handleFocus);
             if (intervalId) clearInterval(intervalId);
         };
-    }, [activeTab]);
+    }, [activeTab, logPage, logLimit]);
 
     const fetchData = async (silent = false) => {
         if (!silent) setLoading(true);
@@ -176,7 +180,7 @@ function AttendanceRegister() {
         try {
             const [pendingRes, logsRes, usersRes] = await Promise.all([
                 axios.get(`${API_BASE_URL}/api/attendance/pending-approvals?status=all`),
-                axios.get(`${API_BASE_URL}/api/attendance/request-logs`),
+                axios.get(`${API_BASE_URL}/api/attendance/request-logs?page=${logPage}&limit=${logLimit}`),
                 axios.get(`${API_BASE_URL}/api/users`)
             ]);
 
@@ -196,7 +200,16 @@ function AttendanceRegister() {
                 setPendingApprovals(enriched);
             }
             if (logsRes.data && logsRes.data.success) {
-                setRequestLogs(logsRes.data.data);
+                if (logsRes.data.pagination) {
+                    setRequestLogs(logsRes.data.data);
+                    setLogTotalPages(logsRes.data.pagination.totalPages);
+                    setLogTotalCount(logsRes.data.pagination.totalItems);
+                } else {
+                    const data = Array.isArray(logsRes.data.data) ? logsRes.data.data : [];
+                    setRequestLogs(data);
+                    setLogTotalPages(1);
+                    setLogTotalCount(data.length);
+                }
             }
             if (Array.isArray(usersRes.data)) {
                 const sups = usersRes.data.filter(u => u.role === 'supervisor');
@@ -1991,6 +2004,119 @@ function AttendanceRegister() {
                                     </tbody>
                                 </table>
                             </div>
+
+                            {/* Pagination Controls for Link request logs */}
+                            {requestLogs.length > 0 && (
+                                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-4 border-t border-slate-100 dark:border-[#262235]/65 text-slate-650 dark:text-gray-300 text-xs font-semibold select-none">
+                                    {/* Left: Size Selector & Total count info */}
+                                    <div className="flex items-center gap-4 flex-wrap">
+                                        <div className="flex items-center gap-2">
+                                            <span>Show</span>
+                                            <select
+                                                value={logLimit}
+                                                onChange={(e) => {
+                                                    setLogLimit(Number(e.target.value));
+                                                    setLogPage(1);
+                                                }}
+                                                className="px-2.5 py-1 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-slate-800 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 cursor-pointer font-bold transition"
+                                            >
+                                                <option value={10}>10</option>
+                                                <option value={20}>20</option>
+                                                <option value={50}>50</option>
+                                            </select>
+                                            <span>logs per page</span>
+                                        </div>
+                                        <span className="text-slate-300 dark:text-slate-700">|</span>
+                                        <span>
+                                            Showing {logTotalCount === 0 ? 0 : (logPage - 1) * logLimit + 1} to {Math.min(logPage * logLimit, logTotalCount)} of {logTotalCount} request logs
+                                        </span>
+                                    </div>
+
+                                    {/* Right: Next / Prev navigation buttons */}
+                                    <div className="flex items-center gap-1">
+                                        <button
+                                            disabled={logPage === 1}
+                                            onClick={() => setLogPage(1)}
+                                            className="p-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-[#201d2c] disabled:opacity-40 disabled:hover:bg-transparent transition cursor-pointer text-slate-500 hover:text-indigo-600 dark:hover:text-violet-400"
+                                            title="First Page"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
+                                            </svg>
+                                        </button>
+                                        
+                                        <button
+                                            disabled={logPage === 1}
+                                            onClick={() => setLogPage(prev => Math.max(prev - 1, 1))}
+                                            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-[#201d2c] disabled:opacity-40 disabled:hover:bg-transparent transition cursor-pointer text-slate-500 hover:text-indigo-600 dark:hover:text-violet-400"
+                                        >
+                                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                                            </svg>
+                                            <span>Prev</span>
+                                        </button>
+
+                                        <div className="flex items-center gap-1 mx-1.5">
+                                            {Array.from({ length: logTotalPages }).map((_, index) => {
+                                                const pageNum = index + 1;
+                                                if (
+                                                    logTotalPages <= 5 ||
+                                                    pageNum === 1 ||
+                                                    pageNum === logTotalPages ||
+                                                    Math.abs(pageNum - logPage) <= 1
+                                                ) {
+                                                    return (
+                                                        <button
+                                                            key={pageNum}
+                                                            onClick={() => setLogPage(pageNum)}
+                                                            className={`w-7 h-7 flex items-center justify-center rounded-lg text-xs font-bold transition ${
+                                                                logPage === pageNum
+                                                                    ? 'bg-indigo-600 dark:bg-violet-600 text-white shadow-sm'
+                                                                    : 'hover:bg-slate-50 dark:hover:bg-[#201d2c] text-slate-650 dark:text-gray-300'
+                                                            }`}
+                                                        >
+                                                            {pageNum}
+                                                        </button>
+                                                    );
+                                                }
+                                                if (
+                                                    (pageNum === 2 && logPage > 3) ||
+                                                    (pageNum === logTotalPages - 1 && logPage < logTotalPages - 2)
+                                                ) {
+                                                    return (
+                                                        <span key={pageNum} className="text-slate-450 px-0.5 select-none font-bold">
+                                                            ...
+                                                        </span>
+                                                    );
+                                                }
+                                                return null;
+                                            })}
+                                        </div>
+
+                                        <button
+                                            disabled={logPage === logTotalPages}
+                                            onClick={() => setLogPage(prev => Math.min(prev + 1, logTotalPages))}
+                                            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-[#201d2c] disabled:opacity-40 disabled:hover:bg-transparent transition cursor-pointer text-slate-500 hover:text-indigo-600 dark:hover:text-violet-400"
+                                        >
+                                            <span>Next</span>
+                                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                            </svg>
+                                        </button>
+
+                                        <button
+                                            disabled={logPage === logTotalPages}
+                                            onClick={() => setLogPage(logTotalPages)}
+                                            className="p-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-[#201d2c] disabled:opacity-40 disabled:hover:bg-transparent transition cursor-pointer text-slate-500 hover:text-indigo-600 dark:hover:text-violet-400"
+                                            title="Last Page"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}

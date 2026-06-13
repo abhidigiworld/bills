@@ -16,12 +16,23 @@ function Bills() {
   const [invoiceToUpdate, setInvoiceToUpdate] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [totalItems, setTotalItems] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
   const fetchBills = async (silent = false) => {
     if (!silent) setLoading(true);
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/invoices`);
-      setBills(response.data);
+      const response = await axios.get(`${API_BASE_URL}/api/invoices?page=${currentPage}&limit=${itemsPerPage}&search=${searchTerm}`);
+      if (response.data && response.data.success && response.data.pagination) {
+        setBills(response.data.data);
+        setTotalItems(response.data.pagination.totalItems);
+        setTotalPages(response.data.pagination.totalPages);
+      } else {
+        const data = Array.isArray(response.data) ? response.data : [];
+        setBills(data);
+        setTotalItems(data.length);
+        setTotalPages(Math.ceil(data.length / itemsPerPage) || 1);
+      }
     } catch (error) {
       console.error('Error fetching bills:', error);
     } finally {
@@ -31,7 +42,7 @@ function Bills() {
 
   useEffect(() => {
     fetchBills();
-  }, []);
+  }, [currentPage, itemsPerPage, searchTerm]);
 
   useEffect(() => {
     const handleFocus = () => {
@@ -41,7 +52,7 @@ function Bills() {
     return () => {
       window.removeEventListener('focus', handleFocus);
     };
-  }, []);
+  }, [currentPage, itemsPerPage, searchTerm]);
 
   const formatDate = (dateString) => {
     return dateString ? dateString.slice(0, 10) : '-';
@@ -169,21 +180,11 @@ function Bills() {
     return sortableBills;
   }, [filteredBills, sortConfig]);
 
-  const totalItems = sortedBills.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
-
-  // Auto-adjust currentPage if it exceeds totalPages due to filtering/search
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages);
-    }
-  }, [totalItems, itemsPerPage, totalPages, currentPage]);
-
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
   const displayedBills = React.useMemo(() => {
-    return sortedBills.slice(startIndex, endIndex);
-  }, [sortedBills, startIndex, endIndex]);
+    return sortedBills;
+  }, [sortedBills]);
 
   return (
     <div className="max-w-6xl mx-auto animate-fade-in">

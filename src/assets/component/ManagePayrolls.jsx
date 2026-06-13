@@ -21,6 +21,12 @@ function ManagePayrolls() {
     const [selectedMonth, setSelectedMonth] = useState('');
     const [selectedYear, setSelectedYear] = useState('');
 
+    // Pagination States
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalSlips, setTotalSlips] = useState(0);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+
     // Modal Edit State
     const [editingSlip, setEditingSlip] = useState(null);
     const [editForm, setEditForm] = useState({
@@ -41,9 +47,49 @@ function ManagePayrolls() {
     const [activeSlip, setActiveSlip] = useState(null);
     const [showSignature, setShowSignature] = useState(true);
 
+    const fetchData = async (silent = false) => {
+        if (!silent) setLoading(true);
+        setError('');
+        try {
+            const params = new URLSearchParams();
+            params.append('page', currentPage);
+            params.append('limit', itemsPerPage);
+            if (selectedEmployeeId) {
+                params.append('employeeId', selectedEmployeeId);
+            }
+            if (selectedMonth && selectedYear) {
+                params.append('month', `${selectedMonth.charAt(0).toUpperCase() + selectedMonth.slice(1)} ${selectedYear}`);
+            } else if (selectedMonth) {
+                params.append('search', selectedMonth);
+            } else if (selectedYear) {
+                params.append('search', selectedYear);
+            }
+
+            const slipsRes = await axios.get(`${API_BASE_URL}/api/salary-slips?${params.toString()}`);
+            const empRes = await axios.get(`${API_BASE_URL}/api/employees`);
+            
+            if (slipsRes.data && slipsRes.data.success && slipsRes.data.pagination) {
+                setSlips(slipsRes.data.data);
+                setTotalSlips(slipsRes.data.pagination.totalItems);
+                setTotalPages(slipsRes.data.pagination.totalPages);
+            } else {
+                const data = Array.isArray(slipsRes.data) ? slipsRes.data : [];
+                setSlips(data);
+                setTotalSlips(data.length);
+                setTotalPages(Math.ceil(data.length / itemsPerPage) || 1);
+            }
+            setEmployees(Array.isArray(empRes.data) ? empRes.data : []);
+        } catch (err) {
+            console.error("Error loading payroll data:", err);
+            setError("Failed to load payroll details.");
+        } finally {
+            if (!silent) setLoading(false);
+        }
+    };
+
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [currentPage, itemsPerPage, selectedEmployeeId, selectedMonth, selectedYear]);
 
     useEffect(() => {
         const handleFocus = () => {
@@ -53,23 +99,12 @@ function ManagePayrolls() {
         return () => {
             window.removeEventListener('focus', handleFocus);
         };
-    }, []);
+    }, [currentPage, itemsPerPage, selectedEmployeeId, selectedMonth, selectedYear]);
 
-    const fetchData = async (silent = false) => {
-        if (!silent) setLoading(true);
-        setError('');
-        try {
-            const slipsRes = await axios.get(`${API_BASE_URL}/api/salary-slips`);
-            const empRes = await axios.get(`${API_BASE_URL}/api/employees`);
-            setSlips(Array.isArray(slipsRes.data) ? slipsRes.data : []);
-            setEmployees(Array.isArray(empRes.data) ? empRes.data : []);
-        } catch (err) {
-            console.error("Error loading payroll data:", err);
-            setError("Failed to load payroll details.");
-        } finally {
-            if (!silent) setLoading(false);
-        }
-    };
+    // Reset to page 1 on filter changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [selectedEmployeeId, selectedMonth, selectedYear]);
 
     const handleDeleteSlip = async (slipId, empName, monthOfSalary) => {
         const confirmDelete = window.confirm(`Are you sure you want to delete the payroll slip for ${empName} (${monthOfSalary})?`);
@@ -193,19 +228,8 @@ function ManagePayrolls() {
         }
     };
 
-    // Filter Slips
-    const filteredSlips = slips.filter(slip => {
-        const emp = slip.employeeId;
-        const empId = emp?._id || emp;
-        const monthOfSalary = slip.monthOfSalary || '';
-        const [monthName, yearStr] = monthOfSalary.split(' ');
-
-        const matchEmployee = selectedEmployeeId ? empId === selectedEmployeeId : true;
-        const matchMonth = selectedMonth ? monthName.toLowerCase() === selectedMonth.toLowerCase() : true;
-        const matchYear = selectedYear ? yearStr === selectedYear : true;
-
-        return matchEmployee && matchMonth && matchYear;
-    });
+    // Filter Slips (applied on server-side)
+    const filteredSlips = slips;
 
     const formatSlipDate = (date) => {
         if (!date) return '-';
@@ -535,6 +559,119 @@ function ManagePayrolls() {
                                     </div>
                                 )}
                             </div>
+
+                            {/* Pagination Controls */}
+                            {slips.length > 0 && (
+                                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-4 border-t border-slate-100 dark:border-[#262235]/65 text-slate-650 dark:text-gray-300 text-xs font-semibold select-none">
+                                    {/* Left: Size Selector & Total count info */}
+                                    <div className="flex items-center gap-4 flex-wrap">
+                                        <div className="flex items-center gap-2">
+                                            <span>Show</span>
+                                            <select
+                                                value={itemsPerPage}
+                                                onChange={(e) => {
+                                                    setItemsPerPage(Number(e.target.value));
+                                                    setCurrentPage(1);
+                                                }}
+                                                className="px-2.5 py-1 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-slate-800 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 cursor-pointer font-bold transition"
+                                            >
+                                                <option value={10}>10</option>
+                                                <option value={20}>20</option>
+                                                <option value={50}>50</option>
+                                            </select>
+                                            <span>slips per page</span>
+                                        </div>
+                                        <span className="text-slate-300 dark:text-slate-700">|</span>
+                                        <span>
+                                            Showing {totalSlips === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, totalSlips)} of {totalSlips} slips
+                                        </span>
+                                    </div>
+
+                                    {/* Right: Next / Prev navigation buttons */}
+                                    <div className="flex items-center gap-1">
+                                        <button
+                                            disabled={currentPage === 1}
+                                            onClick={() => setCurrentPage(1)}
+                                            className="p-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-[#201d2c] disabled:opacity-40 disabled:hover:bg-transparent transition cursor-pointer text-slate-500 hover:text-indigo-600 dark:hover:text-violet-400"
+                                            title="First Page"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
+                                            </svg>
+                                        </button>
+                                        
+                                        <button
+                                            disabled={currentPage === 1}
+                                            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-[#201d2c] disabled:opacity-40 disabled:hover:bg-transparent transition cursor-pointer text-slate-500 hover:text-indigo-600 dark:hover:text-violet-400"
+                                        >
+                                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                                            </svg>
+                                            <span>Prev</span>
+                                        </button>
+
+                                        <div className="flex items-center gap-1 mx-1.5">
+                                            {Array.from({ length: totalPages }).map((_, index) => {
+                                                const pageNum = index + 1;
+                                                if (
+                                                    totalPages <= 5 ||
+                                                    pageNum === 1 ||
+                                                    pageNum === totalPages ||
+                                                    Math.abs(pageNum - currentPage) <= 1
+                                                ) {
+                                                    return (
+                                                        <button
+                                                            key={pageNum}
+                                                            onClick={() => setCurrentPage(pageNum)}
+                                                            className={`w-7 h-7 flex items-center justify-center rounded-lg text-xs font-bold transition ${
+                                                                currentPage === pageNum
+                                                                    ? 'bg-indigo-600 dark:bg-violet-600 text-white shadow-sm'
+                                                                    : 'hover:bg-slate-50 dark:hover:bg-[#201d2c] text-slate-650 dark:text-gray-300'
+                                                            }`}
+                                                        >
+                                                            {pageNum}
+                                                        </button>
+                                                    );
+                                                }
+                                                if (
+                                                    (pageNum === 2 && currentPage > 3) ||
+                                                    (pageNum === totalPages - 1 && currentPage < totalPages - 2)
+                                                ) {
+                                                    return (
+                                                        <span key={pageNum} className="text-slate-450 px-0.5 select-none font-bold">
+                                                            ...
+                                                        </span>
+                                                    );
+                                                }
+                                                return null;
+                                            })}
+                                        </div>
+
+                                        <button
+                                            disabled={currentPage === totalPages}
+                                            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-[#201d2c] disabled:opacity-40 disabled:hover:bg-transparent transition cursor-pointer text-slate-500 hover:text-indigo-600 dark:hover:text-violet-400"
+                                        >
+                                            <span>Next</span>
+                                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                            </svg>
+                                        </button>
+
+                                        <button
+                                            disabled={currentPage === totalPages}
+                                            onClick={() => setCurrentPage(totalPages)}
+                                            className="p-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-[#201d2c] disabled:opacity-40 disabled:hover:bg-transparent transition cursor-pointer text-slate-500 hover:text-indigo-600 dark:hover:text-violet-400"
+                                            title="Last Page"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
