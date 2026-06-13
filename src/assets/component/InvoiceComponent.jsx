@@ -36,6 +36,8 @@ function InvoiceComponent({ invoiceDetails }) {
     const [igstRate, setigstRate] = useState();
     const [firstPart, setFirstPart] = useState('');
     const [secondPart, setSecondPart] = useState('');
+    const [showSignature, setShowSignature] = useState(true);
+    const [showStamp, setShowStamp] = useState(true);
 
     const triggerSuccess = (msg) => {
         setSuccessMessage(msg);
@@ -197,6 +199,10 @@ function InvoiceComponent({ invoiceDetails }) {
 
 
     const handleSave = async () => {
+        if (!billGenerated) {
+            triggerError('Please calculate the bill first before saving.');
+            return;
+        }
         if (saveSuccess) {
             triggerError('This invoice has already been saved!');
             return;
@@ -263,7 +269,7 @@ function InvoiceComponent({ invoiceDetails }) {
         }));
     };
 
-    const handlePrint = () => {
+    const handlePrint = (withSignature, withStamp) => {
         if (!billGenerated) {
             triggerError('Please calculate the bill first before printing.');
             return;
@@ -272,7 +278,11 @@ function InvoiceComponent({ invoiceDetails }) {
             triggerError('Please save the invoice first before printing.');
             return;
         }
-        window.print();
+        setShowSignature(withSignature);
+        setShowStamp(withStamp);
+        setTimeout(() => {
+            window.print();
+        }, 100);
     };
 
     const handleInputChange = (event) => {
@@ -293,8 +303,8 @@ function InvoiceComponent({ invoiceDetails }) {
     return (
         <>
             <div className="w-full px-4 lg:px-8 mb-12 pb-8 font-mono text-slate-800 dark:text-gray-200">
-                <div className="flex flex-col lg:flex-row gap-6">
-                    <div className="flex flex-col space-y-4 w-full lg:w-[300px] print-hidden flex-shrink-0">
+                <div className="flex flex-col lg:flex-row gap-6 print:block">
+                    <div className="flex flex-col space-y-4 w-full lg:w-[300px] print-hidden print:!hidden flex-shrink-0">
                         <div className="p-5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl space-y-3 transition-colors duration-300">
                             <h4 className="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">Add Invoice Item</h4>
                             <input
@@ -468,7 +478,7 @@ function InvoiceComponent({ invoiceDetails }) {
                         {/* Mobile scroll wrapper for invoice preview - not applied during print */}
                         <div className="overflow-x-auto print:overflow-visible">
                         <div className="min-w-[520px] print:min-w-0">
-                        <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-3 sm:p-4 rounded-t-lg ">
+                        <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-3 sm:p-4 rounded-t-lg invoice-print-header border-b border-black">
                             <p className="text-lg sm:text-2xl font-bold text-center">Tax Invoice</p>
                             <div className="flex justify-between items-center relative">
                                 <div className="absolute" style={{ top: '-20px', left: '-10px' }}>
@@ -622,8 +632,12 @@ function InvoiceComponent({ invoiceDetails }) {
                             <div className="text-right flex flex-col justify-between h-20 min-w-[200px] relative print:h-20">
                                 <p className="text-[10px] font-bold text-gray-750">For {settings.company_name}</p>
                                 <div className="relative h-8 w-full flex items-end justify-end">
-                                    <img src={signatureSrc} alt="Signature" className="absolute bottom-[-40px] right-2 max-h-16 w-auto object-contain z-20 pointer-events-none" />
-                                    <img src={stampSrc} alt="stamp" className="absolute bottom-[-45px] right-8 max-h-22 w-auto object-contain z-10 opacity-85 pointer-events-none" />
+                                    {showSignature && (
+                                        <img src={signatureSrc} alt="Signature" className="absolute bottom-[-40px] right-2 max-h-16 w-auto object-contain z-20 pointer-events-none" />
+                                    )}
+                                    {showStamp && (
+                                        <img src={stampSrc} alt="stamp" className="absolute bottom-[-45px] right-8 max-h-22 w-auto object-contain z-10 opacity-85 pointer-events-none" />
+                                    )}
                                 </div>
                                 <p className="text-[10px] font-bold text-gray-750 relative z-0">Authorised Signatory</p>
                             </div>
@@ -632,20 +646,48 @@ function InvoiceComponent({ invoiceDetails }) {
                     </div>
                     </div>
                 </div>
-                <div className="flex justify-end mt-4 gap-2">
+                <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mt-4 print-hidden">
                     <button 
                         onClick={handleSave} 
                         disabled={saveSuccess}
-                        className={`px-4 py-2 rounded-md print-hidden font-semibold transition ${saveSuccess ? 'bg-gray-400 text-white cursor-not-allowed' : 'bg-green-500 text-white hover:bg-green-600'}`}
+                        className={`px-4 py-2 rounded-md font-semibold transition ${saveSuccess ? 'bg-gray-400 text-white cursor-not-allowed' : 'bg-green-500 text-white hover:bg-green-600'}`}
                     >
                         {saveSuccess ? 'Saved ✓' : 'Save'}
                     </button>
-                    <button 
-                        onClick={handlePrint} 
-                        className={`px-4 py-2 rounded-md print-hidden font-semibold transition ${saveSuccess ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
-                    >
-                        Print
-                    </button>
+
+                    {saveSuccess && (
+                        <div className="p-4 bg-slate-50 dark:bg-[#201d2c]/40 border border-slate-200/60 dark:border-[#2e2944] rounded-xl shadow-inner transition-colors duration-300 flex-1">
+                            <p className="text-[10px] font-bold text-slate-400 dark:text-gray-500 uppercase tracking-wider mb-2">
+                                Choose Print Format
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                                <button
+                                    onClick={() => handlePrint(true, true)}
+                                    className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2 px-3 rounded-lg text-xs shadow-sm transition duration-200"
+                                >
+                                    Print with Sign & Stamp
+                                </button>
+                                <button
+                                    onClick={() => handlePrint(true, false)}
+                                    className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2 px-3 rounded-lg text-xs shadow-sm transition duration-200"
+                                >
+                                    Print with Sign
+                                </button>
+                                <button
+                                    onClick={() => handlePrint(false, true)}
+                                    className="bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2 px-3 rounded-lg text-xs shadow-sm transition duration-200"
+                                >
+                                    Print with Stamp
+                                </button>
+                                <button
+                                    onClick={() => handlePrint(false, false)}
+                                    className="bg-slate-200 hover:bg-slate-300 dark:bg-slate-850 dark:hover:bg-slate-800 text-slate-700 dark:text-gray-300 font-bold py-2 px-3 rounded-lg text-xs shadow-sm transition duration-200"
+                                >
+                                    Print Plain Invoice
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
             {/* Centered Premium Overlay Modal for Notifications */}

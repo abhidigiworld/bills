@@ -124,8 +124,18 @@
     background-color: #f8fafc !important; /* slate-50 */
   }
 
-  /* Force hide all elements with print-hidden, print:hidden, and aside/header tags */
-  header, aside, .print-hidden, .print\:hidden, [class*="print-hidden"], [class*="print\:hidden"] {
+  /* FINAL: Force hide all elements with print-hidden — must come LAST to override flex rules above */
+  .print-hidden,
+  .print-hidden.flex,
+  .print-hidden[class*="flex-col"],
+  .print-hidden[class*="flex-row"],
+  [class*="print-hidden"],
+  header,
+  aside {
     display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
   }
 }
