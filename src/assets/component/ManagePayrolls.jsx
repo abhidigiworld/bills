@@ -729,177 +729,179 @@ function ManagePayrolls() {
                         <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] w-full max-w-2xl rounded-xl p-6 shadow-2xl relative transition-colors duration-300 animate-slide-down mx-auto print:mx-auto print:static print:max-h-none print:overflow-visible print:p-0 print:border-none print:shadow-none print:bg-transparent print:text-black">
 
                             {/* Slip Printable Block */}
-                            <div className="printdata font-mono text-slate-800 dark:text-gray-200 print:text-black w-full border border-black rounded-lg overflow-hidden bg-white dark:bg-[#181622] print:bg-white mx-auto print:mx-auto">
-                                {/* Header (styled like Tax Invoice) */}
-                                <div className="bg-gradient-to-r from-indigo-500 to-violet-500 text-white p-4 invoice-print-header border-b border-black">
-                                    <p className="text-xl font-bold text-center uppercase tracking-wide">Salary Statement</p>
-                                    <div className="flex justify-between items-center relative mt-2">
-                                        <div className="absolute" style={{ top: '-10px', left: '-10px' }}>
-                                            <img src={logoSrc} alt="Your Company Logo" className="w-24 h-auto rounded-md" />
+                            <div className="w-full overflow-x-auto print:overflow-visible">
+                                <div className="printdata font-mono text-slate-800 dark:text-gray-200 print:text-black min-w-[600px] border border-black rounded-lg overflow-hidden bg-white dark:bg-[#181622] print:bg-white mx-auto print:mx-auto">
+                                    {/* Header (styled like Tax Invoice) */}
+                                    <div className="bg-gradient-to-r from-indigo-500 to-violet-500 text-white p-4 invoice-print-header border-b border-black">
+                                        <p className="text-xl font-bold text-center uppercase tracking-wide">Salary Statement</p>
+                                        <div className="flex justify-between items-center relative mt-2">
+                                            <div className="absolute" style={{ top: '-10px', left: '-10px' }}>
+                                                <img src={logoSrc} alt="Your Company Logo" className="w-24 h-auto rounded-md" />
+                                            </div>
+                                            <div className="flex-1 text-center pt-2" style={{ marginLeft: '120px' }}>
+                                                <p className="text-2xl font-bold uppercase tracking-wider">{settings.company_name}</p>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-xs font-bold">GSTIN: {settings.company_gstin}</p>
+                                                <p className="text-xs">M.: {settings.company_phone}</p>
+                                            </div>
                                         </div>
-                                        <div className="flex-1 text-center pt-2" style={{ marginLeft: '120px' }}>
-                                            <p className="text-2xl font-bold uppercase tracking-wider">{settings.company_name}</p>
-                                        </div>
-                                        <div className="text-right">
-                                            <p className="text-xs font-bold">GSTIN: {settings.company_gstin}</p>
-                                            <p className="text-xs">M.: {settings.company_phone}</p>
+                                        <div className="flex flex-col content-center mt-3 text-[10px] opacity-90 text-center">
+                                            <p>{settings.company_address}</p>
+                                            <p>E-mail id: {settings.company_email}</p>
                                         </div>
                                     </div>
-                                    <div className="flex flex-col content-center mt-3 text-[10px] opacity-90 text-center">
-                                        <p>{settings.company_address}</p>
-                                        <p>E-mail id: {settings.company_email}</p>
-                                    </div>
-                                </div>
 
-                                {/* Metadata Table Grid (styled like Invoice top table) */}
-                                <table className="w-full text-xs mb-2">
-                                    <tbody>
-                                        <tr className="border-b border-black">
-                                            <td colSpan="3" className="border-r border-black px-3 py-2 text-left"><span className="text-slate-500 print:text-gray-500 font-bold uppercase text-[9px] block">Employee Name:</span> <span className="font-extrabold text-sm">{activeSlip.employeeId?.name || 'Staff'}</span></td>
-                                            <td colSpan="2" className="px-3 py-2 text-left"><span className="text-slate-500 print:text-gray-500 font-bold uppercase text-[9px] block">Salary Slip No:</span> <span className="font-bold">SLIP-{activeSlip._id.slice(-6).toUpperCase()}</span></td>
-                                        </tr>
-                                        <tr className="border-b border-black">
-                                            <td colSpan="3" className="border-r border-black px-3 py-2 text-left"><span className="text-slate-500 print:text-gray-500 font-bold uppercase text-[9px] block">Designation:</span> <span className="font-semibold">{activeSlip.employeeId?.designation || 'Staff'}</span></td>
-                                            <td colSpan="2" className="px-3 py-2 text-left"><span className="text-slate-500 print:text-gray-500 font-bold uppercase text-[9px] block">Statement Period:</span> <span className="font-bold">{activeSlip.monthOfSalary}</span></td>
-                                        </tr>
-                                        <tr className="border-b border-black">
-                                            <td colSpan="3" className="border-r border-black px-3 py-2 text-left"><span className="text-slate-500 print:text-gray-500 font-bold uppercase text-[9px] block">Date of Joining:</span> <span className="font-semibold">{activeSlip.employeeId?.dateOfJoining ? new Date(activeSlip.employeeId.dateOfJoining).toLocaleDateString() : '-'}</span></td>
-                                            <td colSpan="2" className="px-3 py-2 text-left"><span className="text-slate-500 print:text-gray-500 font-bold uppercase text-[9px] block">Gross Salary (Monthly):</span> <span className="font-bold text-indigo-600 print:text-black">₹{Math.floor(activeGrossSalary).toLocaleString()}</span></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                    {/* Metadata Table Grid (styled like Invoice top table) */}
+                                    <table className="w-full text-xs mb-2">
+                                        <tbody>
+                                            <tr className="border-b border-black">
+                                                <td colSpan="3" className="border-r border-black px-3 py-2 text-left"><span className="text-slate-500 print:text-gray-500 font-bold uppercase text-[9px] block">Employee Name:</span> <span className="font-extrabold text-sm">{activeSlip.employeeId?.name || 'Staff'}</span></td>
+                                                <td colSpan="2" className="px-3 py-2 text-left"><span className="text-slate-500 print:text-gray-500 font-bold uppercase text-[9px] block">Salary Slip No:</span> <span className="font-bold">SLIP-{activeSlip._id.slice(-6).toUpperCase()}</span></td>
+                                            </tr>
+                                            <tr className="border-b border-black">
+                                                <td colSpan="3" className="border-r border-black px-3 py-2 text-left"><span className="text-slate-500 print:text-gray-500 font-bold uppercase text-[9px] block">Designation:</span> <span className="font-semibold">{activeSlip.employeeId?.designation || 'Staff'}</span></td>
+                                                <td colSpan="2" className="px-3 py-2 text-left"><span className="text-slate-500 print:text-gray-500 font-bold uppercase text-[9px] block">Statement Period:</span> <span className="font-bold">{activeSlip.monthOfSalary}</span></td>
+                                            </tr>
+                                            <tr className="border-b border-black">
+                                                <td colSpan="3" className="border-r border-black px-3 py-2 text-left"><span className="text-slate-500 print:text-gray-500 font-bold uppercase text-[9px] block">Date of Joining:</span> <span className="font-semibold">{activeSlip.employeeId?.dateOfJoining ? new Date(activeSlip.employeeId.dateOfJoining).toLocaleDateString() : '-'}</span></td>
+                                                <td colSpan="2" className="px-3 py-2 text-left"><span className="text-slate-500 print:text-gray-500 font-bold uppercase text-[9px] block">Gross Salary (Monthly):</span> <span className="font-bold text-indigo-600 print:text-black">₹{Math.floor(activeGrossSalary).toLocaleString()}</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
 
-                                {/* Earnings & Deductions Table (styled like Invoice item table) */}
-                                <table className="w-full text-xs mb-2 border-t border-black">
-                                    <thead>
-                                        <tr className="border-b border-black bg-slate-50 dark:bg-slate-900/25 print:bg-gray-100 font-bold">
-                                            <td className="border-r border-black px-2 py-1.5 text-center w-12">S.No</td>
-                                            <td className="border-r border-black px-3 py-1.5 text-left">Description</td>
-                                            <td className="border-r border-black px-3 py-1.5 text-center w-36">Rate / Base</td>
-                                            <td className="border-r border-black px-3 py-1.5 text-center w-28">Quantity / Days</td>
-                                            <td className="border-r border-black px-3 py-1.5 text-right w-32">Earnings</td>
-                                            <td className="px-3 py-1.5 text-right w-32">Deductions</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {(() => {
-                                            let sNo = 1;
-                                            return (
-                                                <>
+                                    {/* Earnings & Deductions Table (styled like Invoice item table) */}
+                                    <table className="w-full text-xs mb-2 border-t border-black">
+                                        <thead>
+                                            <tr className="border-b border-black bg-slate-50 dark:bg-slate-900/25 print:bg-gray-100 font-bold">
+                                                <td className="border-r border-black px-2 py-1.5 text-center w-12">S.No</td>
+                                                <td className="border-r border-black px-3 py-1.5 text-left">Description</td>
+                                                <td className="border-r border-black px-3 py-1.5 text-center w-36">Rate / Base</td>
+                                                <td className="border-r border-black px-3 py-1.5 text-center w-28">Quantity / Days</td>
+                                                <td className="border-r border-black px-3 py-1.5 text-right w-32">Earnings</td>
+                                                <td className="px-3 py-1.5 text-right w-32">Deductions</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {(() => {
+                                                let sNo = 1;
+                                                return (
+                                                    <>
+                                                        <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
+                                                            <td className="border-r border-black px-2 py-1.5 text-center">{sNo++}</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-left font-semibold">Basic Salary Earned</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-center">₹{activeDailyRate.toLocaleString()} / day</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-center">{activeSlip.workDays} days</td>
+                                                            <td className="border-r border-black px-3 py-1.5 text-right font-bold text-green-600 print:text-black">₹{Math.floor(activeSlip.salaryByWorkDays).toLocaleString()}</td>
+                                                            <td className="px-3 py-1.5 text-right text-slate-400">-</td>
+                                                        </tr>
+                                                        {activeSlip.overtimeHours > 0 && (
+                                                            <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
+                                                                <td className="border-r border-black px-2 py-1.5 text-center">{sNo++}</td>
+                                                                <td className="border-r border-black px-3 py-1.5 text-left font-semibold">Overtime Pay</td>
+                                                                <td className="border-r border-black px-3 py-1.5 text-center">₹{activeHourlyRate.toLocaleString()} / hr</td>
+                                                                <td className="border-r border-black px-3 py-1.5 text-center">{activeSlip.overtimeHours} hrs</td>
+                                                                <td className="border-r border-black px-3 py-1.5 text-right font-bold text-green-600 print:text-black">₹{Math.floor(activeSlip.overtimeSalary).toLocaleString()}</td>
+                                                                <td className="px-3 py-1.5 text-right text-slate-400">-</td>
+                                                            </tr>
+                                                        )}
+                                                        {(activeSlip.nightShiftHours > 0 || activeSlip.nightShiftDays > 0) && (
+                                                            <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
+                                                                <td className="border-r border-black px-2 py-1.5 text-center">{sNo++}</td>
+                                                                <td className="border-r border-black px-3 py-1.5 text-left font-semibold">Night Shift Allowance</td>
+                                                                <td className="border-r border-black px-3 py-1.5 text-center">₹{Math.floor(activeSlip.nightShiftRate || 0).toLocaleString()} {activeSlip.nightShiftHours ? '/ hr' : '/ shift'}</td>
+                                                                <td className="border-r border-black px-3 py-1.5 text-center">{activeSlip.nightShiftHours ? `${activeSlip.nightShiftHours} hrs` : `${activeSlip.nightShiftDays} shifts`}</td>
+                                                                <td className="border-r border-black px-3 py-1.5 text-right font-bold text-green-600 print:text-black">₹{Math.floor(activeSlip.nightShiftAllowance || 0).toLocaleString()}</td>
+                                                                <td className="px-3 py-1.5 text-right text-slate-400">-</td>
+                                                            </tr>
+                                                        )}
+                                                        {activeSlip.hra > 0 && (
+                                                            <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
+                                                                <td className="border-r border-black px-2 py-1.5 text-center">{sNo++}</td>
+                                                                <td className="border-r border-black px-3 py-1.5 text-left font-semibold">House Rent Allowance (HRA)</td>
+                                                                <td className="border-r border-black px-3 py-1.5 text-center">-</td>
+                                                                <td className="border-r border-black px-3 py-1.5 text-center">-</td>
+                                                                <td className="border-r border-black px-3 py-1.5 text-right font-bold text-green-600 print:text-black">₹{Math.floor(activeSlip.hra).toLocaleString()}</td>
+                                                                <td className="px-3 py-1.5 text-right text-slate-400">-</td>
+                                                            </tr>
+                                                        )}
+                                                        {activeSlip.esic > 0 && (
+                                                            <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
+                                                                <td className="border-r border-black px-2 py-1.5 text-center">{sNo++}</td>
+                                                                <td className="border-r border-black px-3 py-1.5 text-left font-semibold text-red-600 print:text-black">ESIC Contribution</td>
+                                                                <td className="border-r border-black px-3 py-1.5 text-center">-</td>
+                                                                <td className="border-r border-black px-3 py-1.5 text-center">-</td>
+                                                                <td className="border-r border-black px-3 py-1.5 text-right text-slate-400">-</td>
+                                                                <td className="px-3 py-1.5 text-right font-bold text-red-500 print:text-black">₹{Math.floor(activeSlip.esic).toLocaleString()}</td>
+                                                            </tr>
+                                                        )}
+                                                        {activeSlip.advance > 0 && (
+                                                            <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
+                                                                <td className="border-r border-black px-2 py-1.5 text-center">{sNo++}</td>
+                                                                <td className="border-r border-black px-3 py-1.5 text-left font-semibold text-red-600 print:text-black">Salary Advance</td>
+                                                                <td className="border-r border-black px-3 py-1.5 text-center">-</td>
+                                                                <td className="border-r border-black px-3 py-1.5 text-center">-</td>
+                                                                <td className="border-r border-black px-3 py-1.5 text-right text-slate-400">-</td>
+                                                                <td className="px-3 py-1.5 text-right font-bold text-red-500 print:text-black">₹{Math.floor(activeSlip.advance).toLocaleString()}</td>
+                                                            </tr>
+                                                        )}
+                                                        {activeSlip.lunchDeduction > 0 && (
+                                                            <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
+                                                                <td className="border-r border-black px-2 py-1.5 text-center">{sNo++}</td>
+                                                                <td className="border-r border-black px-3 py-1.5 text-left font-semibold text-red-600 print:text-black">Lunch Deduction</td>
+                                                                <td className="border-r border-black px-3 py-1.5 text-center">₹{Math.floor(activeSlip.lunchRate).toLocaleString()} / day</td>
+                                                                <td className="border-r border-black px-3 py-1.5 text-center">{activeSlip.lunchDays} days</td>
+                                                                <td className="border-r border-black px-3 py-1.5 text-right text-slate-400">-</td>
+                                                                <td className="px-3 py-1.5 text-right font-bold text-red-500 print:text-black">₹{Math.floor(activeSlip.lunchDeduction).toLocaleString()}</td>
+                                                            </tr>
+                                                        )}
+                                                    </>
+                                                );
+                                            })()}
+                                        </tbody>
+                                    </table>
+
+                                    {/* Summary Calculation (Totals) */}
+                                    <div className="flex justify-between items-stretch border-t border-black bg-slate-50 dark:bg-slate-900/10 print:bg-transparent">
+                                        <div className="text-left text-xs font-bold p-3 pr-4 flex flex-col justify-start border-r border-black flex-grow">
+                                            <span className="text-slate-500 print:text-gray-500 block uppercase text-[9px] mb-1">Net Pay (In Words):</span>
+                                            <span className="font-extrabold text-slate-900 dark:text-white print:text-black">
+                                                Rupees {convertNumberToWords(Math.floor(activeSlip.inHandSalary))} Only
+                                            </span>
+                                        </div>
+                                        <div className="p-3 flex-shrink-0 w-80">
+                                            <table className="w-full text-xs">
+                                                <tbody>
                                                     <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
-                                                        <td className="border-r border-black px-2 py-1.5 text-center">{sNo++}</td>
-                                                        <td className="border-r border-black px-3 py-1.5 text-left font-semibold">Basic Salary Earned</td>
-                                                        <td className="border-r border-black px-3 py-1.5 text-center">₹{activeDailyRate.toLocaleString()} / day</td>
-                                                        <td className="border-r border-black px-3 py-1.5 text-center">{activeSlip.workDays} days</td>
-                                                        <td className="border-r border-black px-3 py-1.5 text-right font-bold text-green-600 print:text-black">₹{Math.floor(activeSlip.salaryByWorkDays).toLocaleString()}</td>
-                                                        <td className="px-3 py-1.5 text-right text-slate-400">-</td>
+                                                        <td className="py-1 font-semibold">Gross Earnings:</td>
+                                                        <td className="py-1 text-right font-bold">₹{Math.floor(activeSlip.totalSalary).toLocaleString()}</td>
                                                     </tr>
-                                                    {activeSlip.overtimeHours > 0 && (
-                                                        <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
-                                                            <td className="border-r border-black px-2 py-1.5 text-center">{sNo++}</td>
-                                                            <td className="border-r border-black px-3 py-1.5 text-left font-semibold">Overtime Pay</td>
-                                                            <td className="border-r border-black px-3 py-1.5 text-center">₹{activeHourlyRate.toLocaleString()} / hr</td>
-                                                            <td className="border-r border-black px-3 py-1.5 text-center">{activeSlip.overtimeHours} hrs</td>
-                                                            <td className="border-r border-black px-3 py-1.5 text-right font-bold text-green-600 print:text-black">₹{Math.floor(activeSlip.overtimeSalary).toLocaleString()}</td>
-                                                            <td className="px-3 py-1.5 text-right text-slate-400">-</td>
-                                                        </tr>
-                                                    )}
-                                                    {(activeSlip.nightShiftHours > 0 || activeSlip.nightShiftDays > 0) && (
-                                                        <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
-                                                            <td className="border-r border-black px-2 py-1.5 text-center">{sNo++}</td>
-                                                            <td className="border-r border-black px-3 py-1.5 text-left font-semibold">Night Shift Allowance</td>
-                                                            <td className="border-r border-black px-3 py-1.5 text-center">₹{Math.floor(activeSlip.nightShiftRate || 0).toLocaleString()} {activeSlip.nightShiftHours ? '/ hr' : '/ shift'}</td>
-                                                            <td className="border-r border-black px-3 py-1.5 text-center">{activeSlip.nightShiftHours ? `${activeSlip.nightShiftHours} hrs` : `${activeSlip.nightShiftDays} shifts`}</td>
-                                                            <td className="border-r border-black px-3 py-1.5 text-right font-bold text-green-600 print:text-black">₹{Math.floor(activeSlip.nightShiftAllowance || 0).toLocaleString()}</td>
-                                                            <td className="px-3 py-1.5 text-right text-slate-400">-</td>
-                                                        </tr>
-                                                    )}
-                                                    {activeSlip.hra > 0 && (
-                                                        <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
-                                                            <td className="border-r border-black px-2 py-1.5 text-center">{sNo++}</td>
-                                                            <td className="border-r border-black px-3 py-1.5 text-left font-semibold">House Rent Allowance (HRA)</td>
-                                                            <td className="border-r border-black px-3 py-1.5 text-center">-</td>
-                                                            <td className="border-r border-black px-3 py-1.5 text-center">-</td>
-                                                            <td className="border-r border-black px-3 py-1.5 text-right font-bold text-green-600 print:text-black">₹{Math.floor(activeSlip.hra).toLocaleString()}</td>
-                                                            <td className="px-3 py-1.5 text-right text-slate-400">-</td>
-                                                        </tr>
-                                                    )}
-                                                    {activeSlip.esic > 0 && (
-                                                        <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
-                                                            <td className="border-r border-black px-2 py-1.5 text-center">{sNo++}</td>
-                                                            <td className="border-r border-black px-3 py-1.5 text-left font-semibold text-red-600 print:text-black">ESIC Contribution</td>
-                                                            <td className="border-r border-black px-3 py-1.5 text-center">-</td>
-                                                            <td className="border-r border-black px-3 py-1.5 text-center">-</td>
-                                                            <td className="border-r border-black px-3 py-1.5 text-right text-slate-400">-</td>
-                                                            <td className="px-3 py-1.5 text-right font-bold text-red-500 print:text-black">₹{Math.floor(activeSlip.esic).toLocaleString()}</td>
-                                                        </tr>
-                                                    )}
-                                                    {activeSlip.advance > 0 && (
-                                                        <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
-                                                            <td className="border-r border-black px-2 py-1.5 text-center">{sNo++}</td>
-                                                            <td className="border-r border-black px-3 py-1.5 text-left font-semibold text-red-600 print:text-black">Salary Advance</td>
-                                                            <td className="border-r border-black px-3 py-1.5 text-center">-</td>
-                                                            <td className="border-r border-black px-3 py-1.5 text-center">-</td>
-                                                            <td className="border-r border-black px-3 py-1.5 text-right text-slate-400">-</td>
-                                                            <td className="px-3 py-1.5 text-right font-bold text-red-500 print:text-black">₹{Math.floor(activeSlip.advance).toLocaleString()}</td>
-                                                        </tr>
-                                                    )}
-                                                    {activeSlip.lunchDeduction > 0 && (
-                                                        <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
-                                                            <td className="border-r border-black px-2 py-1.5 text-center">{sNo++}</td>
-                                                            <td className="border-r border-black px-3 py-1.5 text-left font-semibold text-red-600 print:text-black">Lunch Deduction</td>
-                                                            <td className="border-r border-black px-3 py-1.5 text-center">₹{Math.floor(activeSlip.lunchRate).toLocaleString()} / day</td>
-                                                            <td className="border-r border-black px-3 py-1.5 text-center">{activeSlip.lunchDays} days</td>
-                                                            <td className="border-r border-black px-3 py-1.5 text-right text-slate-400">-</td>
-                                                            <td className="px-3 py-1.5 text-right font-bold text-red-500 print:text-black">₹{Math.floor(activeSlip.lunchDeduction).toLocaleString()}</td>
-                                                        </tr>
-                                                    )}
-                                                </>
-                                            );
-                                        })()}
-                                    </tbody>
-                                </table>
+                                                    <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
+                                                        <td className="py-1 font-semibold text-red-600 print:text-black">Total Deductions:</td>
+                                                        <td className="py-1 text-right font-bold text-red-500 print:text-black">-₹{Math.floor((activeSlip.esic || 0) + (activeSlip.advance || 0) + (activeSlip.lunchDeduction || 0)).toLocaleString()}</td>
+                                                    </tr>
+                                                    <tr className="text-sm font-extrabold">
+                                                        <td className="py-1.5 uppercase text-slate-900 dark:text-white print:text-black">Net Pay:</td>
+                                                        <td className="py-1.5 text-right text-indigo-700 dark:text-violet-400 print:text-black">₹{Math.floor(activeSlip.inHandSalary).toLocaleString()}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
 
-                                {/* Summary Calculation (Totals) */}
-                                <div className="flex justify-between items-stretch border-t border-black bg-slate-50 dark:bg-slate-900/10 print:bg-transparent">
-                                    <div className="text-left text-xs font-bold p-3 pr-4 flex flex-col justify-start border-r border-black flex-grow">
-                                        <span className="text-slate-500 print:text-gray-500 block uppercase text-[9px] mb-1">Net Pay (In Words):</span>
-                                        <span className="font-extrabold text-slate-900 dark:text-white print:text-black">
-                                            Rupees {convertNumberToWords(Math.floor(activeSlip.inHandSalary))} Only
-                                        </span>
-                                    </div>
-                                    <div className="p-3 flex-shrink-0 w-80">
-                                        <table className="w-full text-xs">
-                                            <tbody>
-                                                <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
-                                                    <td className="py-1 font-semibold">Gross Earnings:</td>
-                                                    <td className="py-1 text-right font-bold">₹{Math.floor(activeSlip.totalSalary).toLocaleString()}</td>
-                                                </tr>
-                                                <tr className="border-b border-slate-200 dark:border-[#262235] print:border-black">
-                                                    <td className="py-1 font-semibold text-red-600 print:text-black">Total Deductions:</td>
-                                                    <td className="py-1 text-right font-bold text-red-500 print:text-black">-₹{Math.floor((activeSlip.esic || 0) + (activeSlip.advance || 0) + (activeSlip.lunchDeduction || 0)).toLocaleString()}</td>
-                                                </tr>
-                                                <tr className="text-sm font-extrabold">
-                                                    <td className="py-1.5 uppercase text-slate-900 dark:text-white print:text-black">Net Pay:</td>
-                                                    <td className="py-1.5 text-right text-indigo-700 dark:text-violet-400 print:text-black">₹{Math.floor(activeSlip.inHandSalary).toLocaleString()}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-
-                                {/* Terms and Signature block */}
-                                <div className="p-4 border-t border-black flex justify-between bg-white dark:bg-[#181622] transition-colors duration-300 print:bg-white print:text-black">
-                                    <div className="max-w-xs text-[10px] text-slate-400 dark:text-slate-500 print:text-gray-500 leading-normal">
-                                        <p className="font-bold">Note:</p>
-                                        <p>This document is an official Salary Slip generated by {settings.company_name}. All salary calculations, overtime allowances, and ESIC/advance deductions are computed based on recorded monthly logs.</p>
-                                    </div>
-                                    <div className="text-right relative w-44 min-h-[70px]">
-                                        <p className="text-xs font-bold">For {settings.company_name}</p>
-                                        <p className="text-[10px] absolute bottom-0 right-0 font-bold uppercase tracking-wider text-slate-500 print:text-black">Authorised Signatory</p>
-                                        {showSignature && (
-                                            <img src={signatureSrc} alt="Signature" className="absolute top-1.5 left-0 right-0 mx-auto w-32 h-auto opacity-95 pointer-events-none" />
-                                        )}
+                                    {/* Terms and Signature block */}
+                                    <div className="p-4 border-t border-black flex justify-between bg-white dark:bg-[#181622] transition-colors duration-300 print:bg-white print:text-black">
+                                        <div className="max-w-xs text-[10px] text-slate-400 dark:text-slate-500 print:text-gray-500 leading-normal">
+                                            <p className="font-bold">Note:</p>
+                                            <p>This document is an official Salary Slip generated by {settings.company_name}. All salary calculations, overtime allowances, and ESIC/advance deductions are computed based on recorded monthly logs.</p>
+                                        </div>
+                                        <div className="text-right relative w-44 min-h-[70px]">
+                                            <p className="text-xs font-bold">For {settings.company_name}</p>
+                                            <p className="text-[10px] absolute bottom-0 right-0 font-bold uppercase tracking-wider text-slate-500 print:text-black">Authorised Signatory</p>
+                                            {showSignature && (
+                                                <img src={signatureSrc} alt="Signature" className="absolute top-1.5 left-0 right-0 mx-auto w-32 h-auto opacity-95 pointer-events-none" />
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>

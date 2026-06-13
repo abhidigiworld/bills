@@ -264,8 +264,67 @@ const UpdateInvoice = ({ invoice, onClose }) => {
                     </div>
                 </div>
 
-                <div className="overflow-x-auto">
-                    <table className='w-full mb-4 border border-slate-200 dark:border-[#262235] rounded-lg overflow-hidden'>
+                {/* Metadata Grid Form (mobile only) */}
+                <div className="block sm:hidden bg-slate-50 dark:bg-[#201d2c]/50 p-4 border border-slate-200 dark:border-[#262235] rounded-xl mb-4 space-y-3">
+                    <div>
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">M/s (Company Name)</label>
+                        <input
+                            type="text"
+                            className={inputClass}
+                            value={companyName}
+                            onChange={(e) => setCompanyName(e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">GSTIN</label>
+                        <input
+                            type="text"
+                            className={inputClass}
+                            value={gstin}
+                            onChange={(e) => setGstin(e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">State</label>
+                        <input
+                            type="text"
+                            className={inputClass}
+                            value={state}
+                            onChange={(e) => setState(e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">State Code</label>
+                        <input
+                            type="text"
+                            className={inputClass}
+                            value={stateCode}
+                            onChange={(e) => setStateCode(e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Invoice No</label>
+                        <input
+                            type="text"
+                            className={inputClass}
+                            value={invoiceNo}
+                            onChange={(e) => setInvoiceNo(e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Date</label>
+                        <input
+                            type="date"
+                            className={inputClass}
+                            value={invoiceDate}
+                            onChange={(e) => setInvoiceDate(e.target.value)}
+                        />
+                    </div>
+                </div>
+
+                {/* Metadata Table (desktop only) */}
+                <div className="hidden sm:block overflow-x-auto mb-4">
+                    <table className='w-full border border-slate-200 dark:border-[#262235] rounded-lg overflow-hidden'>
                         <thead>
                             <tr className="border-b border-slate-200 dark:border-[#262235]">
                                 <td colSpan="2" className="px-3 py-2 text-slate-500 dark:text-gray-400 font-bold uppercase text-xs">M/s:</td>
@@ -331,7 +390,179 @@ const UpdateInvoice = ({ invoice, onClose }) => {
                     </table>
                 </div>
 
-                <div className="overflow-x-auto">
+                {/* Items List (mobile only) */}
+                <div className="block md:hidden space-y-4 mb-6">
+                    {items.map((item, index) => (
+                        <div key={index} className="bg-slate-50 dark:bg-[#201d2c]/50 p-4 border border-slate-200 dark:border-[#262235] rounded-xl space-y-3 relative">
+                            <div className="flex justify-between items-center border-b border-slate-200 dark:border-[#262235] pb-2">
+                                <span className="font-bold text-slate-700 dark:text-gray-300">Item #{index + 1}</span>
+                                <button
+                                    className="px-2.5 py-1 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg text-xs transition shadow-sm"
+                                    onClick={() => handleDeleteItem(index)}
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                            <div>
+                                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Description</label>
+                                <input
+                                    type="text"
+                                    className={inputClass}
+                                    value={item.description}
+                                    onChange={(e) => handleItemChange(index, 'description', e.target.value)}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">HSN/SAC Code</label>
+                                <input
+                                    type="text"
+                                    className={inputClass}
+                                    value={item.hsnAsc}
+                                    onChange={(e) => handleItemChange(index, 'hsnAsc', e.target.value)}
+                                />
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Quantity</label>
+                                    <input
+                                        type="number"
+                                        className={inputClass}
+                                        value={item.quantity}
+                                        onChange={(e) => handleItemChange(index, 'quantity', e.target.value)}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Rate</label>
+                                    <input
+                                        type="number"
+                                        className={inputClass}
+                                        value={item.rate}
+                                        onChange={(e) => handleItemChange(index, 'rate', e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Total Value</label>
+                                <input
+                                    type="number"
+                                    className={inputClass}
+                                    value={item.totalValue}
+                                    onChange={(e) => handleItemChange(index, 'totalValue', e.target.value)}
+                                />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Summary & Calculations (mobile only) */}
+                <div className="block md:hidden bg-slate-50 dark:bg-[#201d2c]/50 p-4 border border-slate-200 dark:border-[#262235] rounded-xl mb-4 space-y-4">
+                    <div className="flex justify-between items-center border-b border-slate-200 dark:border-[#262235] pb-2 font-bold text-slate-800 dark:text-white text-sm">
+                        <span>Subtotal:</span>
+                        <span>₹{subtotal.toFixed(2)}</span>
+                    </div>
+
+                    <div>
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Freight Charges</label>
+                        <input
+                            type="number"
+                            className={inputClass}
+                            value={freightCharges}
+                            onChange={(e) => setFreightCharges(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                        <div>
+                            <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">CGST Rate (%)</label>
+                            <input
+                                type="number"
+                                className={inputClass}
+                                value={cgstRate}
+                                onChange={(e) => handleCgstRateChange(e.target.value)}
+                                placeholder="Rate %"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">CGST Value (₹)</label>
+                            <input
+                                type="number"
+                                className={inputClass}
+                                value={cgst}
+                                onChange={(e) => handleCgstValueChange(e.target.value)}
+                                placeholder="Value ₹"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                        <div>
+                            <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">SGST Rate (%)</label>
+                            <input
+                                type="number"
+                                className={inputClass}
+                                value={sgstRate}
+                                onChange={(e) => handleSgstRateChange(e.target.value)}
+                                placeholder="Rate %"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">SGST Value (₹)</label>
+                            <input
+                                type="number"
+                                className={inputClass}
+                                value={sgst}
+                                onChange={(e) => handleSgstValueChange(e.target.value)}
+                                placeholder="Value ₹"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                        <div>
+                            <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">IGST Rate (%)</label>
+                            <input
+                                type="number"
+                                className={inputClass}
+                                value={igstRate}
+                                onChange={(e) => handleIgstRateChange(e.target.value)}
+                                placeholder="Rate %"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">IGST Value (₹)</label>
+                            <input
+                                type="number"
+                                className={inputClass}
+                                value={igst}
+                                onChange={(e) => handleIgstValueChange(e.target.value)}
+                                placeholder="Value ₹"
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Grand Total</label>
+                        <input
+                            type="number"
+                            className={inputClass}
+                            value={grandTotal}
+                            onChange={(e) => setGrandTotal(e.target.value)}
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Grand Total (In Words)</label>
+                        <input
+                            type="text"
+                            className={inputClass}
+                            value={grandTotalInWords}
+                            onChange={(e) => setGrandTotalInWords(e.target.value)}
+                        />
+                    </div>
+                </div>
+
+                {/* Items Table (desktop only) */}
+                <div className="hidden md:block overflow-x-auto mb-4">
                     <table className="w-full table-auto border border-slate-200 dark:border-[#262235]">
                         <thead>
                             <tr className="bg-slate-100 dark:bg-[#201d2c]/50 text-slate-500 dark:text-gray-400 font-bold uppercase text-xs border-b border-slate-200 dark:border-[#262235]">

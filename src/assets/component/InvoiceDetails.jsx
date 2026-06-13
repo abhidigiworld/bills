@@ -167,8 +167,9 @@ function InvoiceDetails({ invoiceId, onClose }) {
                     </svg>
                 </button>
 
-                <div className='printdata font-mono m-auto'>
-                    <div className="bg-gradient-to-r from-indigo-400 to-violet-400 text-white p-4 rounded-t-lg mr-1 invoice-print-header border-b border-black">
+                <div className="w-full overflow-x-auto print:overflow-visible">
+                    <div className="printdata font-mono m-auto min-w-[768px]">
+                        <div className="bg-gradient-to-r from-indigo-400 to-violet-400 text-white p-4 rounded-t-lg mr-1 invoice-print-header border-b border-black">
                         <p className="text-2xl font-bold text-center">Tax Invoice</p>
                         <div className="flex justify-between items-center relative">
                             <div className="absolute" style={{ top: '0px', left: '-10px' }}>
@@ -305,6 +306,7 @@ function InvoiceDetails({ invoiceId, onClose }) {
                         </div>
                     </div>
                 </div>
+            </div>
 
                 <div className="mt-8 p-6 bg-slate-50 dark:bg-[#201d2c]/40 border border-slate-200/60 dark:border-[#2e2944] rounded-xl shadow-inner print-hidden transition-colors duration-300">
                     <h2 className="text-sm font-bold text-slate-800 dark:text-gray-200 mb-4">
