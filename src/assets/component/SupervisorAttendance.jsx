@@ -93,6 +93,18 @@ function SupervisorAttendance() {
                     }
                 }
 
+                // Auto-calculate default overtime based on system settings shift_hours
+                const sh = settings.shift_hours || 8;
+                let defaultOT = 0;
+                if (!isNightDefault) {
+                    const [inH, inM] = checkIn.split(':').map(Number);
+                    const [outH, outM] = checkOut.split(':').map(Number);
+                    if (!isNaN(inH) && !isNaN(inM) && !isNaN(outH) && !isNaN(outM)) {
+                        const diffHours = (outH * 60 + outM - (inH * 60 + inM)) / 60;
+                        defaultOT = diffHours > sh ? parseFloat((diffHours - sh).toFixed(2)) : 0;
+                    }
+                }
+
                 initialStates[emp._id] = {
                     employeeId: emp._id,
                     name: emp.name,
@@ -103,7 +115,7 @@ function SupervisorAttendance() {
                     checkOut,
                     nightCheckIn,
                     nightCheckOut,
-                    overtimeHours: 0,
+                    overtimeHours: defaultOT,
                     isNightShift: isNightDefault,
                     nightShiftHours: isNightDefault ? 8 : 0
                 };
@@ -148,14 +160,41 @@ function SupervisorAttendance() {
         }
     };
 
+    const calculateOvertime = (checkInStr, checkOutStr) => {
+        if (!checkInStr || !checkOutStr) return 0;
+        const [inH, inM] = checkInStr.split(':').map(Number);
+        const [outH, outM] = checkOutStr.split(':').map(Number);
+        if (isNaN(inH) || isNaN(inM) || isNaN(outH) || isNaN(outM)) return 0;
+
+        let inMinutes = inH * 60 + inM;
+        let outMinutes = outH * 60 + outM;
+
+        if (outMinutes < inMinutes) {
+            outMinutes += 24 * 60;
+        }
+
+        const diffHours = (outMinutes - inMinutes) / 60;
+        const sh = settings.shift_hours || 8;
+        const ot = diffHours - sh;
+        return ot > 0 ? parseFloat(ot.toFixed(2)) : 0;
+    };
+
     const handleStatusChange = (empId, status) => {
-        setAttendanceForm(prev => ({
-            ...prev,
-            [empId]: {
-                ...prev[empId],
-                status
+        setAttendanceForm(prev => {
+            const empRecord = prev[empId];
+            const updated = { ...empRecord, status };
+            if (status !== 'Present') {
+                updated.overtimeHours = 0;
+            } else {
+                if (updated.workedDay) {
+                    updated.overtimeHours = calculateOvertime(updated.checkIn, updated.checkOut);
+                }
             }
-        }));
+            return {
+                ...prev,
+                [empId]: updated
+            };
+        });
     };
 
     const handleShiftToggle = (empId, type) => {
@@ -164,6 +203,11 @@ function SupervisorAttendance() {
             const updated = { ...empRecord };
             if (type === 'day') {
                 updated.workedDay = !empRecord.workedDay;
+                if (updated.workedDay) {
+                    updated.overtimeHours = calculateOvertime(updated.checkIn, updated.checkOut);
+                } else {
+                    updated.overtimeHours = 0;
+                }
             } else if (type === 'night') {
                 updated.workedNight = !empRecord.workedNight;
                 updated.isNightShift = updated.workedNight;
@@ -177,13 +221,21 @@ function SupervisorAttendance() {
     };
 
     const handleTimeChange = (empId, field, val) => {
-        setAttendanceForm(prev => ({
-            ...prev,
-            [empId]: {
-                ...prev[empId],
-                [field]: val
+        setAttendanceForm(prev => {
+            const empRecord = prev[empId];
+            const updated = { ...empRecord, [field]: val };
+            
+            // Recalculate OT if checkIn/checkOut changed and Day Shift is active
+            if (field === 'checkIn' || field === 'checkOut') {
+                if (updated.status === 'Present' && updated.workedDay) {
+                    updated.overtimeHours = calculateOvertime(updated.checkIn, updated.checkOut);
+                }
             }
-        }));
+            return {
+                ...prev,
+                [empId]: updated
+            };
+        });
     };
 
     const handleSubmit = async (e) => {

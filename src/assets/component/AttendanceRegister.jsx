@@ -1,13 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_BASE_URL } from '../../config';
+import { useSettings } from '../../context/SettingsContext';
 
 function AttendanceRegister() {
+    const { settings, refreshSettings } = useSettings();
     const [employees, setEmployees] = useState([]);
     const [attendanceLogs, setAttendanceLogs] = useState([]);
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1); // 1-indexed (1-12)
     const [shiftHours, setShiftHours] = useState(8);
+
+    useEffect(() => {
+        if (settings && settings.shift_hours) {
+            setShiftHours(settings.shift_hours);
+        }
+    }, [settings]);
+
+    const handleShiftHoursChange = async (newHours) => {
+        setShiftHours(newHours);
+        try {
+            await axios.put(`${API_BASE_URL}/api/admin/system-settings`, {
+                shift_hours: newHours
+            });
+            if (refreshSettings) {
+                refreshSettings();
+            }
+        } catch (err) {
+            console.error("Error saving shift hours setting:", err);
+        }
+    };
+
     const [loading, setLoading] = useState(true);
 
     // Modal Edit states
@@ -158,7 +181,19 @@ function AttendanceRegister() {
             ]);
 
             if (pendingRes.data && pendingRes.data.success) {
-                setPendingApprovals(pendingRes.data.data);
+                // Pre-calculate overtime for pending records if they have checkIn/checkOut but overtimeHours is 0
+                const enriched = pendingRes.data.data.map(rec => {
+                    if (rec.status === 'Present' && rec.workedDay && rec.checkIn && rec.checkOut) {
+                        if (!rec.overtimeHours || rec.overtimeHours === 0) {
+                            const dayCheckInStr = formatTimeFromDate(rec.checkIn, '');
+                            const dayCheckOutStr = formatTimeFromDate(rec.checkOut, '');
+                            const ot = calculateOvertime(dayCheckInStr, dayCheckOutStr, false);
+                            return { ...rec, overtimeHours: ot };
+                        }
+                    }
+                    return rec;
+                });
+                setPendingApprovals(enriched);
             }
             if (logsRes.data && logsRes.data.success) {
                 setRequestLogs(logsRes.data.data);
@@ -403,7 +438,7 @@ function AttendanceRegister() {
         return parseFloat(diffHours.toFixed(2));
     };
 
-    const calculateOvertime = (checkInStr, checkOutStr, isNightShiftVal) => {
+    function calculateOvertime(checkInStr, checkOutStr, isNightShiftVal) {
         if (!checkInStr || !checkOutStr) return 0;
         const [inH, inM] = checkInStr.split(':').map(Number);
         const [outH, outM] = checkOutStr.split(':').map(Number);
@@ -421,9 +456,9 @@ function AttendanceRegister() {
         const diffHours = (outMinutes - inMinutes) / 60;
         const ot = diffHours - shiftHours;
         return ot > 0 ? parseFloat(ot.toFixed(2)) : 0;
-    };
+    }
 
-    const formatTimeFromDate = (dateStr, defaultVal = '') => {
+    function formatTimeFromDate(dateStr, defaultVal = '') {
         if (!dateStr) return defaultVal;
         try {
             return new Date(dateStr).toLocaleTimeString('en-US', {
@@ -435,7 +470,7 @@ function AttendanceRegister() {
         } catch (e) {
             return defaultVal;
         }
-    };
+    }
 
     const handleModalFormChange = (updatedFields) => {
         setModalForm(prev => {
@@ -1063,7 +1098,7 @@ function AttendanceRegister() {
                                         min="4"
                                         max="16"
                                         value={shiftHours}
-                                        onChange={(e) => setShiftHours(parseInt(e.target.value) || 8)}
+                                        onChange={(e) => handleShiftHoursChange(parseInt(e.target.value) || 8)}
                                         className="w-24 px-4 py-2 bg-slate-50 dark:bg-[#201d2c] border border-slate-200 dark:border-[#37314e] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition text-center"
                                     />
                                 </div>
