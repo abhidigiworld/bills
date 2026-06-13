@@ -312,6 +312,82 @@ function InvoiceComponent({ invoiceDetails }) {
                             </button>
                         </div>
 
+                        {/* Mobile/Tablet Item Card Editor - hidden on lg screens and hidden in print */}
+                        {items.length > 0 && (
+                            <div className="lg:hidden p-5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl space-y-4 transition-colors duration-300 print-hidden">
+                                <h4 className="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider">Edit Added Items</h4>
+                                <div className="space-y-4 max-h-[400px] overflow-y-auto pr-1">
+                                    {items.map((item, index) => (
+                                        <div key={item.id} className="p-3 bg-slate-50 dark:bg-[#201d2c]/45 border border-slate-200 dark:border-[#37314e]/60 rounded-lg space-y-3">
+                                            <div className="flex justify-between items-center border-b border-slate-200/50 dark:border-[#37314e]/50 pb-1.5">
+                                                <span className="text-[11px] font-bold text-slate-400">Item #{index + 1}</span>
+                                                <button
+                                                    onClick={() => {
+                                                        const updated = items.filter(i => i.id !== item.id).map((i, idx) => ({ ...i, id: idx + 1 }));
+                                                        setItems(updated);
+                                                    }}
+                                                    className="text-red-500 hover:text-red-655 text-xs font-bold transition"
+                                                >
+                                                    Remove
+                                                </button>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <div>
+                                                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Description</label>
+                                                    <input
+                                                        type="text"
+                                                        value={item.description}
+                                                        onChange={(e) => handleInputChange2(e, item.id, 'description')}
+                                                        className="w-full px-3 py-1.5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded-md text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition"
+                                                    />
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    <div>
+                                                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">HSN/SAC</label>
+                                                        <input
+                                                            type="text"
+                                                            value={item.hsnAsc}
+                                                            onChange={(e) => handleInputChange2(e, item.id, 'hsnAsc')}
+                                                            className="w-full px-3 py-1.5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded-md text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Total Value</label>
+                                                        <input
+                                                            type="text"
+                                                            value={item.totalValue}
+                                                            onChange={(e) => handleTotalValueChange(e, item.id)}
+                                                            className="w-full px-3 py-1.5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded-md text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    <div>
+                                                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Quantity</label>
+                                                        <input
+                                                            type="number"
+                                                            value={item.quantity}
+                                                            onChange={(e) => handleQuantityOrRateChange(e, item.id, 'quantity')}
+                                                            className="w-full px-3 py-1.5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded-md text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Rate</label>
+                                                        <input
+                                                            type="number"
+                                                            value={item.rate}
+                                                            onChange={(e) => handleQuantityOrRateChange(e, item.id, 'rate')}
+                                                            className="w-full px-3 py-1.5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded-md text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
                         <div className="p-5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl space-y-3 transition-colors duration-300">
                             <h4 className="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">Taxes & Discounts</h4>
                             <input

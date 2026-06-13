@@ -477,8 +477,9 @@ function ManageUsers() {
                             <div className="text-indigo-600 dark:text-violet-400 text-xl font-bold animate-pulse">Loading accounts...</div>
                         </div>
                     ) : (
-                        <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-6 transition-colors duration-300">
-                            <div className="overflow-x-auto">
+                        <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-4 sm:p-6 transition-colors duration-300">
+                            {/* Desktop View Table */}
+                            <div className="hidden md:block overflow-x-auto">
                                 <table className="w-full text-sm text-left border-collapse">
                                     <thead>
                                         <tr className="border-b border-slate-200 dark:border-[#262235] text-slate-500 dark:text-gray-400 font-bold uppercase text-xs">
@@ -523,7 +524,7 @@ function ManageUsers() {
                                                     <td className="px-4 py-4 text-center">
                                                         <button
                                                             onClick={() => handleDeleteUser(user._id, user.name)}
-                                                            className="text-red-500 hover:text-red-600 font-bold text-xs px-3 py-1.5 rounded-md border border-red-200 dark:border-red-900/35 hover:bg-red-50 dark:hover:bg-red-950/20 transition duration-150"
+                                                            className="text-red-500 hover:text-red-655 font-bold text-xs px-3 py-1.5 rounded-md border border-red-200 dark:border-red-900/35 hover:bg-red-50 dark:hover:bg-red-950/20 transition duration-150"
                                                         >
                                                             Delete
                                                         </button>
@@ -539,6 +540,60 @@ function ManageUsers() {
                                         )}
                                     </tbody>
                                 </table>
+                            </div>
+
+                            {/* Mobile View Card Grid */}
+                            <div className="md:hidden space-y-4">
+                                {filteredUsers.length > 0 ? (
+                                    filteredUsers.map((user, index) => (
+                                        <div key={user._id} className="p-4 bg-slate-50 dark:bg-[#201d2c]/40 border border-slate-100 dark:border-[#2b273d] rounded-xl flex flex-col gap-3">
+                                            <div className="flex justify-between items-start border-b border-slate-200/50 dark:border-[#37314e]/50 pb-2">
+                                                <div>
+                                                    <span className="text-[11px] font-bold text-slate-400">#{index + 1}</span>
+                                                    <h4 className="text-sm font-bold text-slate-900 dark:text-white mt-0.5">{user.name}</h4>
+                                                    <p className="text-xs text-slate-500 dark:text-gray-400 font-mono mt-0.5 truncate max-w-[240px]" title={user.email}>{user.email}</p>
+                                                </div>
+                                                <button
+                                                    onClick={() => handleDeleteUser(user._id, user.name)}
+                                                    className="text-red-500 hover:text-red-655 font-bold text-xs px-2.5 py-1.5 rounded-md border border-red-200 dark:border-red-900/35 hover:bg-red-50 dark:hover:bg-red-950/20 transition duration-150"
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-3 pt-1">
+                                                <div className="flex flex-col gap-1.5">
+                                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Role</span>
+                                                    <select
+                                                        value={user.role || 'user'}
+                                                        onChange={(e) => handleRoleChange(user._id, e.target.value)}
+                                                        className="w-full px-2 py-1.5 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] rounded-md text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 transition font-medium"
+                                                    >
+                                                        <option value="user">User</option>
+                                                        <option value="supervisor">Supervisor</option>
+                                                        <option value="admin">Admin</option>
+                                                    </select>
+                                                </div>
+                                                <div className="flex flex-col gap-1.5">
+                                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Verification</span>
+                                                    <button
+                                                        onClick={() => handleVerificationToggle(user._id, user.isVerified)}
+                                                        className={`w-full py-1.5 rounded-md text-xs font-bold transition duration-200 ${
+                                                            user.isVerified
+                                                                ? 'bg-green-100 text-green-700 dark:bg-green-950/40 dark:text-green-400'
+                                                                : 'bg-red-100 text-red-700 dark:bg-red-950/40 dark:text-red-400'
+                                                        }`}
+                                                    >
+                                                        {user.isVerified ? 'Verified ✓' : 'Unverified ✗'}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="text-center py-6 text-slate-400 text-sm font-medium">
+                                        No registered user accounts found.
+                                    </div>
+                                )}
                             </div>
                         </div>
                     )}
@@ -567,8 +622,9 @@ function ManageUsers() {
                             <div className="text-indigo-600 dark:text-violet-400 text-xl font-bold animate-pulse">Loading login history logs...</div>
                         </div>
                     ) : (
-                        <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-6 transition-colors duration-300">
-                            <div className="overflow-x-auto">
+                        <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-4 sm:p-6 transition-colors duration-300">
+                            {/* Desktop View Table */}
+                            <div className="hidden md:block overflow-x-auto">
                                 <table className="w-full text-sm text-left border-collapse">
                                     <thead>
                                         <tr className="border-b border-slate-200 dark:border-[#262235] text-slate-500 dark:text-gray-400 font-bold uppercase text-xs">
@@ -617,6 +673,52 @@ function ManageUsers() {
                                         )}
                                     </tbody>
                                 </table>
+                            </div>
+
+                            {/* Mobile View Card Grid */}
+                            <div className="md:hidden space-y-4">
+                                {filteredLogs.length > 0 ? (
+                                    filteredLogs.map((log, index) => (
+                                        <div key={log._id} className="p-4 bg-slate-50 dark:bg-[#201d2c]/40 border border-slate-100 dark:border-[#2b273d] rounded-xl flex flex-col gap-2">
+                                            <div className="flex justify-between items-center border-b border-slate-200/50 dark:border-[#37314e]/50 pb-2">
+                                                <div>
+                                                    <span className="text-[10px] font-bold text-slate-400">#{index + 1}</span>
+                                                    <h4 className="text-sm font-bold text-slate-900 dark:text-white mt-0.5">{log.name}</h4>
+                                                    <p className="text-xs text-slate-500 dark:text-gray-400 font-mono mt-0.5 max-w-[180px] truncate">{log.email}</p>
+                                                </div>
+                                                <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${
+                                                    log.role === 'admin' 
+                                                        ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-200/30' 
+                                                        : 'bg-indigo-100 text-indigo-800 dark:bg-indigo-950/40 dark:text-indigo-400 border border-indigo-200/30'
+                                                }`}>
+                                                    {log.role}
+                                                </span>
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-2 text-xs pt-1">
+                                                <div className="flex flex-col">
+                                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-0.5">IP Address</span>
+                                                    <span className="font-mono text-slate-700 dark:text-gray-300">{log.ipAddress || 'N/A'}</span>
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-0.5">Device</span>
+                                                    <span className="text-slate-700 dark:text-gray-350 truncate" title={log.userAgent}>
+                                                        {log.userAgent ? parseUserAgent(log.userAgent) : 'N/A'}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-col pt-1.5 border-t border-slate-100 dark:border-[#2b273d]/50">
+                                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wide mb-0.5">Login Time</span>
+                                                <span className="text-[11px] text-slate-600 dark:text-gray-300">
+                                                    {new Date(log.loginTime).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'medium' })}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="text-center py-6 text-slate-400 text-sm font-medium">
+                                        No login history logs found.
+                                    </div>
+                                )}
                             </div>
                         </div>
                     )}

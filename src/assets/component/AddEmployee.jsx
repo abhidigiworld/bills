@@ -171,79 +171,152 @@ function AddEmployee() {
             </div>
 
             {/* Registered Employees Table */}
-            <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-6 transition-colors duration-300">
-                <div className="overflow-x-auto">
-                    {loading ? (
-                        <div className="text-center py-10">
-                            <div className="text-indigo-600 dark:text-violet-400 text-sm font-bold animate-pulse">Loading employees...</div>
+            <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-4 sm:p-6 transition-colors duration-300">
+                {loading ? (
+                    <div className="text-center py-10">
+                        <div className="text-indigo-600 dark:text-violet-400 text-sm font-bold animate-pulse">Loading employees...</div>
+                    </div>
+                ) : employees.length > 0 ? (
+                    <>
+                        {/* Desktop Table View */}
+                        <div className="hidden md:block overflow-x-auto">
+                            <table className="w-full text-sm text-left border-collapse table-auto">
+                                <thead>
+                                    <tr className="border-b border-slate-200 dark:border-[#262235] text-slate-500 dark:text-gray-400 font-bold uppercase text-xs">
+                                        <th className="px-4 py-3">Name</th>
+                                        <th className="px-4 py-3 whitespace-nowrap">Email</th>
+                                        <th className="px-4 py-3">Designation</th>
+                                        <th className="px-4 py-3">Location</th>
+                                        <th className="px-4 py-3 whitespace-nowrap">Joined Date</th>
+                                        <th className="px-4 py-3 whitespace-nowrap">Gross Salary</th>
+                                        <th className="px-4 py-3 whitespace-nowrap">Shift</th>
+                                        <th className="px-4 py-3 whitespace-nowrap">Status</th>
+                                        <th className="px-4 py-3 text-center whitespace-nowrap">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {employees.map((emp) => (
+                                        <tr key={emp._id} className="border-b border-slate-100 dark:border-[#262235] hover:bg-slate-50 dark:hover:bg-[#201d2c]/50 transition duration-150">
+                                            <td className="px-4 py-3 font-semibold text-slate-900 dark:text-white">{emp.name}</td>
+                                            <td className="px-4 py-3 text-slate-600 dark:text-gray-300 font-mono text-xs whitespace-nowrap">{emp.email || '-'}</td>
+                                            <td className="px-4 py-3 text-slate-600 dark:text-gray-300">{emp.designation || '-'}</td>
+                                            <td className="px-4 py-3 text-slate-600 dark:text-gray-300">{emp.location || '-'}</td>
+                                            <td className="px-4 py-3 text-slate-600 dark:text-gray-300 whitespace-nowrap">
+                                                {emp.dateOfJoining ? new Date(emp.dateOfJoining).toLocaleDateString() : '-'}
+                                            </td>
+                                            <td className="px-4 py-3 font-semibold text-slate-700 dark:text-gray-200 whitespace-nowrap">₹{Math.floor(emp.grossSalary)?.toLocaleString()}</td>
+                                            <td className="px-4 py-3 text-slate-600 dark:text-gray-300 whitespace-nowrap">
+                                                <span className={`inline-block text-xs font-bold px-2.5 py-0.5 rounded-full ${
+                                                    emp.defaultShift && emp.defaultShift.includes('Night') ? 'bg-indigo-100 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400' :
+                                                    'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400'
+                                                }`}>
+                                                    {emp.defaultShift || 'Day'}
+                                                </span>
+                                            </td>
+                                            <td className="px-4 py-3 whitespace-nowrap">
+                                                <span className={`inline-block text-xs font-bold px-2.5 py-0.5 rounded-full ${
+                                                    emp.status === 'Active' ? 'bg-green-100 dark:bg-green-950/50 text-green-700 dark:text-green-400' :
+                                                    emp.status === 'On Hold' ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400' :
+                                                    emp.status === 'On Holiday' ? 'bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-400' :
+                                                    emp.status === 'Discontinued' ? 'bg-rose-100 dark:bg-rose-950/50 text-rose-700 dark:text-rose-400' :
+                                                    'bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-400'
+                                                }`}>
+                                                    {emp.status}
+                                                </span>
+                                            </td>
+                                            <td className="px-4 py-3 flex items-center justify-center gap-2 whitespace-nowrap">
+                                                <button
+                                                    onClick={() => handleEdit(emp)}
+                                                    className="bg-indigo-50 dark:bg-indigo-950 hover:bg-indigo-100 dark:hover:bg-[#312a44] text-indigo-700 dark:text-indigo-300 px-3 py-1.5 rounded-md text-xs font-bold transition duration-200"
+                                                >
+                                                    Edit
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(emp._id)}
+                                                    className="bg-red-50 dark:bg-red-950 hover:bg-red-100 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 px-3 py-1.5 rounded-md text-xs font-bold transition duration-200"
+                                                >
+                                                    Delete
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
-                    ) : employees.length > 0 ? (
-                        <table className="w-full text-sm text-left border-collapse table-auto">
-                            <thead>
-                                <tr className="border-b border-slate-200 dark:border-[#262235] text-slate-500 dark:text-gray-400 font-bold uppercase text-xs">
-                                    <th className="px-4 py-3">Name</th>
-                                    <th className="px-4 py-3 whitespace-nowrap">Email</th>
-                                    <th className="px-4 py-3">Designation</th>
-                                    <th className="px-4 py-3">Location</th>
-                                    <th className="px-4 py-3 whitespace-nowrap">Joined Date</th>
-                                    <th className="px-4 py-3 whitespace-nowrap">Gross Salary</th>
-                                    <th className="px-4 py-3 whitespace-nowrap">Shift</th>
-                                    <th className="px-4 py-3 whitespace-nowrap">Status</th>
-                                    <th className="px-4 py-3 text-center whitespace-nowrap">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {employees.map((emp) => (
-                                    <tr key={emp._id} className="border-b border-slate-100 dark:border-[#262235] hover:bg-slate-50 dark:hover:bg-[#201d2c]/50 transition duration-150">
-                                        <td className="px-4 py-3 font-semibold text-slate-900 dark:text-white">{emp.name}</td>
-                                        <td className="px-4 py-3 text-slate-600 dark:text-gray-300 font-mono text-xs whitespace-nowrap">{emp.email || '-'}</td>
-                                        <td className="px-4 py-3 text-slate-600 dark:text-gray-300">{emp.designation || '-'}</td>
-                                        <td className="px-4 py-3 text-slate-600 dark:text-gray-300">{emp.location || '-'}</td>
-                                        <td className="px-4 py-3 text-slate-600 dark:text-gray-300 whitespace-nowrap">
-                                            {emp.dateOfJoining ? new Date(emp.dateOfJoining).toLocaleDateString() : '-'}
-                                        </td>
-                                        <td className="px-4 py-3 font-semibold text-slate-700 dark:text-gray-200 whitespace-nowrap">₹{Math.floor(emp.grossSalary)?.toLocaleString()}</td>
-                                        <td className="px-4 py-3 text-slate-600 dark:text-gray-300 whitespace-nowrap">
-                                            <span className={`inline-block text-xs font-bold px-2.5 py-0.5 rounded-full ${
-                                                emp.defaultShift === 'Night' ? 'bg-indigo-100 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400' :
-                                                'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400'
+
+                        {/* Mobile View Card List */}
+                        <div className="block md:hidden space-y-4">
+                            {employees.map((emp) => (
+                                <div key={emp._id} className="bg-slate-50 dark:bg-[#201d2c]/40 border border-slate-200/50 dark:border-[#262235]/65 rounded-2xl p-4 space-y-3 hover:shadow-md transition">
+                                    <div className="flex justify-between items-start">
+                                        <div className="min-w-0 flex-1 pr-2">
+                                            <h4 className="text-sm font-bold text-slate-900 dark:text-white truncate">{emp.name}</h4>
+                                            <p className="text-xs text-slate-400 font-mono mt-0.5 truncate">{emp.email || '-'}</p>
+                                        </div>
+                                        <span className={`inline-block text-[10px] font-black px-2.5 py-0.5 rounded-full shrink-0 ${
+                                            emp.status === 'Active' ? 'bg-green-50 dark:bg-green-950/20 text-green-600 dark:text-green-400 border border-green-200/10' :
+                                            emp.status === 'On Hold' ? 'bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border border-amber-200/10' :
+                                            emp.status === 'On Holiday' ? 'bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border border-blue-200/10' :
+                                            emp.status === 'Discontinued' ? 'bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-450 border border-rose-200/10' :
+                                            'bg-slate-100 dark:bg-slate-900 text-slate-650 dark:text-slate-400'
+                                        }`}>
+                                            {emp.status}
+                                        </span>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-2 text-xs border-t border-b border-slate-100 dark:border-[#262235]/50 py-2">
+                                        <div>
+                                            <span className="text-slate-400 block text-[10px] uppercase font-bold tracking-wider">Designation</span>
+                                            <span className="text-slate-800 dark:text-gray-200 font-semibold">{emp.designation || '-'}</span>
+                                        </div>
+                                        <div>
+                                            <span className="text-slate-400 block text-[10px] uppercase font-bold tracking-wider">Location</span>
+                                            <span className="text-slate-800 dark:text-gray-200 font-semibold">{emp.location || '-'}</span>
+                                        </div>
+                                        <div>
+                                            <span className="text-slate-400 block text-[10px] uppercase font-bold tracking-wider">Joined Date</span>
+                                            <span className="text-slate-800 dark:text-gray-200 font-semibold">
+                                                {emp.dateOfJoining ? new Date(emp.dateOfJoining).toLocaleDateString() : '-'}
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <span className="text-slate-400 block text-[10px] uppercase font-bold tracking-wider">Gross Salary</span>
+                                            <span className="text-slate-800 dark:text-gray-200 font-semibold">₹{Math.floor(emp.grossSalary)?.toLocaleString()}</span>
+                                        </div>
+                                        <div className="col-span-2">
+                                            <span className="text-slate-400 block text-[10px] uppercase font-bold tracking-wider">Default Shift</span>
+                                            <span className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-md mt-0.5 ${
+                                                emp.defaultShift && emp.defaultShift.includes('Night') ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400' :
+                                                'bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400'
                                             }`}>
                                                 {emp.defaultShift || 'Day'}
                                             </span>
-                                        </td>
-                                        <td className="px-4 py-3 whitespace-nowrap">
-                                            <span className={`inline-block text-xs font-bold px-2.5 py-0.5 rounded-full ${
-                                                emp.status === 'Active' ? 'bg-green-100 dark:bg-green-950/50 text-green-700 dark:text-green-400' :
-                                                emp.status === 'On Hold' ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400' :
-                                                emp.status === 'On Holiday' ? 'bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-400' :
-                                                emp.status === 'Discontinued' ? 'bg-rose-100 dark:bg-rose-950/50 text-rose-700 dark:text-rose-400' :
-                                                'bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-400'
-                                            }`}>
-                                                {emp.status}
-                                            </span>
-                                        </td>
-                                        <td className="px-4 py-3 flex items-center justify-center gap-2 whitespace-nowrap">
-                                            <button
-                                                onClick={() => handleEdit(emp)}
-                                                className="bg-indigo-50 dark:bg-indigo-950 hover:bg-indigo-100 dark:hover:bg-[#312a44] text-indigo-700 dark:text-indigo-300 px-3 py-1.5 rounded-md text-xs font-bold transition duration-200"
-                                            >
-                                                Edit
-                                            </button>
-                                            <button
-                                                onClick={() => handleDelete(emp._id)}
-                                                className="bg-red-50 dark:bg-red-950 hover:bg-red-100 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 px-3 py-1.5 rounded-md text-xs font-bold transition duration-200"
-                                            >
-                                                Delete
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    ) : (
-                        <p className="text-gray-500 text-center py-6 font-medium">No employees registered in the system.</p>
-                    )}
-                </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-2 pt-1">
+                                        <button
+                                            onClick={() => handleEdit(emp)}
+                                            className="flex-1 bg-indigo-50 dark:bg-indigo-950 hover:bg-indigo-100 dark:hover:bg-[#312a44] text-indigo-700 dark:text-indigo-300 py-2 rounded-xl text-xs font-bold transition duration-200 text-center"
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(emp._id)}
+                                            className="flex-1 bg-red-50 dark:bg-red-950 hover:bg-red-100 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 py-2 rounded-xl text-xs font-bold transition duration-200 text-center"
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </>
+                ) : (
+                    <div className="text-center py-10 text-slate-500 dark:text-gray-400 text-sm font-medium">
+                        No employees registered in the system.
+                    </div>
+                )}
             </div>
 
             {/* REGISTRATION & EDIT MODAL OVERLAY */}

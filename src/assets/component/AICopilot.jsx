@@ -82,7 +82,10 @@ function AICopilot() {
   ];
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 print-hidden font-sans">
+    <div className={isOpen 
+      ? "fixed z-50 print-hidden font-sans max-[479px]:bottom-0 max-[479px]:right-0 max-[479px]:left-0 min-[480px]:bottom-6 min-[480px]:right-6" 
+      : "fixed bottom-6 right-6 z-50 print-hidden font-sans"
+    }>
       {/* Floating Trigger Button */}
       {!isOpen && (
         <button
@@ -101,27 +104,32 @@ function AICopilot() {
 
       {/* Chat Drawer Interface */}
       {isOpen && (
-        <div className="flex flex-col w-[350px] sm:w-[380px] h-[500px] sm:h-[550px] bg-white/95 dark:bg-[#181622]/95 backdrop-blur-md border border-slate-200 dark:border-[#2b263e] shadow-2xl rounded-xl overflow-hidden transition-all duration-300 animate-fade-in-up">
+        <div className="flex flex-col max-[479px]:w-full max-[479px]:h-[75vh] max-[479px]:rounded-t-2xl max-[479px]:rounded-b-none w-[350px] sm:w-[380px] h-[500px] sm:h-[550px] bg-white/95 dark:bg-[#181622]/95 backdrop-blur-md border border-slate-200 dark:border-[#2b263e] shadow-2xl rounded-xl overflow-hidden transition-all duration-300 animate-fade-in-up">
           {/* Header */}
-          <div className="flex items-center justify-between px-5 py-4 bg-indigo-600 dark:bg-[#201d2c] border-b border-indigo-700/20 dark:border-[#2b263e] text-white">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white font-black text-sm animate-pulse">
-                🤖
+          <div className="flex flex-col px-5 py-3.5 bg-indigo-600 dark:bg-[#201d2c] border-b border-indigo-700/20 dark:border-[#2b263e] text-white">
+            {/* Drag Handle for Bottom Sheet on Mobile */}
+            <div className="w-10 h-1 bg-indigo-200/40 dark:bg-[#3d3854] rounded-full mx-auto mb-2.5 min-[480px]:hidden"></div>
+            
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white font-black text-sm animate-pulse">
+                  🤖
+                </div>
+                <div>
+                  <h3 className="text-sm font-extrabold tracking-tight">ABHI digi AI Copilot</h3>
+                  <span className="text-[10px] text-indigo-200 dark:text-[#a59ebf] font-semibold">Secure Helper</span>
+                </div>
               </div>
-              <div>
-                <h3 className="text-sm font-extrabold tracking-tight">ABHI digi AI Copilot</h3>
-                <span className="text-[10px] text-indigo-200 dark:text-[#a59ebf] font-semibold">Secure Helper</span>
-              </div>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="p-1.5 rounded-lg hover:bg-white/10 dark:hover:bg-[#2e2a3f] transition duration-200"
+                title="Close chat"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="p-1.5 rounded-lg hover:bg-white/10 dark:hover:bg-[#2e2a3f] transition duration-200"
-              title="Close chat"
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
           </div>
 
           {/* Messages Area */}

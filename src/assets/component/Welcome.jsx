@@ -571,7 +571,7 @@ function WelcomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             
             {/* Salary Slips list */}
-            <div className="bg-white dark:bg-[#181622] border border-slate-200/50 dark:border-[#262235]/65 rounded-3xl p-6 shadow-sm flex flex-col justify-between">
+            <div className="bg-white dark:bg-[#181622] border border-slate-200/50 dark:border-[#262235]/65 rounded-3xl p-4 sm:p-6 shadow-sm flex flex-col justify-between">
               <div>
                 <h3 className="text-base font-extrabold text-slate-900 dark:text-white tracking-tight mb-1">My Salary Slips</h3>
                 <p className="text-[10px] text-slate-400 dark:text-gray-500 mb-4">View or print salary statements dispatched by the administrator</p>
@@ -579,41 +579,63 @@ function WelcomePage() {
                 {salarySlips.length === 0 ? (
                   <div className="py-12 text-center text-slate-400 text-xs font-semibold">No salary slips found</div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                      <thead>
-                        <tr className="border-b border-slate-100 dark:border-[#262235]/50">
-                          <th className="pb-3 text-[10px] font-black text-slate-400 uppercase tracking-wider">Month</th>
-                          <th className="pb-3 text-[10px] font-black text-slate-400 uppercase tracking-wider">Paid Days</th>
-                          <th className="pb-3 text-[10px] font-black text-slate-400 uppercase tracking-wider">Net Salary</th>
-                          <th className="pb-3 text-right text-[10px] font-black text-slate-400 uppercase tracking-wider">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-50/50 dark:divide-[#262235]/20">
-                        {salarySlips.map((slip) => (
-                          <tr key={slip._id} className="hover:bg-slate-50/50 dark:hover:bg-[#201d2c]/20 transition">
-                            <td className="py-3 text-xs font-bold text-slate-800 dark:text-slate-200">{slip.monthOfSalary}</td>
-                            <td className="py-3 text-xs font-semibold text-slate-500 dark:text-gray-400">{slip.paidDays} Days</td>
-                            <td className="py-3 text-xs font-extrabold text-slate-800 dark:text-slate-200">₹{(slip.netSalary || 0).toLocaleString('en-IN')}</td>
-                            <td className="py-3 text-right">
-                              <button
-                                onClick={() => setActiveSlip(slip)}
-                                className="bg-indigo-50 hover:bg-indigo-100 dark:bg-violet-950/30 dark:hover:bg-violet-900/40 text-indigo-600 dark:text-violet-400 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition shadow-sm border border-indigo-100/10"
-                              >
-                                View Slip
-                              </button>
-                            </td>
+                  <>
+                    {/* Desktop View */}
+                    <div className="hidden md:block overflow-x-auto">
+                      <table className="w-full text-left border-collapse">
+                        <thead>
+                          <tr className="border-b border-slate-100 dark:border-[#262235]/50">
+                            <th className="pb-3 text-[10px] font-black text-slate-400 uppercase tracking-wider">Month</th>
+                            <th className="pb-3 text-[10px] font-black text-slate-400 uppercase tracking-wider">Paid Days</th>
+                            <th className="pb-3 text-[10px] font-black text-slate-400 uppercase tracking-wider">Net Salary</th>
+                            <th className="pb-3 text-right text-[10px] font-black text-slate-400 uppercase tracking-wider">Action</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                        </thead>
+                        <tbody className="divide-y divide-slate-50/50 dark:divide-[#262235]/20">
+                          {salarySlips.map((slip) => (
+                            <tr key={slip._id} className="hover:bg-slate-50/50 dark:hover:bg-[#201d2c]/20 transition">
+                              <td className="py-3 text-xs font-bold text-slate-800 dark:text-slate-200">{slip.monthOfSalary}</td>
+                              <td className="py-3 text-xs font-semibold text-slate-500 dark:text-gray-400">{slip.paidDays} Days</td>
+                              <td className="py-3 text-xs font-extrabold text-slate-800 dark:text-slate-200">₹{(slip.netSalary || 0).toLocaleString('en-IN')}</td>
+                              <td className="py-3 text-right">
+                                <button
+                                  onClick={() => setActiveSlip(slip)}
+                                  className="bg-indigo-50 hover:bg-indigo-100 dark:bg-violet-950/30 dark:hover:bg-violet-900/40 text-indigo-600 dark:text-violet-400 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition shadow-sm border border-indigo-100/10"
+                                >
+                                  View Slip
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Mobile View */}
+                    <div className="block md:hidden space-y-3">
+                      {salarySlips.map((slip) => (
+                        <div key={slip._id} className="bg-slate-50 dark:bg-[#201d2c]/40 border border-slate-200/50 dark:border-[#262235]/65 rounded-2xl p-3 flex justify-between items-center hover:shadow-sm transition">
+                          <div>
+                            <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200">{slip.monthOfSalary}</h4>
+                            <p className="text-[10px] text-slate-400 mt-0.5">{slip.paidDays} Days worked</p>
+                            <p className="text-xs font-black text-indigo-600 dark:text-violet-400 mt-1">₹{(slip.netSalary || 0).toLocaleString('en-IN')}</p>
+                          </div>
+                          <button
+                            onClick={() => setActiveSlip(slip)}
+                            className="bg-indigo-50 hover:bg-indigo-100 dark:bg-violet-955/30 dark:hover:bg-violet-900/40 text-indigo-650 dark:text-violet-400 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition shadow-sm border border-indigo-100/10 shrink-0"
+                          >
+                            View
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </>
                 )}
               </div>
             </div>
 
             {/* Attendance Records Log */}
-            <div className="bg-white dark:bg-[#181622] border border-slate-200/50 dark:border-[#262235]/65 rounded-3xl p-6 shadow-sm flex flex-col justify-between">
+            <div className="bg-white dark:bg-[#181622] border border-slate-200/50 dark:border-[#262235]/65 rounded-3xl p-4 sm:p-6 shadow-sm flex flex-col justify-between">
               <div>
                 <h3 className="text-base font-extrabold text-slate-900 dark:text-white tracking-tight mb-1">My Attendance Registers</h3>
                 <p className="text-[10px] text-slate-400 dark:text-gray-500 mb-4">Latest check-in, check-out times, and calculated shift durations</p>
@@ -621,32 +643,63 @@ function WelcomePage() {
                 {attendance.length === 0 ? (
                   <div className="py-12 text-center text-slate-400 text-xs font-semibold">No attendance logged yet</div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                      <thead>
-                        <tr className="border-b border-slate-100 dark:border-[#262235]/50">
-                          <th className="pb-3 text-[10px] font-black text-slate-400 uppercase tracking-wider">Date</th>
-                          <th className="pb-3 text-[10px] font-black text-slate-400 uppercase tracking-wider">In</th>
-                          <th className="pb-3 text-[10px] font-black text-slate-400 uppercase tracking-wider">Out</th>
-                          <th className="pb-3 text-right text-[10px] font-black text-slate-400 uppercase tracking-wider">Hours</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-50/50 dark:divide-[#262235]/20">
-                        {attendance.slice(0, 5).map((record) => (
-                          <tr key={record._id} className="hover:bg-slate-50/50 dark:hover:bg-[#201d2c]/20 transition">
-                            <td className="py-3 text-xs font-bold text-slate-800 dark:text-slate-200">
-                              {new Date(record.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
-                            </td>
-                            <td className="py-3 text-xs font-semibold text-slate-500 dark:text-gray-400">{formatTime(record.checkIn)}</td>
-                            <td className="py-3 text-xs font-semibold text-slate-500 dark:text-gray-400">{formatTime(record.checkOut)}</td>
-                            <td className="py-3 text-right text-xs font-extrabold text-slate-800 dark:text-slate-200">
-                              {record.hoursWorked !== undefined ? `${record.hoursWorked.toFixed(1)} hrs` : 'Active'}
-                            </td>
+                  <>
+                    {/* Desktop View */}
+                    <div className="hidden md:block overflow-x-auto">
+                      <table className="w-full text-left border-collapse">
+                        <thead>
+                          <tr className="border-b border-slate-100 dark:border-[#262235]/50">
+                            <th className="pb-3 text-[10px] font-black text-slate-400 uppercase tracking-wider">Date</th>
+                            <th className="pb-3 text-[10px] font-black text-slate-400 uppercase tracking-wider">In</th>
+                            <th className="pb-3 text-[10px] font-black text-slate-400 uppercase tracking-wider">Out</th>
+                            <th className="pb-3 text-right text-[10px] font-black text-slate-400 uppercase tracking-wider">Hours</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                        </thead>
+                        <tbody className="divide-y divide-slate-50/50 dark:divide-[#262235]/20">
+                          {attendance.slice(0, 5).map((record) => (
+                            <tr key={record._id} className="hover:bg-slate-50/50 dark:hover:bg-[#201d2c]/20 transition">
+                              <td className="py-3 text-xs font-bold text-slate-800 dark:text-slate-200">
+                                {new Date(record.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
+                              </td>
+                              <td className="py-3 text-xs font-semibold text-slate-500 dark:text-gray-400">{formatTime(record.checkIn)}</td>
+                              <td className="py-3 text-xs font-semibold text-slate-500 dark:text-gray-400">{formatTime(record.checkOut)}</td>
+                              <td className="py-3 text-right text-xs font-extrabold text-slate-800 dark:text-slate-200">
+                                {record.hoursWorked !== undefined ? `${record.hoursWorked.toFixed(1)} hrs` : 'Active'}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Mobile View */}
+                    <div className="block md:hidden space-y-3">
+                      {attendance.slice(0, 5).map((record) => (
+                        <div key={record._id} className="bg-slate-50 dark:bg-[#201d2c]/40 border border-slate-200/50 dark:border-[#262235]/65 rounded-2xl p-3 space-y-2 hover:shadow-sm transition">
+                          <div className="flex justify-between items-center text-xs">
+                            <span className="font-bold text-slate-800 dark:text-slate-200">
+                              {new Date(record.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', weekday: 'short' })}
+                            </span>
+                            <span className={`text-[10px] font-black px-2 py-0.5 rounded-md ${
+                              record.hoursWorked !== undefined ? 'bg-green-50 dark:bg-green-950/20 text-green-600 dark:text-green-400' : 'bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 animate-pulse'
+                            }`}>
+                              {record.hoursWorked !== undefined ? `${record.hoursWorked.toFixed(1)} hrs` : 'Active'}
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-1.5 text-[10px] border-t border-slate-100 dark:border-[#262235]/50 pt-2 font-medium text-slate-550 dark:text-gray-400">
+                            <div>
+                              <span className="text-slate-400 block text-[9px] uppercase font-bold tracking-wider">Check In</span>
+                              <span>{formatTime(record.checkIn)}</span>
+                            </div>
+                            <div>
+                              <span className="text-slate-400 block text-[9px] uppercase font-bold tracking-wider">Check Out</span>
+                              <span>{formatTime(record.checkOut)}</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </>
                 )}
               </div>
             </div>

@@ -1158,8 +1158,9 @@ function AttendanceRegister() {
                                 <div className="text-indigo-600 dark:text-violet-400 text-xl font-bold animate-pulse">Loading Attendance Records...</div>
                             </div>
                         ) : (
-                            <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-6 transition-colors duration-300">
-                                <div className="overflow-x-auto">
+                            <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-4 sm:p-6 transition-colors duration-300">
+                                {/* Desktop View: Widescreen Horizontal Table */}
+                                <div className="hidden md:block overflow-x-auto">
                                     <table className="w-full text-xs text-left border-collapse">
                                         <thead>
                                             <tr className="border-b border-slate-200 dark:border-[#262235] text-slate-500 dark:text-gray-400 font-bold uppercase">
@@ -1204,8 +1205,8 @@ function AttendanceRegister() {
                                                                 />
                                                             </td>
                                                             <td className="px-3 py-3 font-semibold text-slate-900 dark:text-white border-r border-slate-100 dark:border-[#262235]">{emp.name}</td>
-                                                            <td className="px-3 py-3 text-slate-650 dark:text-gray-300 border-r border-slate-100 dark:border-[#262235]">{emp.designation || '-'}</td>
-                                                            <td className="px-3 py-3 text-slate-650 dark:text-gray-300 border-r border-slate-100 dark:border-[#262235]">{emp.location || '-'}</td>
+                                                            <td className="px-3 py-3 text-slate-655 dark:text-gray-300 border-r border-slate-100 dark:border-[#262235]">{emp.designation || '-'}</td>
+                                                            <td className="px-3 py-3 text-slate-655 dark:text-gray-300 border-r border-slate-100 dark:border-[#262235]">{emp.location || '-'}</td>
                                                             
                                                             {/* Render status for each day */}
                                                             {daysArray.map(day => {
@@ -1263,6 +1264,83 @@ function AttendanceRegister() {
                                             )}
                                         </tbody>
                                     </table>
+                                </div>
+
+                                {/* Mobile View: Accordions & Interactive Calendar Grid */}
+                                <div className="md:hidden space-y-4">
+                                    {employees.length > 0 ? (
+                                        employees.map((emp, index) => {
+                                            const summary = getEmployeeSummary(emp._id);
+                                            return (
+                                                <div key={emp._id} className="p-4 bg-slate-50 dark:bg-[#201d2c]/40 border border-slate-100 dark:border-[#2b273d] rounded-xl flex flex-col gap-3">
+                                                    <div className="flex justify-between items-start border-b border-slate-200/50 dark:border-[#37314e]/50 pb-2">
+                                                        <div className="flex items-start gap-2.5">
+                                                            <input 
+                                                                type="checkbox" 
+                                                                checked={selectedEmployeeIds.includes(emp._id)} 
+                                                                onChange={() => handleSelectEmployee(emp._id)}
+                                                                className="rounded text-violet-650 focus:ring-violet-500 bg-white dark:bg-[#181622] border-slate-300 dark:border-[#37314e] h-4.5 w-4.5 cursor-pointer mt-0.5"
+                                                            />
+                                                            <div>
+                                                                <h4 className="text-sm font-black text-slate-900 dark:text-white">{emp.name}</h4>
+                                                                <p className="text-xs text-slate-550 dark:text-gray-400 mt-0.5">{emp.designation || 'Staff'} • {emp.location || 'N/A'}</p>
+                                                            </div>
+                                                        </div>
+                                                        <span className="text-xs font-bold text-slate-400">#{index + 1}</span>
+                                                    </div>
+
+                                                    {/* Summary Stats Row */}
+                                                    <div className="grid grid-cols-3 gap-2 py-1 border-b border-slate-200/30 dark:border-[#37314e]/30">
+                                                        <div className="bg-white dark:bg-[#181622] p-2 rounded-lg text-center border border-slate-200/30 dark:border-[#2b273d]">
+                                                            <span className="block text-[9px] font-bold text-slate-400 uppercase tracking-wide">Work Days</span>
+                                                            <span className="text-xs font-black text-green-600 dark:text-green-400">{summary.presentDays}</span>
+                                                        </div>
+                                                        <div className="bg-white dark:bg-[#181622] p-2 rounded-lg text-center border border-slate-200/30 dark:border-[#2b273d]">
+                                                            <span className="block text-[9px] font-bold text-slate-400 uppercase tracking-wide">OT Hours</span>
+                                                            <span className="text-xs font-black text-indigo-600 dark:text-violet-400">{summary.totalOtHours}</span>
+                                                        </div>
+                                                        <div className="bg-white dark:bg-[#181622] p-2 rounded-lg text-center border border-slate-200/30 dark:border-[#2b273d]">
+                                                            <span className="block text-[9px] font-bold text-slate-400 uppercase tracking-wide">NS Hours</span>
+                                                            <span className="text-xs font-black text-amber-600 dark:text-amber-400">{summary.totalNsHours}</span>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Calendar view */}
+                                                    <div>
+                                                        <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-2">Month Calendar (Tap day to edit)</span>
+                                                        <div className="grid grid-cols-7 gap-1.5">
+                                                            {daysArray.map(day => {
+                                                                const cellInfo = getCellDisplayInfo(emp._id, day);
+                                                                return (
+                                                                    <button
+                                                                        key={day}
+                                                                        onClick={() => handleCellClick(emp, day)}
+                                                                        className={`h-8 rounded-lg flex flex-col justify-center items-center text-[10px] font-bold border transition relative hover:scale-105 active:scale-95 ${
+                                                                            cellInfo.colorClass.includes('text-green') ? 'bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-900/30' :
+                                                                            cellInfo.colorClass.includes('text-red') ? 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-900/30' :
+                                                                            cellInfo.colorClass.includes('text-amber') ? 'bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900/30' :
+                                                                            cellInfo.colorClass.includes('text-violet') ? 'bg-violet-50 dark:bg-violet-950/20 border-violet-200 dark:border-violet-900/30' :
+                                                                            cellInfo.colorClass.includes('text-cyan') ? 'bg-cyan-50 dark:bg-cyan-950/20 border-cyan-200 dark:border-cyan-900/30' :
+                                                                            cellInfo.colorClass.includes('text-indigo') ? 'bg-indigo-50 dark:bg-indigo-950/20 border-indigo-200 dark:border-indigo-900/30' :
+                                                                            'bg-slate-50 dark:bg-[#181622] border-slate-200 dark:border-[#37314e]'
+                                                                        } ${cellInfo.colorClass}`}
+                                                                        title={cellInfo.tooltip}
+                                                                    >
+                                                                        <span className="text-[8px] text-slate-400 absolute top-0.5 left-1 font-normal">{day}</span>
+                                                                        <span className="mt-1">{cellInfo.display}</span>
+                                                                    </button>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })
+                                    ) : (
+                                        <div className="text-center py-6 text-slate-400 text-sm font-medium">
+                                            No active employee records found.
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         )}

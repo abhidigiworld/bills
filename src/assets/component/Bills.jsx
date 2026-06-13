@@ -219,7 +219,7 @@ function Bills() {
 
       {/* Invoices List Table */}
       <div className={`bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-4 transition-colors duration-300 ${selectedInvoice || isUpdating ? 'print-hidden' : ''}`}>
-        <div className="overflow-x-auto">
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-sm text-left">
             <thead>
               <tr className="border-b border-slate-200 dark:border-[#262235] text-slate-500 dark:text-gray-400 font-bold uppercase text-xs select-none">
@@ -311,6 +311,68 @@ function Bills() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile View Card List */}
+        <div className="block md:hidden space-y-4">
+          {loading ? (
+            <div className="text-center py-10">
+              <div className="text-indigo-600 dark:text-violet-400 text-base font-bold animate-pulse">
+                Loading invoices...
+              </div>
+            </div>
+          ) : displayedBills.length > 0 ? (
+            displayedBills.map((bill) => (
+              <div key={bill._id} className="bg-slate-50 dark:bg-[#201d2c]/40 border border-slate-200/50 dark:border-[#262235]/65 rounded-2xl p-4 space-y-3 hover:shadow-md transition">
+                <div className="flex justify-between items-start">
+                  <div className="min-w-0 flex-1 pr-2">
+                    <h4 className="text-sm font-bold text-slate-900 dark:text-white truncate">{bill.companyName}</h4>
+                    <p className="text-xs text-slate-400 mt-0.5 truncate">GSTIN: {bill.gstin || '-'}</p>
+                  </div>
+                  <span className="bg-indigo-50 dark:bg-[#201d2c] text-indigo-650 dark:text-violet-450 border border-indigo-100/10 px-2.5 py-1 rounded-lg text-[10px] font-black font-mono shrink-0">
+                    #{bill.invoiceNo}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-xs border-t border-b border-slate-100 dark:border-[#262235]/50 py-2">
+                  <div>
+                    <span className="text-slate-400 block text-[10px] uppercase font-bold tracking-wider">Date</span>
+                    <span className="text-slate-800 dark:text-gray-200 font-semibold">{formatDate(bill.invoiceDate)}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 block text-[10px] uppercase font-bold tracking-wider">State</span>
+                    <span className="text-slate-800 dark:text-gray-200 font-semibold">{bill.state} ({bill.stateCode})</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 pt-1">
+                  <button
+                    className="flex-1 bg-indigo-600 hover:bg-indigo-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white font-bold py-2 rounded-xl text-xs transition shadow-sm text-center"
+                    onClick={() => handleViewDetails(bill._id)}
+                  >
+                    View
+                  </button>
+                  <button
+                    className="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 rounded-xl text-xs transition shadow-sm text-center"
+                    onClick={() => handleUpdate(bill)}
+                  >
+                    Update
+                  </button>
+                  <button
+                    className="bg-rose-50 dark:bg-rose-950/20 hover:bg-rose-100 text-rose-600 dark:text-rose-450 font-bold p-2 rounded-xl text-xs transition shadow-sm flex items-center justify-center shrink-0 border border-rose-200/10"
+                    onClick={() => handleDelete(bill._id)}
+                    title="Delete Invoice"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="text-center py-6 font-medium text-gray-500 bg-slate-50 dark:bg-[#201d2c]/20 rounded-xl p-4">
+              No invoices found.
+            </div>
+          )}
         </div>
 
         {/* Pagination Controls */}

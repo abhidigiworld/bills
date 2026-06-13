@@ -13,6 +13,7 @@ function DashboardLayout() {
 
   // Layout States
   const [isSidebarHovered, setIsSidebarHovered] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
 
   // Profile Modal State (replicated from Header.jsx to preserve profile editing)
@@ -234,11 +235,12 @@ function DashboardLayout() {
     return (
       <Link
         to={to}
-        title={!isSidebarHovered ? label : ""}
-        className={`flex items-center rounded-xl border transition-colors duration-200 ease-in-out h-12 ${
+        onClick={() => setIsDrawerOpen(false)}
+        title={label}
+        className={`flex items-center rounded-xl border transition-colors duration-200 ease-in-out h-12 px-4 w-full justify-start gap-3 ${
           isSidebarHovered 
-            ? 'px-4 w-full justify-start gap-3' 
-            : 'w-12 mx-auto justify-center px-0 gap-0'
+            ? 'lg:px-4 lg:w-full lg:justify-start lg:gap-3' 
+            : 'lg:w-12 lg:mx-auto lg:gap-0 lg:px-0 lg:justify-center'
         } ${
           isActive
             ? 'bg-indigo-50 dark:bg-[#201d2c] text-indigo-600 dark:text-violet-400 shadow-sm border-indigo-100/10'
@@ -250,7 +252,7 @@ function DashboardLayout() {
           className={`text-sm font-semibold whitespace-nowrap transition-all duration-300 ease-in-out ${
             isSidebarHovered 
               ? 'opacity-100 w-auto ml-1 visible' 
-              : 'opacity-0 w-0 overflow-hidden invisible'
+              : 'opacity-100 w-auto ml-1 visible lg:opacity-0 lg:w-0 lg:overflow-hidden lg:invisible'
           }`}
         >
           {label}
@@ -263,16 +265,27 @@ function DashboardLayout() {
     <div className="flex flex-col h-screen bg-[#F5F6FA] dark:bg-[#110f18] text-slate-800 dark:text-gray-200 transition-colors duration-300 font-sans overflow-hidden">
       
       {/* Top Navbar Header (Full Width) */}
-      <header className="flex justify-between items-center h-16 px-6 bg-white/70 dark:bg-[#181622]/70 backdrop-blur-md border-b border-slate-200/40 dark:border-[#262235]/40 shrink-0 z-30 w-full print-hidden">
-        <div className="flex items-center gap-4">
+      <header className="flex justify-between items-center h-16 px-4 sm:px-6 bg-white/70 dark:bg-[#181622]/70 backdrop-blur-md border-b border-slate-200/40 dark:border-[#262235]/40 shrink-0 z-30 w-full print-hidden">
+        <div className="flex items-center gap-2.5 sm:gap-4">
+          {/* Hamburger toggle button on mobile/tablet */}
+          <button
+            onClick={() => setIsDrawerOpen(!isDrawerOpen)}
+            className="lg:hidden p-1.5 rounded-lg text-slate-500 hover:text-slate-800 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none shrink-0"
+            aria-label="Toggle Navigation Drawer"
+          >
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+
           {/* Brand Logo & Name */}
           <div className="flex items-center gap-2.5">
-            <img src={settings.company_logo || logo} alt="Company Logo" className="h-9 w-auto rounded-md shadow-md border border-slate-200 dark:border-[#3e3857]" />
+            <img src={settings.company_logo || logo} alt="Company Logo" className="h-8 sm:h-9 w-auto rounded-md shadow-md border border-slate-200 dark:border-[#3e3857]" />
             <div className="flex flex-col justify-center leading-[1.05]">
-              <span className="text-[13px] font-black tracking-wider text-slate-800 dark:text-white uppercase">
+              <span className="text-[12px] sm:text-[13px] font-black tracking-wider text-slate-800 dark:text-white uppercase">
                 {settings.company_name.split(' ')[0] || ''}
               </span>
-              <span className="text-[8px] font-bold tracking-[0.22em] text-slate-400 dark:text-slate-500 uppercase mt-0.5">
+              <span className="text-[7.5px] sm:text-[8px] font-bold tracking-[0.22em] text-slate-400 dark:text-slate-500 uppercase mt-0.5">
                 {settings.company_name.split(' ').slice(1).join(' ') || ''}
               </span>
             </div>
@@ -282,8 +295,8 @@ function DashboardLayout() {
           <div className="h-8 w-px bg-slate-200 dark:bg-[#262235]/60" />
 
           <div>
-            <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight leading-none">{title}</h1>
-            <p className="text-slate-400 dark:text-gray-400 text-[10px] mt-1.5 font-medium">{subtitle}</p>
+            <h1 className="text-lg sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight leading-none truncate max-w-[120px] sm:max-w-none">{title}</h1>
+            <p className="hidden sm:block text-slate-400 dark:text-gray-400 text-[10px] mt-1.5 font-medium">{subtitle}</p>
           </div>
         </div>
 
@@ -309,13 +322,26 @@ function DashboardLayout() {
       </header>
 
       {/* Body container (sidebar & main content side-by-side) */}
-      <div className="flex flex-row flex-grow h-[calc(100vh-4rem)] overflow-hidden">
+      <div className="flex flex-row flex-grow h-[calc(100vh-4rem)] overflow-hidden relative">
         
-        {/* UNIFIED HOVER-EXPANDABLE SIDEBAR */}
+        {/* Mobile Drawer Backdrop */}
+        {isDrawerOpen && (
+          <div 
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden print-hidden transition-opacity duration-300"
+            onClick={() => setIsDrawerOpen(false)}
+          />
+        )}
+
+        {/* UNIFIED HOVER-EXPANDABLE SIDEBAR & MOBILE DRAWER */}
         <aside 
           onMouseEnter={() => setIsSidebarHovered(true)}
           onMouseLeave={() => setIsSidebarHovered(false)}
-          className={`${isSidebarHovered ? 'w-64' : 'w-20'} bg-white/70 dark:bg-[#181622]/70 backdrop-blur-md border-r border-slate-200/40 dark:border-[#262235]/40 flex flex-col justify-between pb-6 shrink-0 transition-all duration-300 ease-in-out print-hidden z-20 h-full`}
+          className={`
+            fixed inset-y-0 left-0 z-50 flex flex-col justify-between pb-6 bg-white dark:bg-[#181622] lg:bg-white/70 lg:dark:bg-[#181622]/70 backdrop-blur-md border-r border-slate-200/40 dark:border-[#262235]/40 transition-all duration-300 ease-in-out print-hidden h-full
+            lg:static lg:translate-x-0 lg:z-20 lg:shrink-0
+            ${isDrawerOpen ? 'translate-x-0 w-64 shadow-2xl' : '-translate-x-full lg:translate-x-0'}
+            ${isSidebarHovered ? 'lg:w-64' : 'lg:w-20'}
+          `}
         >
           <div className="w-full flex flex-col overflow-y-auto overflow-x-hidden scrollbar-none pt-0">
             {/* Grouped Sidebar Menu Items */}
@@ -326,20 +352,21 @@ function DashboardLayout() {
                   <div>
                     <div className="h-8 flex items-center px-4 relative shrink-0">
                       <h5 
-                        className={`text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest transition-all duration-300 ease-in-out ${
-                          isSidebarHovered 
-                            ? 'opacity-100 w-auto visible' 
-                            : 'opacity-0 w-0 overflow-hidden invisible'
-                        }`}
+                        className={`text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest transition-all duration-300 ease-in-out
+                          opacity-100 w-auto visible
+                          ${isSidebarHovered ? 'lg:opacity-100 lg:w-auto lg:visible' : 'lg:opacity-0 lg:w-0 lg:overflow-hidden lg:invisible'}
+                        `}
                       >
                         OPERATIONS
                       </h5>
                       <div 
-                        className={`bg-slate-200 dark:bg-[#262235]/60 mx-auto transition-all duration-300 ease-in-out ${
-                          isSidebarHovered 
-                            ? 'w-0 opacity-0 invisible' 
-                            : 'w-8 h-px opacity-100 visible mx-auto'
-                        }`}
+                        className={`bg-slate-200 dark:bg-[#262235]/60 mx-auto transition-all duration-300 ease-in-out
+                          w-0 opacity-0 invisible
+                          ${isSidebarHovered 
+                            ? 'lg:w-0 lg:opacity-0 lg:invisible' 
+                            : 'lg:w-8 lg:h-px lg:opacity-100 lg:visible lg:mx-auto'
+                          }
+                        `}
                       />
                     </div>
                     <div className="space-y-1">
@@ -370,20 +397,21 @@ function DashboardLayout() {
                   <div>
                     <div className="h-8 flex items-center px-4 relative shrink-0">
                       <h5 
-                        className={`text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest transition-all duration-300 ease-in-out ${
-                          isSidebarHovered 
-                            ? 'opacity-100 w-auto visible' 
-                            : 'opacity-0 w-0 overflow-hidden invisible'
-                        }`}
+                        className={`text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest transition-all duration-300 ease-in-out
+                          opacity-100 w-auto visible
+                          ${isSidebarHovered ? 'lg:opacity-100 lg:w-auto lg:visible' : 'lg:opacity-0 lg:w-0 lg:overflow-hidden lg:invisible'}
+                        `}
                       >
                         STAFF & PAYROLL
                       </h5>
                       <div 
-                        className={`bg-slate-200 dark:bg-[#262235]/60 mx-auto transition-all duration-300 ease-in-out ${
-                          isSidebarHovered 
-                            ? 'w-0 opacity-0 invisible' 
-                            : 'w-8 h-px opacity-100 visible mx-auto'
-                        }`}
+                        className={`bg-slate-200 dark:bg-[#262235]/60 mx-auto transition-all duration-300 ease-in-out
+                          w-0 opacity-0 invisible
+                          ${isSidebarHovered 
+                            ? 'lg:w-0 lg:opacity-0 lg:invisible' 
+                            : 'lg:w-8 lg:h-px lg:opacity-100 lg:visible lg:mx-auto'
+                          }
+                        `}
                       />
                     </div>
                     <div className="space-y-1">
@@ -414,20 +442,22 @@ function DashboardLayout() {
                   <div>
                     <div className="h-8 flex items-center px-4 relative shrink-0">
                       <h5 
-                        className={`text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest transition-all duration-300 ease-in-out ${
-                          isSidebarHovered 
-                            ? 'opacity-100 w-auto visible' 
-                            : 'opacity-0 w-0 overflow-hidden invisible'
-                        }`}
+                        className={`text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest transition-all duration-300 ease-in-out
+                          opacity-100 w-auto visible
+                          lg:opacity-0 lg:w-0 lg:overflow-hidden lg:invisible
+                          ${isSidebarHovered ? 'lg:opacity-100 lg:w-auto lg:visible' : ''}
+                        `}
                       >
                         SYSTEM
                       </h5>
                       <div 
-                        className={`bg-slate-200 dark:bg-[#262235]/60 mx-auto transition-all duration-300 ease-in-out ${
-                          isSidebarHovered 
-                            ? 'w-0 opacity-0 invisible' 
-                            : 'w-8 h-px opacity-100 visible mx-auto'
-                        }`}
+                        className={`bg-slate-200 dark:bg-[#262235]/60 mx-auto transition-all duration-300 ease-in-out
+                          w-0 opacity-0 invisible
+                          ${isSidebarHovered 
+                            ? 'lg:w-0 lg:opacity-0 lg:invisible' 
+                            : 'lg:w-8 lg:h-px lg:opacity-100 lg:visible lg:mx-auto'
+                          }
+                        `}
                       />
                     </div>
                     <div className="space-y-1">
@@ -445,20 +475,21 @@ function DashboardLayout() {
                   <div>
                     <div className="h-8 flex items-center px-4 relative shrink-0">
                       <h5 
-                        className={`text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest transition-all duration-300 ease-in-out ${
-                          isSidebarHovered 
-                            ? 'opacity-100 w-auto visible' 
-                            : 'opacity-0 w-0 overflow-hidden invisible'
-                        }`}
+                        className={`text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest transition-all duration-300 ease-in-out
+                          opacity-100 w-auto visible
+                          ${isSidebarHovered ? 'lg:opacity-100 lg:w-auto lg:visible' : 'lg:opacity-0 lg:w-0 lg:overflow-hidden lg:invisible'}
+                        `}
                       >
                         WORKSPACE
                       </h5>
                       <div 
-                        className={`bg-slate-200 dark:bg-[#262235]/60 mx-auto transition-all duration-300 ease-in-out ${
-                          isSidebarHovered 
-                            ? 'w-0 opacity-0 invisible' 
-                            : 'w-8 h-px opacity-100 visible mx-auto'
-                        }`}
+                        className={`bg-slate-200 dark:bg-[#262235]/60 mx-auto transition-all duration-300 ease-in-out
+                          w-0 opacity-0 invisible
+                          ${isSidebarHovered 
+                            ? 'lg:w-0 lg:opacity-0 lg:invisible' 
+                            : 'lg:w-8 lg:h-px lg:opacity-100 lg:visible lg:mx-auto'
+                          }
+                        `}
                       />
                     </div>
                     <div className="space-y-1">
@@ -474,32 +505,36 @@ function DashboardLayout() {
                   <div>
                     <div className="h-8 flex items-center px-4 relative shrink-0">
                       <h5 
-                        className={`text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest transition-all duration-300 ease-in-out ${
-                          isSidebarHovered 
-                            ? 'opacity-100 w-auto visible' 
-                            : 'opacity-0 w-0 overflow-hidden invisible'
-                        }`}
+                        className={`text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest transition-all duration-300 ease-in-out
+                          opacity-100 w-auto visible
+                          ${isSidebarHovered ? 'lg:opacity-100 lg:w-auto lg:visible' : 'lg:opacity-0 lg:w-0 lg:overflow-hidden lg:invisible'}
+                        `}
                       >
                         SYSTEM
                       </h5>
                       <div 
-                        className={`bg-slate-200 dark:bg-[#262235]/60 mx-auto transition-all duration-300 ease-in-out ${
-                          isSidebarHovered 
-                            ? 'w-0 opacity-0 invisible' 
-                            : 'w-8 h-px opacity-100 visible mx-auto'
-                        }`}
+                        className={`bg-slate-200 dark:bg-[#262235]/60 mx-auto transition-all duration-300 ease-in-out
+                          w-0 opacity-0 invisible
+                          ${isSidebarHovered 
+                            ? 'lg:w-0 lg:opacity-0 lg:invisible' 
+                            : 'lg:w-8 lg:h-px lg:opacity-100 lg:visible lg:mx-auto'
+                          }
+                        `}
                       />
                     </div>
                     <div className="space-y-1">
                       <button 
                         type="button"
-                        onClick={() => setIsProfileModalOpen(true)} 
-                        title={!isSidebarHovered ? "My Profile" : ""}
-                        className={`flex items-center rounded-xl transition-all duration-300 ease-in-out h-12 w-full ${
+                        onClick={() => {
+                          setIsDrawerOpen(false);
+                          setIsProfileModalOpen(true);
+                        }} 
+                        title="My Profile"
+                        className={`flex items-center rounded-xl transition-all duration-300 ease-in-out h-12 px-4 w-full justify-start gap-3 ${
                           isSidebarHovered 
-                            ? 'px-4 justify-start gap-3' 
-                            : 'w-12 mx-auto justify-center px-0 gap-0'
-                        } text-slate-500 hover:text-slate-800 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-slate-50 dark:hover:bg-[#201d2c]/50`}
+                            ? 'lg:px-4 lg:w-full lg:justify-start lg:gap-3 hover:bg-slate-50 dark:hover:bg-[#201d2c]/50' 
+                            : 'lg:w-12 lg:mx-auto lg:gap-0 lg:px-0 lg:justify-center hover:bg-slate-50 dark:hover:bg-[#201d2c]/50'
+                        } text-slate-500 hover:text-slate-800 dark:text-gray-400 dark:hover:text-gray-200`}
                       >
                         <span className="shrink-0">
                           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -507,10 +542,10 @@ function DashboardLayout() {
                           </svg>
                         </span>
                         <span 
-                          className={`text-sm font-semibold whitespace-nowrap transition-all duration-300 ease-in-out ${
+                          className={`text-sm font-semibold whitespace-nowrap transition-all duration-300 ease-in-out opacity-100 w-auto ml-1 visible ${
                             isSidebarHovered 
-                              ? 'opacity-100 w-auto ml-1 visible' 
-                              : 'opacity-0 w-0 overflow-hidden invisible'
+                              ? 'lg:opacity-100 lg:w-auto lg:ml-1 lg:visible' 
+                              : 'lg:opacity-0 lg:w-0 lg:overflow-hidden lg:invisible'
                           }`}
                         >
                           My Profile
@@ -527,22 +562,25 @@ function DashboardLayout() {
           <div className="px-3 border-t border-slate-100 dark:border-[#262235]/60 pt-4 flex flex-col justify-end gap-2 shrink-0 h-32 mt-auto">
             {/* User profile row */}
             <div
-              onClick={() => setIsProfileModalOpen(true)}
-              title={!isSidebarHovered ? "My Profile" : ""}
-              className={`flex items-center rounded-xl transition-all duration-300 ease-in-out h-12 cursor-pointer ${
+              onClick={() => {
+                setIsDrawerOpen(false);
+                setIsProfileModalOpen(true);
+              }}
+              title="My Profile"
+              className={`flex items-center rounded-xl transition-all duration-300 ease-in-out h-12 cursor-pointer px-4 w-full justify-start gap-3 ${
                 isSidebarHovered 
-                  ? 'px-4 w-full justify-start gap-3 hover:bg-slate-50 dark:hover:bg-[#201d2c]/50' 
-                  : 'w-12 mx-auto justify-center px-0 gap-0 hover:bg-slate-50 dark:hover:bg-[#201d2c]/50'
+                  ? 'lg:px-4 lg:w-full lg:justify-start lg:gap-3 hover:bg-slate-50 dark:hover:bg-[#201d2c]/50' 
+                  : 'lg:w-12 lg:mx-auto lg:gap-0 lg:px-0 lg:justify-center hover:bg-slate-50 dark:hover:bg-[#201d2c]/50'
               }`}
             >
               <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-500 flex items-center justify-center text-white text-[11px] font-black shadow-sm shrink-0">
                 {currentUser?.name ? currentUser.name.split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase() : 'ME'}
               </div>
               <div 
-                className={`flex-grow min-w-0 transition-all duration-300 ease-in-out ${
+                className={`flex-grow min-w-0 transition-all duration-300 ease-in-out opacity-100 w-auto ml-1 visible ${
                   isSidebarHovered 
-                    ? 'opacity-100 w-auto ml-1 visible' 
-                    : 'opacity-0 w-0 overflow-hidden invisible'
+                    ? 'lg:opacity-100 lg:w-auto lg:ml-1 lg:visible' 
+                    : 'lg:opacity-0 lg:w-0 lg:overflow-hidden lg:invisible'
                 }`}
               >
                 <h4 className="text-xs font-bold text-slate-800 dark:text-white truncate">{currentUser?.name || 'Guest User'}</h4>
@@ -555,12 +593,15 @@ function DashboardLayout() {
             {/* Logout row */}
             <button
               type="button"
-              onClick={handleLogout}
-              title={!isSidebarHovered ? "Logout" : ""}
-              className={`flex items-center rounded-xl transition-all duration-300 ease-in-out h-12 ${
+              onClick={() => {
+                setIsDrawerOpen(false);
+                handleLogout();
+              }}
+              title="Logout"
+              className={`flex items-center rounded-xl transition-all duration-300 ease-in-out h-12 px-4 w-full justify-start gap-3 ${
                 isSidebarHovered 
-                  ? 'px-4 w-full justify-start gap-3 hover:bg-red-50 dark:hover:bg-red-950/20' 
-                  : 'w-12 mx-auto justify-center px-0 gap-0 hover:bg-red-50 dark:hover:bg-red-950/20'
+                  ? 'lg:px-4 lg:w-full lg:justify-start lg:gap-3 hover:bg-red-50 dark:hover:bg-red-950/20' 
+                  : 'lg:w-12 lg:mx-auto lg:gap-0 lg:px-0 lg:justify-center hover:bg-red-50 dark:hover:bg-red-950/20'
               } text-red-500 hover:text-red-700`}
             >
               <span className="shrink-0">
@@ -569,10 +610,10 @@ function DashboardLayout() {
                 </svg>
               </span>
               <span 
-                className={`text-sm font-semibold whitespace-nowrap transition-all duration-300 ease-in-out ${
+                className={`text-sm font-semibold whitespace-nowrap transition-all duration-300 ease-in-out opacity-100 w-auto ml-1 visible ${
                   isSidebarHovered 
-                    ? 'opacity-100 w-auto ml-1 visible' 
-                    : 'opacity-0 w-0 overflow-hidden invisible'
+                    ? 'lg:opacity-100 lg:w-auto lg:ml-1 lg:visible' 
+                    : 'lg:opacity-0 lg:w-0 lg:overflow-hidden lg:invisible'
                 }`}
               >
                 Logout
@@ -582,7 +623,7 @@ function DashboardLayout() {
         </aside>
 
         {/* 3. MAIN WORKSPACE CONTAINER */}
-        <main className="flex-grow p-6 sm:p-8 max-w-7xl w-full mx-auto overflow-y-auto print:p-0">
+        <main className="flex-grow p-3 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto overflow-y-auto print:p-0">
           <Outlet />
         </main>
       </div>

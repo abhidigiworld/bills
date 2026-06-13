@@ -394,8 +394,9 @@ function ManagePayrolls() {
                             <div className="text-indigo-600 dark:text-violet-400 text-xl font-bold animate-pulse">Loading payroll slips...</div>
                         </div>
                     ) : (
-                        <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-6 transition-colors duration-300">
-                            <div className="overflow-x-auto">
+                        <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-xl rounded-xl p-4 sm:p-6 transition-colors duration-300">
+                            {/* Desktop View */}
+                            <div className="hidden md:block overflow-x-auto">
                                 <table className="w-full text-xs text-left border-collapse">
                                     <thead>
                                         <tr className="border-b border-slate-200 dark:border-[#262235] text-slate-500 dark:text-gray-400 font-bold uppercase text-xxs tracking-wider">
@@ -463,6 +464,76 @@ function ManagePayrolls() {
                                         )}
                                     </tbody>
                                 </table>
+                            </div>
+
+                            {/* Mobile View */}
+                            <div className="block md:hidden space-y-4">
+                                {filteredSlips.length > 0 ? (
+                                    filteredSlips.map((slip, index) => {
+                                        const empName = slip.employeeId?.name || 'Unknown';
+                                        const grossVal = Math.floor(slip.employeeId?.grossSalary || 0);
+                                        return (
+                                            <div key={slip._id} className="bg-slate-50 dark:bg-[#201d2c]/40 border border-slate-200/50 dark:border-[#262235]/65 rounded-2xl p-4 space-y-3 hover:shadow-md transition">
+                                                <div className="flex justify-between items-start">
+                                                    <div className="min-w-0 flex-1 pr-2">
+                                                        <h4 className="text-sm font-bold text-slate-900 dark:text-white truncate">{empName}</h4>
+                                                        <p className="text-xs text-slate-400 mt-0.5">{slip.monthOfSalary}</p>
+                                                    </div>
+                                                    <span className="text-xs font-black text-green-600 dark:text-green-400 shrink-0">
+                                                        ₹{Math.floor(slip.inHandSalary || 0).toLocaleString()}
+                                                    </span>
+                                                </div>
+
+                                                <div className="grid grid-cols-2 gap-2 text-xxs border-t border-b border-slate-100 dark:border-[#262235]/50 py-2 text-slate-650 dark:text-gray-300">
+                                                    <div>
+                                                        <span className="text-slate-400 block font-bold uppercase tracking-wider">Work Days</span>
+                                                        <span className="font-semibold text-slate-800 dark:text-gray-250">{slip.workDays} days</span>
+                                                    </div>
+                                                    <div>
+                                                        <span className="text-slate-400 block font-bold uppercase tracking-wider">Gross Salary</span>
+                                                        <span className="font-semibold text-slate-800 dark:text-gray-250">₹{grossVal.toLocaleString()}</span>
+                                                    </div>
+                                                    <div>
+                                                        <span className="text-slate-400 block font-bold uppercase tracking-wider">OT Hours</span>
+                                                        <span className="font-semibold text-slate-800 dark:text-gray-250">{slip.overtimeHours || 0} hrs</span>
+                                                    </div>
+                                                    <div>
+                                                        <span className="text-slate-400 block font-bold uppercase tracking-wider">Advance / ESIC</span>
+                                                        <span className="font-semibold text-red-500">-₹{Math.floor(slip.advance || 0)} / -₹{Math.floor(slip.esic || 0)}</span>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex items-center gap-2 pt-1">
+                                                    <button
+                                                        onClick={() => handleOpenEdit(slip)}
+                                                        className="flex-1 text-center bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 rounded-xl text-xs transition shadow-sm"
+                                                    >
+                                                        Edit
+                                                    </button>
+                                                    <button
+                                                        onClick={() => setActiveSlip(slip)}
+                                                        className="flex-1 text-center bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-xl text-xs transition shadow-sm"
+                                                    >
+                                                        Print
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDeleteSlip(slip._id, empName, slip.monthOfSalary)}
+                                                        className="bg-rose-50 dark:bg-rose-950/20 hover:bg-rose-100 text-rose-600 dark:text-rose-450 font-bold p-2 rounded-xl text-xs transition shadow-sm flex items-center justify-center border border-rose-200/10 shrink-0"
+                                                        title="Delete Slip"
+                                                    >
+                                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        );
+                                    })
+                                ) : (
+                                    <div className="text-center py-6 font-medium text-gray-500 bg-slate-50 dark:bg-[#201d2c]/20 rounded-xl p-4 text-xs">
+                                        No salary slips found matching the filters.
+                                    </div>
+                                )}
                             </div>
                         </div>
                     )}
