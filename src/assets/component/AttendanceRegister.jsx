@@ -35,50 +35,50 @@ function AttendanceRegister() {
 
     // Modal Edit states
     const [selectedCell, setSelectedCell] = useState(null); // { employee, dayNum }
-    const [modalForm, setModalForm] = useState({ 
-        status: 'Absent', 
+    const [modalForm, setModalForm] = useState({
+        status: 'Absent',
         workedDay: true,
         workedNight: false,
-        checkIn: '09:00', 
-        checkOut: '17:00', 
-        nightCheckIn: '20:00', 
+        checkIn: '09:00',
+        checkOut: '17:00',
+        nightCheckIn: '20:00',
         nightCheckOut: '04:00',
-        overtimeHours: 0, 
-        isNightShift: false, 
-        nightShiftHours: 0 
+        overtimeHours: 0,
+        isNightShift: false,
+        nightShiftHours: 0
     });
 
     // Blanket Edit states
     const [isBlanketModalOpen, setIsBlanketModalOpen] = useState(false);
-    const [blanketForm, setBlanketForm] = useState({ 
-        dayNum: 1, 
-        status: 'Present', 
+    const [blanketForm, setBlanketForm] = useState({
+        dayNum: 1,
+        status: 'Present',
         workedDay: true,
         workedNight: false,
-        checkIn: '09:30', 
-        checkOut: '17:30', 
-        nightCheckIn: '20:00', 
+        checkIn: '09:30',
+        checkOut: '17:30',
+        nightCheckIn: '20:00',
         nightCheckOut: '04:00',
-        overtimeHours: 0, 
-        isNightShift: false, 
-        nightShiftHours: 0 
+        overtimeHours: 0,
+        isNightShift: false,
+        nightShiftHours: 0
     });
 
     // Bulk Edit states
     const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
     const [selectedEmployeeIds, setSelectedEmployeeIds] = useState([]);
-    const [bulkForm, setBulkForm] = useState({ 
-        dayNum: 1, 
-        status: 'Present', 
+    const [bulkForm, setBulkForm] = useState({
+        dayNum: 1,
+        status: 'Present',
         workedDay: true,
         workedNight: false,
-        checkIn: '09:30', 
-        checkOut: '17:30', 
-        nightCheckIn: '20:00', 
+        checkIn: '09:30',
+        checkOut: '17:30',
+        nightCheckIn: '20:00',
         nightCheckOut: '04:00',
-        overtimeHours: 0, 
-        isNightShift: false, 
-        nightShiftHours: 0 
+        overtimeHours: 0,
+        isNightShift: false,
+        nightShiftHours: 0
     });
 
     // Hover tooltip state
@@ -256,11 +256,11 @@ function AttendanceRegister() {
         setPendingApprovals(prev => prev.map(rec => {
             if (rec._id === recordId) {
                 let nextRec = { ...rec, ...updatedFields };
-                
+
                 if (nextRec.status === 'Present') {
                     const hasDay = nextRec.workedDay;
                     const hasNight = nextRec.workedNight;
-                    
+
                     const dayCheckInStr = formatTimeFromDate(nextRec.checkIn, '');
                     const dayCheckOutStr = formatTimeFromDate(nextRec.checkOut, '');
                     const nightCheckInStr = formatTimeFromDate(nextRec.nightCheckIn, '');
@@ -370,7 +370,7 @@ function AttendanceRegister() {
                 const supervisorName = rec.supervisorId?.name || 'Unknown Supervisor';
                 const supervisorEmail = rec.supervisorId?.email || '';
                 const groupKey = `${dateKey}_${supervisorId}`;
-                
+
                 if (!groups[groupKey]) {
                     groups[groupKey] = {
                         date: dateKey,
@@ -395,7 +395,7 @@ function AttendanceRegister() {
                 const supervisorName = rec.supervisorId?.name || 'Unknown Supervisor';
                 const supervisorEmail = rec.supervisorId?.email || '';
                 const groupKey = `${dateKey}_${supervisorId}`;
-                
+
                 if (!groups[groupKey]) {
                     groups[groupKey] = {
                         date: dateKey,
@@ -488,11 +488,11 @@ function AttendanceRegister() {
     const handleModalFormChange = (updatedFields) => {
         setModalForm(prev => {
             let nextForm = { ...prev, ...updatedFields };
-            
+
             if (nextForm.status === 'Present') {
                 const hasDay = nextForm.workedDay;
                 const hasNight = nextForm.workedNight;
-                
+
                 if (hasDay) {
                     nextForm.overtimeHours = calculateOvertime(nextForm.checkIn, nextForm.checkOut, false);
                 } else {
@@ -520,11 +520,11 @@ function AttendanceRegister() {
     const handleBlanketFormChange = (updatedFields) => {
         setBlanketForm(prev => {
             let nextForm = { ...prev, ...updatedFields };
-            
+
             if (nextForm.status === 'Present') {
                 const hasDay = nextForm.workedDay;
                 const hasNight = nextForm.workedNight;
-                
+
                 if (hasDay) {
                     nextForm.overtimeHours = calculateOvertime(nextForm.checkIn, nextForm.checkOut, false);
                 } else {
@@ -552,11 +552,11 @@ function AttendanceRegister() {
     const handleBulkFormChange = (updatedFields) => {
         setBulkForm(prev => {
             let nextForm = { ...prev, ...updatedFields };
-            
+
             if (nextForm.status === 'Present') {
                 const hasDay = nextForm.workedDay;
                 const hasNight = nextForm.workedNight;
-                
+
                 if (hasDay) {
                     nextForm.overtimeHours = calculateOvertime(nextForm.checkIn, nextForm.checkOut, false);
                 } else {
@@ -582,7 +582,7 @@ function AttendanceRegister() {
     };
 
     const handleSelectEmployee = (empId) => {
-        setSelectedEmployeeIds(prev => 
+        setSelectedEmployeeIds(prev =>
             prev.includes(empId) ? prev.filter(id => id !== empId) : [...prev, empId]
         );
     };
@@ -640,7 +640,7 @@ function AttendanceRegister() {
                 const ot = log.overtimeHours || 0;
                 const workedDay = !!log.checkIn;
                 const workedNight = !!log.nightCheckIn || (log.isNightShift && log.nightShiftHours > 0);
-                
+
                 if (workedDay && workedNight) {
                     display = ot > 0 ? 'P☀️🌙⁺' : 'P☀️🌙';
                     colorClass = 'text-violet-600 dark:text-violet-400 font-black';
@@ -666,7 +666,7 @@ function AttendanceRegister() {
                         colorClass = 'text-green-600 dark:text-green-400';
                     }
                 }
-                
+
                 tooltip = 'Present';
                 if (workedDay || (!workedDay && !workedNight)) {
                     tooltip += ` | Day: ${checkInStr || '-'} to ${checkOutStr || '-'}`;
@@ -695,7 +695,7 @@ function AttendanceRegister() {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const cellDate = new Date(selectedYear, selectedMonth - 1, dayNum);
-        
+
         if (cellDate > today) {
             return { display: '-', colorClass: 'text-slate-400 dark:text-gray-500 font-normal', tooltip: 'Future Date' };
         } else {
@@ -749,7 +749,7 @@ function AttendanceRegister() {
 
         const defaultShift = employee.defaultShift || 'Day (09:30 - 17:30)';
         const isNight = defaultShift.includes('Night');
-        
+
         let checkInTime = '09:30';
         let checkOutTime = '17:30';
         if (defaultShift.includes('09:00')) {
@@ -790,32 +790,32 @@ function AttendanceRegister() {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             const cellDate = new Date(selectedYear, selectedMonth - 1, dayNum);
-            
+
             if (cellDate > today) {
-                setModalForm({ 
-                    status: 'Present', 
+                setModalForm({
+                    status: 'Present',
                     workedDay: !isNight,
                     workedNight: isNight,
-                    checkIn: checkInTime, 
-                    checkOut: checkOutTime, 
-                    nightCheckIn: nightCheckInTime, 
+                    checkIn: checkInTime,
+                    checkOut: checkOutTime,
+                    nightCheckIn: nightCheckInTime,
                     nightCheckOut: nightCheckOutTime,
-                    overtimeHours: 0, 
-                    isNightShift: isNight, 
-                    nightShiftHours: isNight ? calculateTotalHours(nightCheckInTime, nightCheckOutTime, true) : 0 
+                    overtimeHours: 0,
+                    isNightShift: isNight,
+                    nightShiftHours: isNight ? calculateTotalHours(nightCheckInTime, nightCheckOutTime, true) : 0
                 });
             } else {
-                setModalForm({ 
-                    status: 'Absent', 
+                setModalForm({
+                    status: 'Absent',
                     workedDay: !isNight,
                     workedNight: isNight,
-                    checkIn: checkInTime, 
-                    checkOut: checkOutTime, 
-                    nightCheckIn: nightCheckInTime, 
+                    checkIn: checkInTime,
+                    checkOut: checkOutTime,
+                    nightCheckIn: nightCheckInTime,
                     nightCheckOut: nightCheckOutTime,
-                    overtimeHours: 0, 
-                    isNightShift: isNight, 
-                    nightShiftHours: 0 
+                    overtimeHours: 0,
+                    isNightShift: isNight,
+                    nightShiftHours: 0
                 });
             }
         }
@@ -878,7 +878,7 @@ function AttendanceRegister() {
     const downloadAttendanceCSV = () => {
         try {
             const headers = ["Sl", "Name", "Designation", "Location", ...daysArray.map(d => `Day ${d}`), "Work Days", "OT Hours", "NS Hours"];
-            
+
             const rows = employees.map((emp, index) => {
                 const summary = getEmployeeSummary(emp._id);
                 const dailyStatuses = daysArray.map(day => {
@@ -888,31 +888,31 @@ function AttendanceRegister() {
                         if (status === 'Present') {
                             const workedDay = !!log.checkIn;
                             const workedNight = !!log.nightCheckIn || (log.isNightShift && log.nightShiftHours > 0);
-                            
+
                             const checkInStr = formatTimeFromDate(log.checkIn, '');
                             const checkOutStr = formatTimeFromDate(log.checkOut, '');
                             const nightCheckInStr = formatTimeFromDate(log.nightCheckIn, '');
                             const nightCheckOutStr = formatTimeFromDate(log.nightCheckOut, '');
-                            
+
                             let details = 'Present';
                             const shifts = [];
-                            
+
                             if (workedDay && checkInStr && checkOutStr) {
                                 shifts.push(`Day: ${checkInStr}-${checkOutStr}`);
                             }
                             if (workedNight && nightCheckInStr && nightCheckOutStr) {
                                 shifts.push(`Night: ${nightCheckInStr}-${nightCheckOutStr}`);
                             }
-                            
+
                             if (shifts.length > 0) {
                                 details += ` [${shifts.join(', ')}]`;
                             }
-                            
+
                             const ot = log.overtimeHours || 0;
                             if (ot > 0) {
                                 details += ` (OT: ${ot}h)`;
                             }
-                            
+
                             return details;
                         }
                         return status;
@@ -923,7 +923,7 @@ function AttendanceRegister() {
                     if (cellDate > today) return '-';
                     return 'Absent';
                 });
-                
+
                 return [
                     index + 1,
                     emp.name,
@@ -935,7 +935,7 @@ function AttendanceRegister() {
                     summary.totalNsHours
                 ];
             });
-            
+
             const csvContent = [
                 headers.join(','),
                 ...rows.map(row => row.map(val => {
@@ -946,7 +946,7 @@ function AttendanceRegister() {
                     return strVal;
                 }).join(','))
             ].join('\n');
-            
+
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -956,7 +956,7 @@ function AttendanceRegister() {
             a.click();
             document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
-            
+
             triggerSuccess(`Attendance CSV report downloaded successfully!`);
         } catch (error) {
             console.error("Error generating CSV:", error);
@@ -1038,11 +1038,10 @@ function AttendanceRegister() {
                 <div className="flex border-b border-slate-200 dark:border-[#262235] mb-8 gap-8 justify-start print-hidden">
                     <button
                         onClick={() => setActiveTab('register')}
-                        className={`pb-3 text-sm font-bold uppercase tracking-wider transition-all duration-200 border-b-2 flex items-center gap-2 ${
-                            activeTab === 'register'
+                        className={`pb-3 text-sm font-bold uppercase tracking-wider transition-all duration-200 border-b-2 flex items-center gap-2 ${activeTab === 'register'
                                 ? 'text-indigo-600 dark:text-violet-400 border-indigo-600 dark:border-violet-400 font-black'
                                 : 'text-slate-400 dark:text-gray-500 border-transparent hover:text-slate-650 dark:hover:text-gray-300 font-bold'
-                        }`}
+                            }`}
                     >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -1051,11 +1050,10 @@ function AttendanceRegister() {
                     </button>
                     <button
                         onClick={() => setActiveTab('approvals')}
-                        className={`pb-3 text-sm font-bold uppercase tracking-wider transition-all duration-200 border-b-2 flex items-center gap-2 ${
-                            activeTab === 'approvals'
+                        className={`pb-3 text-sm font-bold uppercase tracking-wider transition-all duration-200 border-b-2 flex items-center gap-2 ${activeTab === 'approvals'
                                 ? 'text-indigo-600 dark:text-violet-400 border-indigo-600 dark:border-violet-400 font-black'
                                 : 'text-slate-400 dark:text-gray-500 border-transparent hover:text-slate-650 dark:hover:text-gray-300 font-bold'
-                        }`}
+                            }`}
                     >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
@@ -1072,7 +1070,7 @@ function AttendanceRegister() {
                 {activeTab === 'register' ? (
                     <>
                         {/* Filter Bar */}
-                        <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl p-6 mb-8 flex flex-wrap gap-6 items-center justify-between transition-colors duration-300">
+                        <div className="bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-lg rounded-xl p-4 sm:p-6 mb-8 flex flex-wrap gap-4 sm:gap-6 items-center justify-between transition-colors duration-300 overflow-hidden">
                             <div className="flex flex-wrap gap-4 items-center">
                                 <div>
                                     <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1">Month</label>
@@ -1117,13 +1115,13 @@ function AttendanceRegister() {
                                 </div>
                             </div>
 
-                            <div className="flex gap-4 items-center">
+                            <div className="flex flex-wrap gap-2 sm:gap-4 items-center">
                                 {selectedEmployeeIds.length > 0 && (
                                     <button
                                         onClick={() => setIsBulkModalOpen(true)}
-                                        className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-750 hover:to-teal-750 text-white font-bold rounded-lg text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition duration-200 flex items-center gap-2 animate-fade-in"
+                                        className="px-3 sm:px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-750 hover:to-teal-750 text-white font-bold rounded-lg text-[10px] sm:text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition duration-200 flex items-center gap-1.5 sm:gap-2 animate-fade-in"
                                     >
-                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                        <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                                         </svg>
                                         Bulk Mark ({selectedEmployeeIds.length})
@@ -1131,25 +1129,25 @@ function AttendanceRegister() {
                                 )}
                                 <button
                                     onClick={() => setIsBlanketModalOpen(true)}
-                                    className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-750 hover:to-violet-750 text-white font-bold rounded-lg text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition duration-200 flex items-center gap-2"
+                                    className="px-3 sm:px-4 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-750 hover:to-violet-750 text-white font-bold rounded-lg text-[10px] sm:text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition duration-200 flex items-center gap-1.5 sm:gap-2"
                                 >
-                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                    <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                                     </svg>
                                     Blanket Mark
                                 </button>
                                 <button
                                     onClick={downloadAttendanceCSV}
-                                    className="px-4 py-2 bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 text-white font-bold rounded-lg text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition duration-200 flex items-center gap-2"
+                                    className="px-3 sm:px-4 py-2 bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 text-white font-bold rounded-lg text-[10px] sm:text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition duration-200 flex items-center gap-1.5 sm:gap-2"
                                 >
-                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                    <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                     </svg>
-                                    Download CSV
+                                    <span className="hidden sm:inline">Download</span> CSV
                                 </button>
                                 <button
                                     onClick={() => fetchData()}
-                                    className="p-2 bg-slate-50 hover:bg-slate-100 dark:bg-[#201d2c] dark:hover:bg-[#2c273e] text-slate-650 dark:text-gray-300 rounded-lg border border-slate-200 dark:border-[#37314e] transition"
+                                    className="p-2 bg-slate-50 hover:bg-slate-100 dark:bg-[#201d2c] dark:hover:bg-[#2c273e] text-slate-650 dark:text-gray-300 rounded-lg border border-slate-200 dark:border-[#37314e] transition flex-shrink-0"
                                     title="Refresh Register"
                                     disabled={loading}
                                 >
@@ -1159,9 +1157,9 @@ function AttendanceRegister() {
                                     </svg>
                                 </button>
 
-                                <div className="text-right text-xs print:hidden">
-                                    <span className="text-[10px] font-bold text-slate-400 dark:text-gray-500 block uppercase tracking-wider">Currently Showing</span>
-                                    <span className="text-sm font-extrabold text-indigo-700 dark:text-violet-400">{monthName} {selectedYear}</span>
+                                <div className="text-right text-xs print:hidden min-w-0 ml-auto">
+                                    <span className="text-[10px] font-bold text-slate-400 dark:text-gray-500 block uppercase tracking-wider whitespace-nowrap">Currently Showing</span>
+                                    <span className="text-sm font-extrabold text-indigo-700 dark:text-violet-400 whitespace-nowrap">{monthName} {selectedYear}</span>
                                 </div>
                             </div>
                         </div>
@@ -1179,24 +1177,24 @@ function AttendanceRegister() {
                                             <tr className="border-b border-slate-200 dark:border-[#262235] text-slate-500 dark:text-gray-400 font-bold uppercase">
                                                 <th className="px-2 py-3 text-center border-r border-slate-100 dark:border-[#262235]">Sl</th>
                                                 <th className="px-2 py-3 text-center border-r border-slate-100 dark:border-[#262235] print-hidden">
-                                                    <input 
-                                                        type="checkbox" 
-                                                        checked={selectedEmployeeIds.length === employees.length && employees.length > 0} 
-                                                        onChange={handleSelectAllEmployees} 
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={selectedEmployeeIds.length === employees.length && employees.length > 0}
+                                                        onChange={handleSelectAllEmployees}
                                                         className="rounded text-violet-600 focus:ring-violet-500 bg-slate-100 dark:bg-[#201d2c] border-slate-300 dark:border-[#37314e] h-4 w-4 cursor-pointer"
                                                     />
                                                 </th>
                                                 <th className="px-3 py-3 min-w-[140px] border-r border-slate-100 dark:border-[#262235]">Name</th>
                                                 <th className="px-3 py-3 min-w-[100px] border-r border-slate-100 dark:border-[#262235]">Designation</th>
                                                 <th className="px-3 py-3 min-w-[100px] border-r border-slate-100 dark:border-[#262235]">Location</th>
-                                                
+
                                                 {/* Render day columns */}
                                                 {daysArray.map(day => (
                                                     <th key={day} className="px-1.5 py-3 text-center min-w-[26px] border-r border-slate-100 dark:border-[#262235] last:border-r-0">
                                                         {day}
                                                     </th>
                                                 ))}
-                                                
+
                                                 <th className="px-3 py-3 text-center min-w-[60px] border-l border-slate-100 dark:border-[#262235]">Work Days</th>
                                                 <th className="px-3 py-3 text-center min-w-[60px] border-r border-slate-100 dark:border-[#262235]">OT Hrs</th>
                                                 <th className="px-3 py-3 text-center min-w-[60px]">NS Hrs</th>
@@ -1210,9 +1208,9 @@ function AttendanceRegister() {
                                                         <tr key={emp._id} className="border-b border-slate-100 dark:border-[#262235] hover:bg-slate-50 dark:hover:bg-[#201d2c]/50 transition duration-150">
                                                             <td className="px-2 py-3 text-center font-bold text-slate-400 border-r border-slate-100 dark:border-[#262235]">{index + 1}</td>
                                                             <td className="px-2 py-3 text-center border-r border-slate-100 dark:border-[#262235] print-hidden">
-                                                                <input 
-                                                                    type="checkbox" 
-                                                                    checked={selectedEmployeeIds.includes(emp._id)} 
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={selectedEmployeeIds.includes(emp._id)}
                                                                     onChange={() => handleSelectEmployee(emp._id)}
                                                                     className="rounded text-violet-650 focus:ring-violet-500 bg-slate-100 dark:bg-[#201d2c] border-slate-300 dark:border-[#37314e] h-4 w-4 cursor-pointer"
                                                                 />
@@ -1220,42 +1218,42 @@ function AttendanceRegister() {
                                                             <td className="px-3 py-3 font-semibold text-slate-900 dark:text-white border-r border-slate-100 dark:border-[#262235]">{emp.name}</td>
                                                             <td className="px-3 py-3 text-slate-655 dark:text-gray-300 border-r border-slate-100 dark:border-[#262235]">{emp.designation || '-'}</td>
                                                             <td className="px-3 py-3 text-slate-655 dark:text-gray-300 border-r border-slate-100 dark:border-[#262235]">{emp.location || '-'}</td>
-                                                            
+
                                                             {/* Render status for each day */}
                                                             {daysArray.map(day => {
-                                                                    const cellInfo = getCellDisplayInfo(emp._id, day);
-                                                                    return (
-                                                                        <td 
-                                                                            key={day} 
-                                                                            className={`px-1.5 py-3 text-center font-bold border-r border-slate-100 dark:border-[#262235] last:border-r-0 cursor-pointer hover:bg-indigo-100/30 dark:hover:bg-[#201d2c] transition duration-150 ${cellInfo.colorClass}`}
-                                                                            onClick={() => handleCellClick(emp, day)}
-                                                                            onMouseEnter={(e) => {
-                                                                                const log = getLogForDay(emp._id, day);
-                                                                                if (log) {
-                                                                                    const rect = e.currentTarget.getBoundingClientRect();
-                                                                                    setHoveredCell({
-                                                                                        employeeName: emp.name,
-                                                                                        date: `${day} ${monthName} ${selectedYear}`,
-                                                                                        status: log.status,
-                                                                                        checkIn: formatTimeFromDate(log.checkIn, null),
-                                                                                        checkOut: formatTimeFromDate(log.checkOut, null),
-                                                                                        nightCheckIn: formatTimeFromDate(log.nightCheckIn, null),
-                                                                                        nightCheckOut: formatTimeFromDate(log.nightCheckOut, null),
-                                                                                        isNightShift: log.isNightShift,
-                                                                                        nightShiftHours: log.nightShiftHours || 0,
-                                                                                        overtimeHours: log.overtimeHours,
-                                                                                        x: rect.left,
-                                                                                        y: rect.bottom + 5
-                                                                                    });
-                                                                                }
-                                                                            }}
-                                                                            onMouseLeave={() => setHoveredCell(null)}
-                                                                        >
-                                                                            {cellInfo.display}
-                                                                        </td>
-                                                                    );
+                                                                const cellInfo = getCellDisplayInfo(emp._id, day);
+                                                                return (
+                                                                    <td
+                                                                        key={day}
+                                                                        className={`px-1.5 py-3 text-center font-bold border-r border-slate-100 dark:border-[#262235] last:border-r-0 cursor-pointer hover:bg-indigo-100/30 dark:hover:bg-[#201d2c] transition duration-150 ${cellInfo.colorClass}`}
+                                                                        onClick={() => handleCellClick(emp, day)}
+                                                                        onMouseEnter={(e) => {
+                                                                            const log = getLogForDay(emp._id, day);
+                                                                            if (log) {
+                                                                                const rect = e.currentTarget.getBoundingClientRect();
+                                                                                setHoveredCell({
+                                                                                    employeeName: emp.name,
+                                                                                    date: `${day} ${monthName} ${selectedYear}`,
+                                                                                    status: log.status,
+                                                                                    checkIn: formatTimeFromDate(log.checkIn, null),
+                                                                                    checkOut: formatTimeFromDate(log.checkOut, null),
+                                                                                    nightCheckIn: formatTimeFromDate(log.nightCheckIn, null),
+                                                                                    nightCheckOut: formatTimeFromDate(log.nightCheckOut, null),
+                                                                                    isNightShift: log.isNightShift,
+                                                                                    nightShiftHours: log.nightShiftHours || 0,
+                                                                                    overtimeHours: log.overtimeHours,
+                                                                                    x: rect.left,
+                                                                                    y: rect.bottom + 5
+                                                                                });
+                                                                            }
+                                                                        }}
+                                                                        onMouseLeave={() => setHoveredCell(null)}
+                                                                    >
+                                                                        {cellInfo.display}
+                                                                    </td>
+                                                                );
                                                             })}
-                                                            
+
                                                             <td className="px-3 py-3 text-center font-bold text-green-600 dark:text-green-400 border-l border-slate-100 dark:border-[#262235]">
                                                                 {summary.presentDays}
                                                             </td>
@@ -1288,9 +1286,9 @@ function AttendanceRegister() {
                                                 <div key={emp._id} className="p-4 bg-slate-50 dark:bg-[#201d2c]/40 border border-slate-100 dark:border-[#2b273d] rounded-xl flex flex-col gap-3">
                                                     <div className="flex justify-between items-start border-b border-slate-200/50 dark:border-[#37314e]/50 pb-2">
                                                         <div className="flex items-start gap-2.5">
-                                                            <input 
-                                                                type="checkbox" 
-                                                                checked={selectedEmployeeIds.includes(emp._id)} 
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={selectedEmployeeIds.includes(emp._id)}
                                                                 onChange={() => handleSelectEmployee(emp._id)}
                                                                 className="rounded text-violet-650 focus:ring-violet-500 bg-white dark:bg-[#181622] border-slate-300 dark:border-[#37314e] h-4.5 w-4.5 cursor-pointer mt-0.5"
                                                             />
@@ -1328,15 +1326,14 @@ function AttendanceRegister() {
                                                                     <button
                                                                         key={day}
                                                                         onClick={() => handleCellClick(emp, day)}
-                                                                        className={`h-8 rounded-lg flex flex-col justify-center items-center text-[10px] font-bold border transition relative hover:scale-105 active:scale-95 ${
-                                                                            cellInfo.colorClass.includes('text-green') ? 'bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-900/30' :
-                                                                            cellInfo.colorClass.includes('text-red') ? 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-900/30' :
-                                                                            cellInfo.colorClass.includes('text-amber') ? 'bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900/30' :
-                                                                            cellInfo.colorClass.includes('text-violet') ? 'bg-violet-50 dark:bg-violet-950/20 border-violet-200 dark:border-violet-900/30' :
-                                                                            cellInfo.colorClass.includes('text-cyan') ? 'bg-cyan-50 dark:bg-cyan-950/20 border-cyan-200 dark:border-cyan-900/30' :
-                                                                            cellInfo.colorClass.includes('text-indigo') ? 'bg-indigo-50 dark:bg-indigo-950/20 border-indigo-200 dark:border-indigo-900/30' :
-                                                                            'bg-slate-50 dark:bg-[#181622] border-slate-200 dark:border-[#37314e]'
-                                                                        } ${cellInfo.colorClass}`}
+                                                                        className={`h-8 rounded-lg flex flex-col justify-center items-center text-[10px] font-bold border transition relative hover:scale-105 active:scale-95 ${cellInfo.colorClass.includes('text-green') ? 'bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-900/30' :
+                                                                                cellInfo.colorClass.includes('text-red') ? 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-900/30' :
+                                                                                    cellInfo.colorClass.includes('text-amber') ? 'bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900/30' :
+                                                                                        cellInfo.colorClass.includes('text-violet') ? 'bg-violet-50 dark:bg-violet-950/20 border-violet-200 dark:border-violet-900/30' :
+                                                                                            cellInfo.colorClass.includes('text-cyan') ? 'bg-cyan-50 dark:bg-cyan-950/20 border-cyan-200 dark:border-cyan-900/30' :
+                                                                                                cellInfo.colorClass.includes('text-indigo') ? 'bg-indigo-50 dark:bg-indigo-950/20 border-indigo-200 dark:border-indigo-900/30' :
+                                                                                                    'bg-slate-50 dark:bg-[#181622] border-slate-200 dark:border-[#37314e]'
+                                                                            } ${cellInfo.colorClass}`}
                                                                         title={cellInfo.tooltip}
                                                                     >
                                                                         <span className="text-[8px] text-slate-400 absolute top-0.5 left-1 font-normal">{day}</span>
@@ -1619,7 +1616,7 @@ function AttendanceRegister() {
                                                     <span className="px-3.5 py-1.5 bg-indigo-50 dark:bg-violet-950/20 text-indigo-750 dark:text-violet-300 rounded-full text-xs font-black border border-indigo-100/30">
                                                         Sheet Date: {formatDisplayDate(group.date)}
                                                     </span>
-                                                    
+
                                                     <div className="flex gap-2.5">
                                                         <button
                                                             onClick={() => handleApproveGroup(groupKey, group.records)}
@@ -1785,7 +1782,7 @@ function AttendanceRegister() {
 
                         {/* Processed Submissions History */}
                         <div className="space-y-6">
-                            <div 
+                            <div
                                 className="flex items-center justify-between cursor-pointer bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#262235] shadow-md rounded-xl p-4 transition duration-200 select-none"
                                 onClick={() => setIsHistoryOpen(!isHistoryOpen)}
                             >
@@ -1855,7 +1852,7 @@ function AttendanceRegister() {
                                                             <span className="px-3 py-1 bg-slate-100 dark:bg-[#201d2c] text-slate-700 dark:text-gray-300 rounded-full text-xs font-bold border border-slate-200/30">
                                                                 Sheet Date: {formatDisplayDate(group.date)}
                                                             </span>
-                                                            
+
                                                             {group.approvalStatus === 'approved' ? (
                                                                 <span className="px-3 py-1 bg-green-50 dark:bg-green-950/20 text-green-700 dark:text-green-400 border border-green-200/20 rounded-full text-xs font-black flex items-center gap-1">
                                                                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
@@ -1871,7 +1868,7 @@ function AttendanceRegister() {
                                                                     Rejected / Discarded
                                                                 </span>
                                                             )}
-                                                            
+
                                                             <span className="text-[11px] text-slate-550 dark:text-gray-400 font-bold">
                                                                 Actioned: {formatDateTime(group.updatedAt)}
                                                             </span>
@@ -2044,7 +2041,7 @@ function AttendanceRegister() {
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
                                             </svg>
                                         </button>
-                                        
+
                                         <button
                                             disabled={logPage === 1}
                                             onClick={() => setLogPage(prev => Math.max(prev - 1, 1))}
@@ -2069,11 +2066,10 @@ function AttendanceRegister() {
                                                         <button
                                                             key={pageNum}
                                                             onClick={() => setLogPage(pageNum)}
-                                                            className={`w-7 h-7 flex items-center justify-center rounded-lg text-xs font-bold transition ${
-                                                                logPage === pageNum
+                                                            className={`w-7 h-7 flex items-center justify-center rounded-lg text-xs font-bold transition ${logPage === pageNum
                                                                     ? 'bg-indigo-600 dark:bg-violet-600 text-white shadow-sm'
                                                                     : 'hover:bg-slate-50 dark:hover:bg-[#201d2c] text-slate-650 dark:text-gray-300'
-                                                            }`}
+                                                                }`}
                                                         >
                                                             {pageNum}
                                                         </button>
@@ -2643,10 +2639,10 @@ function AttendanceRegister() {
             )}
             {/* Custom Hover Tooltip */}
             {hoveredCell && (
-                <div 
+                <div
                     className="fixed z-50 bg-white dark:bg-[#181622] border border-slate-200 dark:border-[#37314e] text-slate-800 dark:text-gray-200 p-4 rounded-xl shadow-2xl text-xs space-y-2 pointer-events-none transition-all duration-150 print-hidden"
-                    style={{ 
-                        left: `${hoveredCell.x}px`, 
+                    style={{
+                        left: `${hoveredCell.x}px`,
                         top: `${hoveredCell.y}px`,
                         minWidth: '220px',
                         transform: 'translateX(-50%)',
